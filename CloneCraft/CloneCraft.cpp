@@ -24,10 +24,13 @@ void drawGame(sf::Vector2u wsize)
     glNormal3f(0.f, 1.f, 0.f);
     glVertex3f(1.0f, 1.0f, -1.0f);  // Top Right Of The Quad (Top)
     glNormal3f(0.f, 1.f, 0.f);
+    glColor3f(1.0f, 0.0f, 0.0f);  // Color Red
     glVertex3f(-1.0f, 1.0f, -1.0f);  // Top Left Of The Quad (Top)
     glNormal3f(0.f, 1.f, 0.f);
+    glColor3f(0.0f, 0.0f, 1.0f);  // Color Blue
     glVertex3f(-1.0f, 1.0f, 1.0f);  // Bottom Left Of The Quad (Top)
     glNormal3f(0.f, 1.f, 0.f);
+    glColor3f(1.0f, 0.0f, 1.0f);  // Color Purple
     glVertex3f(1.0f, 1.0f, 1.0f);  // Bottom Right Of The Quad (Top)
     glEnd();
 }
