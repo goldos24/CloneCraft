@@ -14,22 +14,22 @@ namespace renderer
             float x3, float y3, float z3,
             float x4, float y4, float z4)
         {
-            glColor3f(texture->color1.x, texture->color1.y, texture->color1.z);  // Color Green
+            glColor3f(texture->color1.x, texture->color1.y, texture->color1.z);  // Color 1
             glNormal3f(0.f, 1.f, 0.f);
             glVertex3f(x1, y1, z1);
 
             glNormal3f(0.0, 1.0, 0.0);
-            glColor3f(texture->color2.x, texture->color2.y, texture->color2.z);  // Color Red
+            glColor3f(texture->color2.x, texture->color2.y, texture->color2.z);  // Color 2
             glVertex3f(x2, y2, z2);
 
             glNormal3f(0.0, 1.0, 0.0);
-            glColor3f(texture->color3.x, texture->color3.y, texture->color3.z);  // Color Blue
+            glColor3f(texture->color3.x, texture->color3.y, texture->color3.z);  // Color 3
             glVertex3f(x3, y3, z3);
 
             glNormal3f(0.f, 1.f, 0.f);
-            glColor3f(texture->color4.x, texture->color4.y, texture->color4.z);  // Color Purple
+            glColor3f(texture->color4.x, texture->color4.y, texture->color4.z);  // Color 4
             glVertex3d(x4, y4, z4);
-        }
+        }1
 
         auto drawOffsetFace(textures::FaceTexture* texture, 
             float x, float y, float z,
