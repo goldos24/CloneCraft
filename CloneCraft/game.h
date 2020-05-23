@@ -26,12 +26,9 @@ struct Game {
 
         sf::Vector2f positionDifference = position - sf::Vector2f(this->lastMousePosition);
 
-        printf("x : %f, y : %f \n", this->player.rotation.x, this->player.rotation.y);
-
         sf::Mouse::setPosition(sf::Vector2i(halfWindowSize.x, halfWindowSize.y), window);
 
-        this->player.rotation.y += float(positionDifference.x);
-        this->player.rotation.x += float(positionDifference.y);
+        this->player.rotate(float(positionDifference.y), float(positionDifference.x), 1.f);
     }
 
     void drawGame(sf::Vector2u wsize, sf::RenderWindow& window)
@@ -48,9 +45,10 @@ struct Game {
 
         glPushMatrix();
         updateRotation(wsize, window);
+
         glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
-        glRotatef(this-> player.rotation.y, 0.f, -1.f, 0.f);
-        glRotatef(180.f, 0.f, 0.f, 1.f);
+        glRotatef(- this-> player.rotation.y, 0.f, -1.f, 0.f);
+
         glTranslatef(0.f, 0.f, 5.f);
 
         glBegin(GL_QUADS);      // Draw The Cube Using quads

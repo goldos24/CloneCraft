@@ -19,6 +19,7 @@ int main()
 
     // load resources, initialize the OpenGL states, ...
     Game game;
+    window.setMouseCursorVisible(false);
 
     // run the main loop
     bool running = true;

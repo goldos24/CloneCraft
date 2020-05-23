@@ -15,8 +15,10 @@ namespace player
 
 		auto rotate(float X, float Y, float mouseSpeed)
 		{
-			this-> rotation.y += X * mouseSpeed;
-			this-> rotation.x += Y * mouseSpeed;
+			this-> rotation.x += X * mouseSpeed;
+			this-> rotation.y += Y * mouseSpeed;
+			if (this->rotation.x < -90.f) this->rotation.x = -90.f;
+			if (this->rotation.x > 90.f) this->rotation.x = 90.f;
 		}
 	};
 
