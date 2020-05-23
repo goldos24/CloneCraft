@@ -48,8 +48,8 @@ struct Game {
     }
 
     void moveBackward(float elapsedTime) {
-        player.position.x -= maths::sind(-player.rotation.y) * elapsedTime;
-        player.position.z -= maths::cosd(-player.rotation.y) * elapsedTime;
+        player.position.x += maths::sind(-player.rotation.y) * elapsedTime;
+        player.position.z += maths::cosd(-player.rotation.y) * elapsedTime;
     }
 
     void updatePosition()
