@@ -29,7 +29,7 @@ namespace renderer
             glNormal3f(0.f, 1.f, 0.f);
             glColor3f(texture->color4.x, texture->color4.y, texture->color4.z);  // Color 4
             glVertex3d(x4, y4, z4);
-        }1
+        }
 
         auto drawOffsetFace(textures::FaceTexture* texture, 
             float x, float y, float z,
