@@ -45,19 +45,19 @@ namespace textures
 
 	namespace colors
 	{
-		const auto grey1 = maths::Vec3(0.4f, 0.4f, 0.4f);
-		const auto grey2 = maths::Vec3(0.35f, 0.35f, 0.35f);
-		const auto grey3 = maths::Vec3(0.3f, 0.3f, 0.3f);
-		const auto grey4 = maths::Vec3(0.25f, 0.25f, 0.25f);
+		auto grey1 = maths::Vec3(0.4f, 0.4f, 0.4f);
+		auto grey2 = maths::Vec3(0.35f, 0.35f, 0.35f);
+		auto grey3 = maths::Vec3(0.3f, 0.3f, 0.3f);
+		auto grey4 = maths::Vec3(0.25f, 0.25f, 0.25f);
 	}
 
 	namespace faceTextures
 	{
-		const FaceTexture* stone = new FaceTexture( colors::grey1, colors::grey3, colors::grey2, colors::grey4);
+		FaceTexture* stone = new FaceTexture( colors::grey1, colors::grey3, colors::grey2, colors::grey4);
 	}
 
 	namespace blockTextures
 	{
-		const BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
+		BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
 	}
 }

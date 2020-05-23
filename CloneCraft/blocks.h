@@ -1,5 +1,6 @@
 #pragma once
 #include<string>
+#include "textures.h"
 
 namespace blox 
 {
@@ -18,12 +19,14 @@ namespace blox
 	struct Block
 	{
 		Block() {}
-		Block(ID id, std::string name)
+		Block(ID id, std::string name, textures::BlockTexture* texture)
 		{
 			this->id = id;
 			this->name = name;
+			this->texture = texture;
 		}
 
+		textures::BlockTexture* texture;
 		ID id;
 		std::string name;
 	};
@@ -33,12 +36,12 @@ namespace blox
 		auto InitBlocks() -> Block*
 		{
 			auto* blocks = new Block[256];
-			blocks[air] = Block(air, "air");
-			blocks[stone] = Block(stone, "stone");
+			blocks[air] = Block(air, "air", textures::blockTextures::stone); //TODO nullptr
+			blocks[stone] = Block(stone, "stone", textures::blockTextures::stone);
 			return blocks;
 		}
 
-		const Block* blocks = InitBlocks();
+		Block* blocks = InitBlocks();
 	}
 
 	auto getByID(ID id) -> Block
