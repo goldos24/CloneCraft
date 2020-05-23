@@ -15,18 +15,18 @@ namespace renderer
             float x4, float y4, float z4)
         {
             glColor3f(texture->color1.x, texture->color1.y, texture->color1.z);  // Color 1
-            glNormal3f(0.f, 1.f, 0.f);
+            glNormal3f(x1, y1, z1);
             glVertex3f(x1, y1, z1);
 
-            glNormal3f(0.0, 1.0, 0.0);
+            glNormal3f(x2 - x1, y2 - y1, z2 - z1);
             glColor3f(texture->color2.x, texture->color2.y, texture->color2.z);  // Color 2
             glVertex3f(x2, y2, z2);
 
-            glNormal3f(0.0, 1.0, 0.0);
+            glNormal3f(x3 - x1, y3 - y1, z3 - z1);
             glColor3f(texture->color3.x, texture->color3.y, texture->color3.z);  // Color 3
             glVertex3f(x3, y3, z3);
 
-            glNormal3f(0.f, 1.f, 0.f);
+            glNormal3f(x4 - x1, y4 - y1, z4 - z1);
             glColor3f(texture->color4.x, texture->color4.y, texture->color4.z);  // Color 4
             glVertex3d(x4, y4, z4);
         }
@@ -46,9 +46,12 @@ namespace renderer
         }
             
 
-		auto drawBottomFace(blox::ID id, int x, int y, int z) 
+		auto drawBottomFace(blox::ID id, int x, int y, int z, bool swapSides)
 		{
-            auto* texture = blox::getByID(id).texture->bottom;
+            auto* texture = swapSides ?
+                blox::getByID(id).texture->top
+                :
+                blox::getByID(id).texture->bottom;
             drawOffsetFace(
                 texture,
                 x, y, z,
@@ -59,9 +62,12 @@ namespace renderer
             );
 		}
 
-        auto drawFrontFace(blox::ID id, int x, int y, int z) 
+        auto drawFrontFace(blox::ID id, int x, int y, int z, bool swapSides)
         {
-            auto* texture = blox::getByID(id).texture->front;
+            auto* texture = swapSides ?
+                blox::getByID(id).texture->front
+                :
+                blox::getByID(id).texture->back;
             drawOffsetFace(
                 texture,
                 x, y, z,
@@ -72,9 +78,12 @@ namespace renderer
             );
         }
 
-        auto drawLeftFace(blox::ID id, int x, int y, int z) 
+        auto drawLeftFace(blox::ID id, int x, int y, int z, bool swapSides) 
         {
-            auto* texture = blox::getByID(id).texture->bottom;
+            auto* texture = swapSides ? 
+                blox::getByID(id).texture->left
+                : 
+                blox::getByID(id).texture->right;
             drawOffsetFace(
                 texture,
                 x, y, z,

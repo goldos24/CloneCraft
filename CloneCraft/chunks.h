@@ -53,17 +53,33 @@ namespace chunks
 
 		auto renderBlock(int x, int y, int z)
 		{
+			bool swapSides = !blox::isTransparent(this->getBlock(x, y, z));
 			if (blox::isTransparent(this->getBlock(x, y, z)) ^
 				blox::isTransparent(this->getBlock(x, y - 1, z)))
-				renderer::block::drawBottomFace(this-> getBlock(x, y, z), x, y, z);
+				renderer::block::drawBottomFace( 
+					(swapSides) ?
+					this->getBlock(x, y, z)
+					:
+					this->getBlock(x, y - 1, z)
+					, x, y, z, swapSides);
 
 			if (blox::isTransparent(this->getBlock(x, y, z)) ^
 				blox::isTransparent(this->getBlock(x, y, z - 1)))
-				renderer::block::drawFrontFace(this->getBlock(x, y, z), x, y, z);
+				renderer::block::drawFrontFace(
+					(swapSides) ?
+					this->getBlock(x, y, z)
+					:
+					this->getBlock(x, y, z - 1)
+					, x, y, z, swapSides);
 
 			if (blox::isTransparent(this->getBlock(x, y, z)) ^
 					blox::isTransparent(this->getBlock(x - 1, y, z)))
-				renderer::block::drawLeftFace(this->getBlock(x, y, z), x, y, z);
+				renderer::block::drawLeftFace(
+					(swapSides) ?
+					this->getBlock(x, y, z)
+					:
+					this->getBlock(x - 1, y, z)
+					, x, y, z, swapSides);
 		}
 
 		auto renderBlockWithIndex(int i)

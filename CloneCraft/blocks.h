@@ -1,5 +1,5 @@
 #pragma once
-#include<string>
+#include <string>
 #include "textures.h"
 
 namespace blox 
@@ -36,7 +36,7 @@ namespace blox
 		auto InitBlocks() -> Block*
 		{
 			auto* blocks = new Block[256];
-			blocks[air] = Block(air, "air", textures::blockTextures::stone); //TODO nullptr
+			blocks[air] = Block(air, "air", nullptr); //TODO nullptr
 			blocks[stone] = Block(stone, "stone", textures::blockTextures::stone);
 			return blocks;
 		}
