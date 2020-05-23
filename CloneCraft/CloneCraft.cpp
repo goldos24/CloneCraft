@@ -21,6 +21,9 @@ int main()
     Game game;
     window.setMouseCursorVisible(false);
 
+    // initialize the clock
+    sf::Clock clock;
+
     // run the main loop
     bool running = true;
     while (running)
@@ -49,7 +52,7 @@ int main()
 
         sf::Vector2u wsize = window.getSize();
 
-        game.drawGame(wsize, window);
+        game.drawGame(wsize, window, clock);
 
         glPopMatrix();
 

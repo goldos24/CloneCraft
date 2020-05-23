@@ -13,9 +13,13 @@ struct Game {
     Game() {}
 
     chunks::Chunk gameChunk = chunks::initFlatChunk();
-    float rotation = 0.f;
+    
     player::Player player;
+    const float movementSpeed = 6.9f;
+    float rotation = 0.f;
     sf::Vector2f lastMousePosition;
+
+    float lastElapsed = 0;
 
     void updateRotation(sf::Vector2u wsize, sf::RenderWindow& window)
     {
@@ -32,34 +36,52 @@ struct Game {
         this->player.rotate(float(positionDifference.y), float(positionDifference.x), 1.f);
     }
 
-    void moveRight(float elapsedTime) {
-        player.position.x += maths::cosd(-player.rotation.y) * elapsedTime;
-        player.position.z -= maths::sind(-player.rotation.y) * elapsedTime;
-    }
-
-    void moveLeft(float elapsedTime) {
-        player.position.x -= maths::cosd(-player.rotation.y) * elapsedTime;
-        player.position.z += maths::sind(-player.rotation.y) * elapsedTime;
-    }
-
-    void moveForward(float elapsedTime) {
-        player.position.x -= maths::sind(-player.rotation.y) * elapsedTime;
-        player.position.z -= maths::cosd(-player.rotation.y) * elapsedTime;
-    }
-
-    void moveBackward(float elapsedTime) {
-        player.position.x += maths::sind(-player.rotation.y) * elapsedTime;
-        player.position.z += maths::cosd(-player.rotation.y) * elapsedTime;
-    }
-
-    void updatePosition()
+    void moveUp(float elapsedTime)
     {
-        moveForward(0.01);
+        player.position.y += movementSpeed * elapsedTime;
     }
 
-    void drawGame(sf::Vector2u wsize, sf::RenderWindow& window)
+    void moveDown(float elapsedTime)
     {
+        player.position.y -= movementSpeed * elapsedTime;
+    }
 
+    void moveRight(float elapsedTime) 
+    {
+        player.position.x += maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
+        player.position.z -= maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
+    }
+
+    void moveLeft(float elapsedTime) 
+    {
+        player.position.x -= maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
+        player.position.z += maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
+    }
+
+    void moveForward(float elapsedTime) 
+    {
+        player.position.x -= maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
+        player.position.z -= maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
+    }
+
+    void moveBackward(float elapsedTime) 
+    {
+        player.position.x += maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
+        player.position.z += maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
+    }
+
+    void updatePosition(float elapsedTime)
+    {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) moveForward(elapsedTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveBackward(elapsedTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) moveLeft(elapsedTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) moveRight(elapsedTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) moveUp(elapsedTime);
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) moveDown(elapsedTime);
+    }
+
+    void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
+    {
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
         glMatrixMode(GL_PROJECTION);
@@ -75,7 +97,10 @@ struct Game {
         glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
         glRotatef(- this-> player.rotation.y, 0.f, -1.f, 0.f);
 
-        updatePosition();
+        sf::Time elapsed = clock.restart();
+        float elapsedSeconds = elapsed.asSeconds();
+
+        updatePosition(elapsedSeconds);
 
         glTranslatef(-player.position.x, -player.position.y, -player.position.z);
 
