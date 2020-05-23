@@ -50,7 +50,8 @@ struct Game {
         updateRotation(wsize, window);
         glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
         glRotatef(this-> player.rotation.y, 0.f, -1.f, 0.f);
-        glTranslatef(0.f, 0.f, 0.f);
+        glRotatef(180.f, 0.f, 0.f, 1.f);
+        glTranslatef(0.f, 0.f, 5.f);
 
         glBegin(GL_QUADS);      // Draw The Cube Using quads
 
