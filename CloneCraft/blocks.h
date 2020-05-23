@@ -1,5 +1,4 @@
 #pragma once
-#define func auto
 #include<string>
 
 namespace blox 
@@ -11,7 +10,7 @@ namespace blox
 		grass
 	};
 
-	func isTransparent(ID blockId) -> bool
+	auto isTransparent(ID blockId) -> bool
 	{
 		return blockId == air;
 	}
@@ -31,7 +30,7 @@ namespace blox
 
 	namespace 
 	{
-		func InitBlocks() -> Block*
+		auto InitBlocks() -> Block*
 		{
 			auto* blocks = new Block[256];
 			blocks[air] = Block(air, "air");
@@ -42,7 +41,7 @@ namespace blox
 		const Block* blocks = InitBlocks();
 	}
 
-	func getByID(ID id) -> Block
+	auto getByID(ID id) -> Block
 	{
 		return blocks[id];
 	}

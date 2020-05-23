@@ -4,9 +4,11 @@
 #include <SFML/OpenGL.hpp>
 #include "oldFunctions.h"
 #include "blocks.h"
+#include "chunks.h"
 
 void drawGame(sf::Vector2u wsize)
 {
+
     glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
     glMatrixMode(GL_PROJECTION);
