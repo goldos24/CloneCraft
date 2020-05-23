@@ -5,30 +5,8 @@
 #include "oldFunctions.h"
 #include "blocks.h"
 #include "chunks.h"
+#include "game.h"
 
-chunks::Chunk gameChunk = chunks::initFlatChunk();
-
-void drawGame(sf::Vector2u wsize)
-{
-
-    glClearColor(0.3f, 0.3f, 0.3f, 1.f);
-
-    glMatrixMode(GL_PROJECTION);
-    glLoadIdentity();
-    glViewport(0, 0, wsize.x, wsize.y);
-    oldf::glu::Perspective(60, (float)wsize.x / (float)wsize.y, 0.1f, 512.f);
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    glPushMatrix();
-    glTranslatef(-15.f, -5.f, -30.f);
-
-    glBegin(GL_QUADS);      // Draw The Cube Using quads
-
-    gameChunk.Render();
-    
-    glEnd();
-}
 
 int main()
 {
@@ -40,7 +18,8 @@ int main()
     window.setActive(true);
 
     // load resources, initialize the OpenGL states, ...
-    
+    Game game;
+
     // run the main loop
     bool running = true;
     while (running)
@@ -61,6 +40,7 @@ int main()
             }
         }
 
+        glEnable(GL_DEPTH_TEST);
         // clear the buffers
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -68,7 +48,7 @@ int main()
 
         sf::Vector2u wsize = window.getSize();
 
-        drawGame(wsize);
+        game.drawGame(wsize, window);
 
         glPopMatrix();
 

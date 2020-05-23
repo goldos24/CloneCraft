@@ -56,6 +56,14 @@ namespace chunks
 			if (blox::isTransparent(this->getBlock(x, y, z)) ^
 				blox::isTransparent(this->getBlock(x, y - 1, z)))
 				renderer::block::drawBottomFace(this-> getBlock(x, y, z), x, y, z);
+
+			if (blox::isTransparent(this->getBlock(x, y, z)) ^
+				blox::isTransparent(this->getBlock(x, y, z - 1)))
+				renderer::block::drawFrontFace(this->getBlock(x, y, z), x, y, z);
+
+			if (blox::isTransparent(this->getBlock(x, y, z)) ^
+					blox::isTransparent(this->getBlock(x - 1, y, z)))
+				renderer::block::drawLeftFace(this->getBlock(x, y, z), x, y, z);
 		}
 
 		auto renderBlockWithIndex(int i)
@@ -81,10 +89,11 @@ namespace chunks
 				for (int k = 0; k < size; k++)
 				{
 					chunk.setBlock(
-						(j > 1 ? blox::air : blox::stone),
+						(j > 1 || i > 14 || k > 14 ? blox::air : blox::stone),
 						i, j, k
 					);
 				}
+		chunk.setBlock(blox::stone, 8, 14, 8);
 		return chunk;
 	}
 }
