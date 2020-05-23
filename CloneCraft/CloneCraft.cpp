@@ -21,7 +21,7 @@ void drawGame(sf::Vector2u wsize)
     glLoadIdentity();
 
     glPushMatrix();
-    glTranslatef(0.f, -5.f, -5.f);
+    glTranslatef(-15.f, -5.f, -30.f);
 
     glBegin(GL_QUADS);      // Draw The Cube Using quads
 
