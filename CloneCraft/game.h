@@ -7,6 +7,7 @@
 #include "blocks.h"
 #include "chunks.h"
 #include "player.h"
+#include "maths.h"
 
 struct Game {
     Game() {}
@@ -31,6 +32,31 @@ struct Game {
         this->player.rotate(float(positionDifference.y), float(positionDifference.x), 1.f);
     }
 
+    void moveRight(float elapsedTime) {
+        player.position.x += maths::cosd(-player.rotation.y) * elapsedTime;
+        player.position.z -= maths::sind(-player.rotation.y) * elapsedTime;
+    }
+
+    void moveLeft(float elapsedTime) {
+        player.position.x -= maths::cosd(-player.rotation.y) * elapsedTime;
+        player.position.z += maths::sind(-player.rotation.y) * elapsedTime;
+    }
+
+    void moveForward(float elapsedTime) {
+        player.position.x -= maths::sind(-player.rotation.y) * elapsedTime;
+        player.position.z -= maths::cosd(-player.rotation.y) * elapsedTime;
+    }
+
+    void moveBackward(float elapsedTime) {
+        player.position.x -= maths::sind(-player.rotation.y) * elapsedTime;
+        player.position.z -= maths::cosd(-player.rotation.y) * elapsedTime;
+    }
+
+    void updatePosition()
+    {
+        moveForward(0.01);
+    }
+
     void drawGame(sf::Vector2u wsize, sf::RenderWindow& window)
     {
 
@@ -49,7 +75,9 @@ struct Game {
         glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
         glRotatef(- this-> player.rotation.y, 0.f, -1.f, 0.f);
 
-        glTranslatef(0.f, 0.f, 5.f);
+        updatePosition();
+
+        glTranslatef(-player.position.x, -player.position.y, -player.position.z);
 
         glBegin(GL_QUADS);      // Draw The Cube Using quads
 

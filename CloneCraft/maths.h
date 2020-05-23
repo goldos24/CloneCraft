@@ -1,4 +1,5 @@
 #pragma once
+#include <math.h>
 
 namespace maths
 {
@@ -16,4 +17,34 @@ namespace maths
 		float y = 0.f;
 		float z = 0.f;
 	};
+
+	const float pi = 3.1415926535897932384626433832795;
+
+	auto degreesToRadians(float degrees)
+	{
+		return degrees / 180 * pi;
+	}
+
+	void capDegrees(float& angle)
+	{
+		while (angle < 0)
+		{
+			angle += 360;
+		}
+
+		while (angle >= 360)
+		{
+			angle -= 360;
+		}
+	}
+	
+	float cosd(float angle)
+	{
+		return (float)cos(degreesToRadians(angle));
+	}
+
+	float sind(float angle)
+	{
+		return (float)sin(degreesToRadians(angle));
+	}
 }
