@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
 #include "oldFunctions.h"
+#include "blocks.h"
 
 void drawGame(sf::Vector2u wsize)
 {
