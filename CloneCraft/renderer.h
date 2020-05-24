@@ -14,7 +14,7 @@ namespace renderer
             float x3, float y3, float z3,
             float x4, float y4, float z4)
         {
-            auto color = texture->color1 * shading;
+            maths::Vec3 color = texture->color1 * shading;
 
             glColor3f(color.x, color.y, color.z);  // Color 1
             glNormal3f(0.f, 1.f, 0.f);
@@ -44,7 +44,7 @@ namespace renderer
 
 		auto drawBottomFace(blox::ID id, int x, int y, int z, bool swapSides)
 		{
-            auto* texture = swapSides ?
+            auto* texture = !swapSides ?
                 blox::getByID(id).texture->top
                 :
                 blox::getByID(id).texture->bottom;
@@ -60,7 +60,7 @@ namespace renderer
 
         auto drawFrontFace(blox::ID id, int x, int y, int z, bool swapSides)
         {
-            auto* texture = swapSides ?
+            auto* texture = !swapSides ?
                 blox::getByID(id).texture->front
                 :
                 blox::getByID(id).texture->back;
@@ -76,7 +76,7 @@ namespace renderer
 
         auto drawLeftFace(blox::ID id, int x, int y, int z, bool swapSides) 
         {
-            auto* texture = swapSides ? 
+            auto* texture = !swapSides ? 
                 blox::getByID(id).texture->left
                 : 
                 blox::getByID(id).texture->right;

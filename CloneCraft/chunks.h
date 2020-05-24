@@ -1,6 +1,7 @@
 #pragma once
 #include "blocks.h"
 #include "renderer.h"
+#include "maths.h"
 
 namespace chunks 
 {
@@ -9,17 +10,12 @@ namespace chunks
 
 	auto coordinateToIndex(int x, int y, int z) -> int
 	{
-		return x * size * size + y * size + z;
+		return maths::coord::coordinateToIndex(x, y, z, size);
 	}
 
 	auto indexToCoordinate(int i, int& x, int& y, int& z)
 	{
-		x = i / size / size;
-		i -= x * size * size;
-		y = i / size;
-		i -= y * size;
-		z = i;
-		i -= z;
+		maths::coord::indexToCoordinate(i, x, y, z, size);
 	}
 
 	auto isCoordinateInBounds(int x, int y, int z)
@@ -35,6 +31,8 @@ namespace chunks
 
 	struct Chunk
 	{
+		maths::Vec3i chunkPos;
+
 		blox::ID blocks[size * size * size];
 
 		auto getBlock(int x, int y, int z)
@@ -53,6 +51,10 @@ namespace chunks
 
 		auto renderBlock(int x, int y, int z)
 		{
+			int absoluteX = x + +this->chunkPos.x;
+			int absoluteY = y + +this->chunkPos.y;
+			int absoluteZ = z + +this->chunkPos.z;
+
 			bool swapSides = !blox::isTransparent(this->getBlock(x, y, z));
 			if (blox::isTransparent(this->getBlock(x, y, z)) ^
 				blox::isTransparent(this->getBlock(x, y - 1, z)))
@@ -61,7 +63,7 @@ namespace chunks
 					this->getBlock(x, y, z)
 					:
 					this->getBlock(x, y - 1, z)
-					, x, y, z, swapSides);
+					, absoluteX, absoluteY, absoluteZ, swapSides);
 
 			if (blox::isTransparent(this->getBlock(x, y, z)) ^
 				blox::isTransparent(this->getBlock(x, y, z - 1)))
@@ -70,7 +72,7 @@ namespace chunks
 					this->getBlock(x, y, z)
 					:
 					this->getBlock(x, y, z - 1)
-					, x, y, z, swapSides);
+					, absoluteX, absoluteY, absoluteZ, swapSides);
 
 			if (blox::isTransparent(this->getBlock(x, y, z)) ^
 					blox::isTransparent(this->getBlock(x - 1, y, z)))
@@ -79,14 +81,14 @@ namespace chunks
 					this->getBlock(x, y, z)
 					:
 					this->getBlock(x - 1, y, z)
-					, x, y, z, swapSides);
+					, absoluteX, absoluteY, absoluteZ, swapSides);
 		}
 
 		auto renderBlockWithIndex(int i)
 		{
 			int x, y, z;
 			indexToCoordinate(i, x, y, z);
-			this-> renderBlock( x, y, z );
+			this-> renderBlock( x, y , z);
 		}
 
 		auto Render() //TODO replace loop
@@ -100,6 +102,7 @@ namespace chunks
 	auto initFlatChunk()
 	{
 		Chunk chunk;
+		chunk.chunkPos = maths::Vec3i(0, 16, 0);
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				for (int k = 0; k < size; k++)
@@ -109,7 +112,7 @@ namespace chunks
 						i, j, k
 					);
 				}
-		chunk.setBlock(blox::stone, 8, 14, 8);
+		chunk.setBlock(blox::grass, 8, 14, 8);
 		return chunk;
 	}
 }

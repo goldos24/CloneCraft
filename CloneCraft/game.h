@@ -8,12 +8,14 @@
 #include "chunks.h"
 #include "player.h"
 #include "maths.h"
+#include "world.h"
 
 struct Game {
     Game() {}
 
-    chunks::Chunk gameChunk = chunks::initFlatChunk();
-    
+    //chunks::Chunk gameChunk = chunks::initFlatChunk();
+    world::World gameChunk = world::World();
+
     player::Player player;
     const float movementSpeed = 6.9f;
     float rotation = 0.f;

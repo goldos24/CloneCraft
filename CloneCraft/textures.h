@@ -47,7 +47,7 @@ namespace textures
 		auto green2 = maths::Vec3(0.f, 0.8f, 0.f);
 		auto green3 = maths::Vec3(0.f, 0.6f, 0.f);
 		auto green4 = maths::Vec3(0.f, 0.5f, 0.f);
-
+		auto brown1 = maths::Vec3(0.3f, 0.3f, 0.f);
 	}
 
 	namespace shadingFactors
@@ -64,10 +64,12 @@ namespace textures
 	{
 		FaceTexture* stone = new FaceTexture( colors::grey1);
 		FaceTexture* grassTop = new FaceTexture(colors::green1);
+		FaceTexture* grassBottom = new FaceTexture(colors::brown1);
 	}
 
 	namespace blockTextures
 	{
-		BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::grassTop, faceTextures::stone, faceTextures::stone);
+		BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
+		BlockTexture* grass = new BlockTexture(faceTextures::grassTop, faceTextures::grassBottom, faceTextures::grassBottom, faceTextures::grassBottom, faceTextures::grassBottom, faceTextures::grassBottom);
 	}
 }
