@@ -17,8 +17,6 @@ namespace renderer
 		{
 			sf::Texture::bind(&texture->texture);
 
-			glBegin(GL_QUADS);
-
 			glTexCoord2f(1, 1);
 			glNormal3f(x1, y1, z1);
 			glVertex3f(x1, y1, z1);
@@ -34,8 +32,6 @@ namespace renderer
 			glTexCoord2f(1, 0);
 			glNormal3f(x4 - x1, y4 - y1, z4 - z1);
 			glVertex3d(x4, y4, z4);
-
-			glEnd();
 		}
 
 		auto drawOffsetFace(textures::FaceTexture* texture,

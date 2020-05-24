@@ -38,6 +38,7 @@ namespace blox
 			auto* blocks = new Block[256];
 			blocks[air] = Block(air, "air", nullptr); //TODO nullptr
 			blocks[stone] = Block(stone, "stone", textures::blockTextures::stone);
+			blocks[grass] = Block(stone, "stone", textures::blockTextures::grass);
 			return blocks;
 		}
 

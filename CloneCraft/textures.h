@@ -50,6 +50,16 @@ namespace textures
 		FaceTexture* dirt = new FaceTexture("resources/dirt.png");
 	}
 
+	namespace shadingFactors
+	{
+		const float top = 1.0f;
+		const float bottom = 0.7f;
+		const float left = 0.9f;
+		const float right = 0.8f;
+		const float front = 0.95f;
+		const float back = 0.75f;
+	}
+
 	namespace blockTextures
 	{
 		BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
