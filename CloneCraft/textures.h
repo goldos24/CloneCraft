@@ -13,7 +13,7 @@ namespace textures
 		{
 			this->filePath = path;
 
-			if (!texture.loadFromFile(path))
+			if (!this-> texture.loadFromFile(path))
 			{
 				std::cout << "Texture not loaded!"<< " Texture Path:" << path << std::endl;
 			}
