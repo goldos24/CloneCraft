@@ -86,14 +86,12 @@ struct Game {
 
         glMatrixMode(GL_PROJECTION);
         glLoadIdentity();
-        glViewport(0, 0, wsize.x, wsize.y);
         oldf::glu::Perspective(60, (float)wsize.x / (float)wsize.y, 0.1f, 512.f);
+        
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        glPushMatrix();
         updateRotation(wsize, window);
-
         glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
         glRotatef(- this-> player.rotation.y, 0.f, -1.f, 0.f);
 
@@ -104,10 +102,6 @@ struct Game {
 
         glTranslatef(-player.position.x, -player.position.y, -player.position.z);
 
-        glBegin(GL_QUADS);      // Draw The Cube Using quads
-
         this-> gameChunk.Render();
-
-        glEnd();
     }
 };
