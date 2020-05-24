@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+
 #include "blocks.h"
 #include "textures.h"
 #include "facePosition.h"
@@ -78,15 +79,16 @@ namespace renderer
         void drawFace(textures::FaceTexture* texture, const float shading,
             FaceVertexContainer vertices)
         {
-            auto color = (texture->color1 * shading);
+            sf::Texture::bind(&texture->texture);
 
-            glColor3f(color.x, color.y, color.z);  // Color 1
+            glTexCoord2f(1, 1);
             glNormal3f(0.f, 1.f, 0.f);
             glVertex3f(vertices.x1, vertices.y1, vertices.z1);
-
+            glTexCoord2f(0, 1);
             glVertex3f(vertices.x2, vertices.y2, vertices.z2);
-
+            glTexCoord2f(0, 0);
             glVertex3f(vertices.x3, vertices.y3, vertices.z3);
+            glTexCoord2f(1, 0);
 
             glVertex3d(vertices.x4, vertices.y4, vertices.z4);
         }

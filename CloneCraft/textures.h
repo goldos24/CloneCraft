@@ -1,17 +1,26 @@
 #pragma once
 #include "maths.h"
 #include "facePosition.h"
+#include <iostream>
+#include <string>
+#include <SFML/Graphics.hpp>
 
 namespace textures
 {
-
 	struct FaceTexture
 	{
-		FaceTexture(maths::Vec3 c1)
+		FaceTexture(std::string path)
 		{
-			this->color1 = c1;
+			this->filePath = path;
+
+			if (!texture.loadFromFile(path))
+			{
+				std::cout << "Texture not loaded!"<< " Texture Path:" << path << std::endl;
+			}
 		}
-		maths::Vec3 color1;
+
+		std::string filePath;
+		sf::Texture texture;
 	};
 
 	struct BlockTexture
@@ -60,17 +69,11 @@ namespace textures
 		FaceTexture* back;
 	}; 
 
-	namespace colors
+	namespace faceTextures
 	{
-		auto grey1 = maths::Vec3(0.4f, 0.4f, 0.4f);
-		auto grey2 = maths::Vec3(0.35f, 0.35f, 0.35f);
-		auto grey3 = maths::Vec3(0.3f, 0.3f, 0.3f);
-		auto grey4 = maths::Vec3(0.25f, 0.25f, 0.25f);
-		auto green1 = maths::Vec3(0.f, 0.7f, 0.f);
-		auto green2 = maths::Vec3(0.f, 0.8f, 0.f);
-		auto green3 = maths::Vec3(0.f, 0.6f, 0.f);
-		auto green4 = maths::Vec3(0.f, 0.5f, 0.f);
-		auto brown1 = maths::Vec3(0.3f, 0.3f, 0.f);
+		FaceTexture* air = new FaceTexture("resources/air.png");
+		FaceTexture* stone = new FaceTexture("resources/stone.png");
+		FaceTexture* dirt = new FaceTexture("resources/dirt.png");
 	}
 
 	namespace shadingFactors
@@ -104,16 +107,8 @@ namespace textures
 		}
 	}
 
-	namespace faceTextures
-	{
-		FaceTexture* stone = new FaceTexture( colors::grey1);
-		FaceTexture* grassTop = new FaceTexture(colors::green1);
-		FaceTexture* grassBottom = new FaceTexture(colors::brown1);
-	}
-
 	namespace blockTextures
 	{
 		BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
-		BlockTexture* grass = new BlockTexture(faceTextures::grassTop, faceTextures::grassBottom, faceTextures::grassBottom, faceTextures::grassBottom, faceTextures::grassBottom, faceTextures::grassBottom);
 	}
 }

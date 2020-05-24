@@ -2,7 +2,6 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include "oldFunctions.h"
 #include "blocks.h"
 #include "chunks.h"
 #include "game.h"
@@ -24,6 +23,10 @@ int main()
     // initialize the clock
     sf::Clock clock;
 
+    // Enable OpenGL 2D Textures and depth test
+    glEnable(GL_TEXTURE_2D);
+    glEnable(GL_DEPTH_TEST);
+
     // run the main loop
     bool running = true;
     while (running)
@@ -44,17 +47,14 @@ int main()
             }
         }
 
-        glEnable(GL_DEPTH_TEST);
         // clear the buffers
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // draw...
 
         sf::Vector2u wsize = window.getSize();
 
         game.drawGame(wsize, window, clock);
-
-        glPopMatrix();
 
         GLenum err = glGetError(); 
         window.display();
