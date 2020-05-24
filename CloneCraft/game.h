@@ -104,7 +104,7 @@ struct Game {
 
         glTranslatef(-player.position.x, -player.position.y, -player.position.z);
 
-        glBegin(GL_QUADS);      // Draw The Cube Using quads
+        glBegin(GL_QUADS);      // Draw The Cubes Using quads
 
         this-> gameChunk.Render();
 

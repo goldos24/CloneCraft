@@ -16,6 +16,15 @@ namespace maths
 		float x = 0.f;
 		float y = 0.f;
 		float z = 0.f;
+
+		Vec3 operator * (float factor)
+		{
+			return Vec3(
+				this-> x * factor,
+				this-> y * factor,
+				this-> z * factor
+			);
+		}
 	};
 
 	const float pi = 3.1415926535897932384626433832795;

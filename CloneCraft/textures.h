@@ -6,17 +6,11 @@ namespace textures
 
 	struct FaceTexture
 	{
-		FaceTexture(maths::Vec3 c1, maths::Vec3 c2, maths::Vec3 c3, maths::Vec3 c4)
+		FaceTexture(maths::Vec3 c1)
 		{
 			this->color1 = c1;
-			this->color1 = c2;
-			this->color1 = c3;
-			this->color1 = c4;
 		}
 		maths::Vec3 color1;
-		maths::Vec3 color2;
-		maths::Vec3 color3;
-		maths::Vec3 color4;
 	};
 
 	struct BlockTexture
@@ -56,10 +50,20 @@ namespace textures
 
 	}
 
+	namespace shadingFactors
+	{
+		const float top = 1.0f;
+		const float bottom = 0.7f;
+		const float left = 0.9f;
+		const float right = 0.8f;
+		const float front = 0.95f;
+		const float back = 0.75f;
+	}
+
 	namespace faceTextures
 	{
-		FaceTexture* stone = new FaceTexture( colors::grey1, colors::grey3, colors::grey2, colors::grey4);
-		FaceTexture* grassTop = new FaceTexture(colors::green1, colors::green3, colors::green2, colors::green4);
+		FaceTexture* stone = new FaceTexture( colors::grey1);
+		FaceTexture* grassTop = new FaceTexture(colors::green1);
 	}
 
 	namespace blockTextures
