@@ -1,5 +1,6 @@
 #pragma once
 #include "maths.h"
+#include "facePosition.h"
 
 namespace textures
 {
@@ -29,6 +30,28 @@ namespace textures
 			this->front = front;
 			this->back = back;
 		}
+
+		auto getFaceTexture(facePos::FacePosition position)
+		{
+			switch (position)
+			{
+			case facePos::top:
+				return this->top;
+			case facePos::bottom:
+				return this->bottom;
+			case facePos::front:
+				return this->front;
+			case facePos::back:
+				return this->back;
+			case facePos::left:
+				return this->left;
+			case facePos::right:
+				return this->right;
+			default:
+				break;
+			}
+		}
+
 		FaceTexture* top;
 		FaceTexture* bottom;
 		FaceTexture* left;
@@ -54,10 +77,31 @@ namespace textures
 	{
 		const float top = 1.0f;
 		const float bottom = 0.7f;
-		const float left = 0.9f;
-		const float right = 0.8f;
 		const float front = 0.95f;
 		const float back = 0.75f;
+		const float left = 0.9f;
+		const float right = 0.8f;
+	}
+
+	float getShadingFactorByPosition(facePos::FacePosition position)
+	{
+		switch (position)
+		{
+		case facePos::top:
+			return shadingFactors::top;
+		case facePos::bottom:
+			return shadingFactors::bottom;
+		case facePos::front:
+			return shadingFactors::front;
+		case facePos::back:
+			return shadingFactors::back;
+		case facePos::left:
+			return shadingFactors::left;
+		case facePos::right:
+			return shadingFactors::right;
+		default:
+			break;
+		}
 	}
 
 	namespace faceTextures

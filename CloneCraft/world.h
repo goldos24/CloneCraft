@@ -19,7 +19,7 @@ namespace world
 			}
 		}
 		int size;
-		int chunkRenderDistance = 2;
+		int chunkRenderDistance = 3;
 		chunks::Chunk* chunks;
 
 

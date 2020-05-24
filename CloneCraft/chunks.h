@@ -2,6 +2,8 @@
 #include "blocks.h"
 #include "renderer.h"
 #include "maths.h"
+#include "renderData.h"
+#include <vector>
 
 namespace chunks 
 {
@@ -31,9 +33,16 @@ namespace chunks
 
 	struct Chunk
 	{
+		Chunk()
+		{
+			this->calculateFaces();
+		}
+
+		std::vector<renderData::BlockFace> renderData;
+
 		maths::Vec3i chunkPos;
 
-		blox::ID blocks[size * size * size];
+		blox::ID blocks[maths::cubeof(size)];
 
 		auto getBlock(int x, int y, int z)
 		{
@@ -49,52 +58,63 @@ namespace chunks
 			this-> blocks[coordinateToIndex(x, y, z)] = id;
 		}
 
-		auto renderBlock(int x, int y, int z)
+		auto calculateAndPushBlock(int x, int y, int z)
 		{
-			int absoluteX = x + +this->chunkPos.x;
-			int absoluteY = y + +this->chunkPos.y;
-			int absoluteZ = z + +this->chunkPos.z;
+			int absoluteX = x + this->chunkPos.x;
+			int absoluteY = y + this->chunkPos.y;
+			int absoluteZ = z + this->chunkPos.z;
 
-			bool swapSides = !blox::isTransparent(this->getBlock(x, y, z));
-			if (blox::isTransparent(this->getBlock(x, y, z)) ^
+			bool isSelectedBlockTransparent = blox::isTransparent(this->getBlock(x, y, z));
+			bool swapSides = !isSelectedBlockTransparent;
+			if (isSelectedBlockTransparent ^
 				blox::isTransparent(this->getBlock(x, y - 1, z)))
-				renderer::block::drawBottomFace( 
+				this->renderData.push_back(
+				renderData::makeBottomFace(
 					(swapSides) ?
 					this->getBlock(x, y, z)
 					:
 					this->getBlock(x, y - 1, z)
-					, absoluteX, absoluteY, absoluteZ, swapSides);
+					, absoluteX, absoluteY, absoluteZ, swapSides));
 
-			if (blox::isTransparent(this->getBlock(x, y, z)) ^
+			if (isSelectedBlockTransparent ^
 				blox::isTransparent(this->getBlock(x, y, z - 1)))
-				renderer::block::drawFrontFace(
+				this->renderData.push_back(
+				renderData::makeFrontFace(
 					(swapSides) ?
 					this->getBlock(x, y, z)
 					:
 					this->getBlock(x, y, z - 1)
-					, absoluteX, absoluteY, absoluteZ, swapSides);
+					, absoluteX, absoluteY, absoluteZ, swapSides));
 
-			if (blox::isTransparent(this->getBlock(x, y, z)) ^
-					blox::isTransparent(this->getBlock(x - 1, y, z)))
-				renderer::block::drawLeftFace(
+			if (isSelectedBlockTransparent ^
+				blox::isTransparent(this->getBlock(x - 1, y, z)))
+				this->renderData.push_back(
+				renderData::makeLeftFace(
 					(swapSides) ?
 					this->getBlock(x, y, z)
 					:
 					this->getBlock(x - 1, y, z)
-					, absoluteX, absoluteY, absoluteZ, swapSides);
+					, absoluteX, absoluteY, absoluteZ, swapSides));
 		}
 
-		auto renderBlockWithIndex(int i)
+		auto calculateBlockWithIndex(int i)
 		{
 			int x, y, z;
 			indexToCoordinate(i, x, y, z);
-			this-> renderBlock( x, y , z);
+			this-> calculateAndPushBlock(x, y , z);
+		}
+
+		void calculateFaces()
+		{
+			this->renderData.clear();
+			for (int i = 0; i < (sizeof(this->blocks) / sizeof(blox::ID)); i++)
+				this->calculateBlockWithIndex(i);
 		}
 
 		auto Render() //TODO replace loop
 		{
-			for (int i = 0; i < (sizeof(this->blocks) / sizeof(blox::ID)); i++)
-				this->renderBlockWithIndex(i);
+			for (auto face : renderData)
+				face.render(chunkPos.x, chunkPos.y, chunkPos.z);
 		}
 
 	};
@@ -113,6 +133,7 @@ namespace chunks
 					);
 				}
 		chunk.setBlock(blox::grass, 8, 14, 8);
+		chunk.calculateFaces();
 		return chunk;
 	}
 }

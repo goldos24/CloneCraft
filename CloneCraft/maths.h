@@ -3,6 +3,9 @@
 
 namespace maths
 {
+	typedef unsigned char uint8;
+	typedef unsigned short uint16;
+
 	struct Vec3
 	{
 		Vec3() {}
@@ -82,6 +85,7 @@ namespace maths
 	}
 
 	constexpr float cubeof(float x) { return x * x * x; };
+	constexpr int cubeof(int x) { return x * x * x; };
 
 	namespace coord
 	{

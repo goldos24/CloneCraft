@@ -14,7 +14,7 @@ struct Game {
     Game() {}
 
     //chunks::Chunk gameChunk = chunks::initFlatChunk();
-    world::World gameChunk = world::World();
+    world::World gameWorld = world::World();
 
     player::Player player;
     const float movementSpeed = 6.9f;
@@ -108,7 +108,7 @@ struct Game {
 
         glBegin(GL_QUADS);      // Draw The Cubes Using quads
 
-        this-> gameChunk.Render();
+        this-> gameWorld.Render();
 
         glEnd();
     }
