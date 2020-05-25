@@ -13,14 +13,14 @@ namespace textures
 		{
 			this->filePath = path;
 
-			if (!this-> texture.loadFromFile(path))
+			if (!this-> texture->loadFromFile(path))
 			{
 				std::cout << "Texture not loaded!"<< " Texture Path:" << path << std::endl;
 			}
 		}
 
 		std::string filePath;
-		sf::Texture texture;
+		sf::Texture* texture = new sf::Texture;
 	};
 
 	struct BlockTexture

@@ -79,18 +79,23 @@ namespace renderer
         void drawFace(textures::FaceTexture* texture, const float shading,
             FaceVertexContainer vertices)
         {
-            sf::Texture::bind(&texture->texture);
+            glEnd(); //TODO replace by something waaaaaaaaaaaaaaaaaaay faster
+
+            sf::Texture::bind(texture->texture);
+
+            glBegin(GL_QUADS);
 
             glTexCoord2f(1, 1);
-            glNormal3f(0.f, 1.f, 0.f);
             glVertex3f(vertices.x1, vertices.y1, vertices.z1);
+
             glTexCoord2f(0, 1);
             glVertex3f(vertices.x2, vertices.y2, vertices.z2);
+
             glTexCoord2f(0, 0);
             glVertex3f(vertices.x3, vertices.y3, vertices.z3);
-            glTexCoord2f(1, 0);
 
-            glVertex3d(vertices.x4, vertices.y4, vertices.z4);
+            glTexCoord2f(1, 0);
+            glVertex3f(vertices.x4, vertices.y4, vertices.z4);
         }
 
         void drawFace(facePos::FacePosition position, textures::BlockTexture* texture, maths::Vec3i blockPos)
