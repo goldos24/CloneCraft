@@ -1,8 +1,10 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include <iostream>
 
 #include "blocks.h"
+#include "textureStorage.h"
 #include "textures.h"
 #include "facePosition.h"
 #include "maths.h"
@@ -17,7 +19,7 @@ namespace renderer
         float x4; float y4; float z4;
     };
 
-    auto operator+(FaceVertexContainer face, maths::Vec3i absolutePosition)
+    auto operator+(const FaceVertexContainer& face, maths::Vec3i absolutePosition)
     {
         FaceVertexContainer result;
         result.x1 = face.x1 + absolutePosition.x;
@@ -79,22 +81,23 @@ namespace renderer
         void drawFace(textures::FaceTexture* texture, const float shading,
             FaceVertexContainer vertices)
         {
-            glEnd(); //TODO replace by something waaaaaaaaaaaaaaaaaaay faster
+            /*glEnd(); //TODO replace by something waaaaaaaaaaaaaaaaaaay faster
 
             sf::Texture::bind(texture->texture);
 
-            glBegin(GL_QUADS);
+            glBegin(GL_QUADS);*/
+            textures::storage.select(texture->texture);
 
-            glTexCoord2f(1, 1);
+            textures::storage.setGlTexCoord2f(1, 1);
             glVertex3f(vertices.x1, vertices.y1, vertices.z1);
 
-            glTexCoord2f(0, 1);
+            textures::storage.setGlTexCoord2f(0, 1);
             glVertex3f(vertices.x2, vertices.y2, vertices.z2);
 
-            glTexCoord2f(0, 0);
+            textures::storage.setGlTexCoord2f(0, 0);
             glVertex3f(vertices.x3, vertices.y3, vertices.z3);
 
-            glTexCoord2f(1, 0);
+            textures::storage.setGlTexCoord2f(1, 0);
             glVertex3f(vertices.x4, vertices.y4, vertices.z4);
         }
 
@@ -104,7 +107,7 @@ namespace renderer
         }
 
         auto drawOffsetFace(textures::FaceTexture* texture, const float shading,
-            float x, float y, float z, FaceVertexContainer vertices)
+            float x, float y, float z, const FaceVertexContainer& vertices)
         {
             drawFace(texture, shading,
                 { x + vertices.x1, y + vertices.y1, z + vertices.z1,

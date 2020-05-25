@@ -1,56 +1,59 @@
 #pragma once
 #include <math.h>
+#include <SFML/Graphics/Color.hpp>
 
 namespace maths
 {
 	typedef unsigned char uint8;
 	typedef unsigned short uint16;
 
-	struct Vec3
+	template<class num>
+	struct genericVec3
 	{
-		Vec3() {}
+		genericVec3() {}
 
-		Vec3(float x, float y, float z)
+		genericVec3(num x, num y, num z)
 		{
 			this->x = x;
 			this->y = y;
 			this->z = z;
 		}
-		float x = 0.f;
-		float y = 0.f;
-		float z = 0.f;
+		num x = 0.f;
+		num y = 0.f;
+		num z = 0.f;
 
-		Vec3 operator * (float factor)
+		genericVec3<num> operator * (num factor)
 		{
-			return Vec3(
-				this-> x * factor,
-				this-> y * factor,
-				this-> z * factor
-			);
-		}
-	};
-
-	struct Vec3i
-	{
-		Vec3i() {}
-
-		Vec3i(int x, int y, int z)
-		{
-			this->x = x;
-			this->y = y;
-			this->z = z;
-		}
-		int x = 0.f;
-		int y = 0.f;
-		int z = 0.f;
-
-		Vec3i operator * (int factor)
-		{
-			return Vec3i(
+			return genericVec3<num>(
 				this->x * factor,
 				this->y * factor,
 				this->z * factor
 			);
+		}
+	};
+
+	typedef genericVec3<float> Vec3;
+	typedef genericVec3<int> Vec3i;
+
+	template<class num>
+	struct Vec2
+	{
+		Vec2() {}
+
+		Vec2(num x, num y)
+		{
+			this->x = x;
+			this->y = y;
+		}
+		num x = 0.f;
+		num y = 0.f;
+
+		Vec2<num> operator * (num factor)
+		{
+			return genericVec3<num>(
+				this->x * factor,
+				this->y * factor
+				);
 		}
 	};
 
@@ -102,6 +105,24 @@ namespace maths
 			i -= y * size;
 			z = i;
 			i -= z;
+		}
+	}
+
+	namespace color
+	{
+		uint8 normalizeChannel(uint8 channel)
+		{
+			return uint8( sqrt( float(channel) / 255 ) * 255.f );
+		}
+
+		void normalizeRef(sf::Color& color)
+		{
+			color = sf::Color(
+				normalizeChannel(color.r),
+				normalizeChannel(color.g),
+				normalizeChannel(color.b),
+				color.a
+			);
 		}
 	}
 }

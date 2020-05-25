@@ -4,23 +4,33 @@
 #include <iostream>
 #include <string>
 #include <SFML/Graphics.hpp>
+#include "textureStorage.h"
 
 namespace textures
 {
+	auto storage = texStorage::Storage(16, 16, 256);
+
+	sf::Image loadImageFromPath(std::string path)
+	{
+		auto image = sf::Image();
+		if (!image.loadFromFile(path))
+		{
+			std::cout << "Couldn't load texture with path :" + path;
+			image.create(16, 16); // Preventing a Segfault 
+		}
+		return image;
+	}
+
 	struct FaceTexture
 	{
 		FaceTexture(std::string path)
 		{
+			this->texture = storage.add(loadImageFromPath(path));
 			this->filePath = path;
-
-			if (!this-> texture->loadFromFile(path))
-			{
-				std::cout << "Texture not loaded!"<< " Texture Path:" << path << std::endl;
-			}
 		}
-
+		texStorage::Texture texture;
 		std::string filePath;
-		sf::Texture* texture = new sf::Texture;
+		
 	};
 
 	struct BlockTexture

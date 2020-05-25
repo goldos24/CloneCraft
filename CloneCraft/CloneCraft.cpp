@@ -5,6 +5,7 @@
 #include "blocks.h"
 #include "chunks.h"
 #include "game.h"
+#include "textures.h"
 
 
 int main()
@@ -26,6 +27,10 @@ int main()
     // Enable OpenGL 2D Textures and depth test
     glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
+
+    // Initialise the texture storage
+    textures::storage.makeTexture();
+    textures::storage.bind();
 
     // run the main loop
     bool running = true;
