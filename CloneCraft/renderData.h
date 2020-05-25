@@ -17,18 +17,21 @@ namespace renderData
 			this->position = position;
 			this->blockID = blockID;
 
-			this->x = (maths::uint8) blockPosition.x;
-			this->y = (maths::uint8) blockPosition.y;
-			this->z = (maths::uint8) blockPosition.z;
+			this->x = blockPosition.x;
+			this->y = blockPosition.y;
+			this->z = blockPosition.z;
 		}
 
 		facePos::FacePosition position;
 		blox::ID blockID;
 
-		maths::uint8 x, y, z;
+		int x, y, z;
 
 		void render(int relativeX, int relativeY, int relativeZ)
 		{
+			relativeX = 0;
+			relativeY = 0;
+			relativeZ = 0;
 			auto blockPos = maths::Vec3i(relativeX + this->x, relativeY + this->y, relativeZ + this->z);
 			renderer::block::drawFace(this->position, blox::getByID(blockID).texture, blockPos);
 		}

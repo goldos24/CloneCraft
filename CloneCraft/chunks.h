@@ -119,10 +119,10 @@ namespace chunks
 
 	};
 
-	auto initFlatChunk()
+	auto initFlatChunk(maths::Vec3i chunkPos)
 	{
 		Chunk chunk;
-		chunk.chunkPos = maths::Vec3i(0, 16, 0);
+		chunk.chunkPos = chunkPos;
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				for (int k = 0; k < size; k++)

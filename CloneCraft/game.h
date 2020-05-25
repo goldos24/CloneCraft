@@ -13,13 +13,14 @@
 struct Game {
     Game() {}
 
-    //chunks::Chunk gameChunk = chunks::initFlatChunk();
+    bool isPaused = false;
+
     world::World gameWorld = world::World();
 
     player::Player player;
     const float movementSpeed = 6.9f;
     float rotation = 0.f;
-    sf::Vector2f lastMousePosition;
+    sf::Vector2f windowCenter;
 
     float lastElapsed = 0;
 
@@ -29,9 +30,9 @@ struct Game {
 
         auto position = sf::Vector2f(sf::Mouse::getPosition(window));
 
-        this->lastMousePosition = sf::Vector2f(halfWindowSize.x, halfWindowSize.y);
+        this->windowCenter = sf::Vector2f(halfWindowSize.x, halfWindowSize.y);
 
-        sf::Vector2f positionDifference = position - sf::Vector2f(this->lastMousePosition);
+        sf::Vector2f positionDifference = position - sf::Vector2f(this->windowCenter);
 
         sf::Mouse::setPosition(sf::Vector2i(halfWindowSize.x, halfWindowSize.y), window);
 
@@ -93,7 +94,9 @@ struct Game {
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
 
-        updateRotation(wsize, window);
+        if(!this-> isPaused) updateRotation(wsize, window);
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) this->isPaused = !this->isPaused; //TODO Replace by something much better
         glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
         glRotatef(- this-> player.rotation.y, 0.f, -1.f, 0.f);
 

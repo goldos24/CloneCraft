@@ -120,5 +120,6 @@ namespace textures
 	namespace blockTextures
 	{
 		BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
+		BlockTexture* dirt = new BlockTexture(faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt);
 	}
 }

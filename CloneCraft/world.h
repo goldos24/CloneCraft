@@ -15,11 +15,13 @@ namespace world
 			for (int i = 0;i < this-> size; i++)
 			{
 				auto& chunk = chunks[i];
-				chunk = chunks::initFlatChunk();
+				int x, y, z;
+				maths::coord::indexToCoordinate(i, x, y, z, chunkRenderDistance);
+				chunk = chunks::initFlatChunk(maths::Vec3i(x * 16, y * 16, z * 16));
 			}
 		}
 		int size;
-		int chunkRenderDistance = 3;
+		int chunkRenderDistance = 7;
 		chunks::Chunk* chunks;
 
 
