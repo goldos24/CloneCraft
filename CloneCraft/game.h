@@ -18,7 +18,7 @@ struct Game {
     world::World gameWorld = world::World();
 
     player::Player player;
-    const float movementSpeed = 6.9f;
+    float movementSpeed = 6.9f;
     float rotation = 0.f;
     sf::Vector2f windowCenter;
 
@@ -75,6 +75,9 @@ struct Game {
 
     void updatePosition(float elapsedTime)
     {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) movementSpeed = 24.f;
+        else movementSpeed = 6.9f;
+     
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) moveForward(elapsedTime);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveBackward(elapsedTime);
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) moveLeft(elapsedTime);

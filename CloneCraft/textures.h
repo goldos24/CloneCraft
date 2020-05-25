@@ -84,6 +84,8 @@ namespace textures
 		FaceTexture* air = new FaceTexture("resources/air.png");
 		FaceTexture* stone = new FaceTexture("resources/stone.png");
 		FaceTexture* dirt = new FaceTexture("resources/dirt.png");
+		FaceTexture* grass_side = new FaceTexture("resources/grass_side.png");
+		FaceTexture* grass_top = new FaceTexture("resources/grass_top.png");
 	}
 
 	namespace shadingFactors
@@ -121,5 +123,6 @@ namespace textures
 	{
 		BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
 		BlockTexture* dirt = new BlockTexture(faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt);
+		BlockTexture* grass = new BlockTexture(faceTextures::grass_top, faceTextures::dirt, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side);
 	}
 }
