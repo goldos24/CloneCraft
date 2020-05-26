@@ -24,13 +24,29 @@ namespace world
 		int chunkRenderDistance = 7;
 		chunks::Chunk* chunks;
 
-
 		auto chunkPosFromIndex(int i)
 		{
 			int x, y, z;
 			maths::coord::indexToCoordinate(i, x, y, z, chunkRenderDistance);
 			return maths::Vec3i(x, y, z);
 		}
+
+		/*void move(maths::Vec3i movement)
+		{
+			// TODO Multithreading
+
+			for (int i = 0; i < maths::cubeof(chunkRenderDistance); i++)
+			{
+				int x, y, z;
+				maths::coord::indexToCoordinate(i, x, y, z, chunkRenderDistance);
+
+				x += movement.x; 
+				y += movement.y; 
+				z += movement.z;
+
+				
+			}
+		}*/
 
 		void Render() //TODO replace
 		{

@@ -1,5 +1,6 @@
 #pragma once
-
+#include <iostream>
+#include "textures.h"
 #include "blocks.h"
 #include "maths.h"
 #include "renderer.h"
@@ -13,33 +14,27 @@ namespace renderData
 	struct BlockFace
 	{
 		BlockFace(facePos::FacePosition position, blox::ID blockID, maths::Vec3i blockPosition)
+			:
+			vertices(renderer::vertices::faces[position])
 		{
-			this->position = position;
-			this->blockID = blockID;
-
-			this->x = blockPosition.x;
-			this->y = blockPosition.y;
-			this->z = blockPosition.z;
+			blox::eliminateFalseID(blockID);
+			this->position = maths::Vec3( float(blockPosition.x), float(blockPosition.y), float(blockPosition.z)) ;
+			this->texture = blox::getByID(blockID).texture->getFaceTexture(position);
 		}
 
-		facePos::FacePosition position;
-		blox::ID blockID;
+		const renderer::FaceVertexContainer& vertices;
+		textures::FaceTexture* texture;
 
-		int x, y, z;
+		maths::Vec3 position;
 
-		void render(int relativeX, int relativeY, int relativeZ)
+		void render()
 		{
-			relativeX = 0;
-			relativeY = 0;
-			relativeZ = 0;
-			auto blockPos = maths::Vec3i(relativeX + this->x, relativeY + this->y, relativeZ + this->z);
-			renderer::block::drawFace(this->position, blox::getByID(blockID).texture, blockPos);
+			renderer::block::drawFace(this->texture, 0.f, vertices.addVec3f(this->position));
 		}
 	};
 
 	auto makeBottomFace(blox::ID id, int x, int y, int z, bool swapSides)
 	{
-
 		auto position = !swapSides ?
 			facePos::top
 			:

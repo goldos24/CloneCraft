@@ -67,6 +67,7 @@ namespace textures
 			case facePos::right:
 				return this->right;
 			default:
+				std::cout << "Invalid position: Segfault imminent";
 				break;
 			}
 		}

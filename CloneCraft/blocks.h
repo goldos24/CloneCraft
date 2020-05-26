@@ -8,8 +8,15 @@ namespace blox
 	{
 		air,
 		stone,
-		grass
+		grass,
+
+		enumSize
 	};
+
+	void eliminateFalseID(ID& id)
+	{
+		if (id >= enumSize)  id = air; 
+	}
 
 	auto isTransparent(ID blockId) -> bool
 	{
@@ -33,7 +40,7 @@ namespace blox
 
 	namespace 
 	{
-		auto InitBlocks() -> Block*
+		Block* InitBlocks()
 		{
 			auto* blocks = new Block[256];
 			blocks[air] = Block(air, "air", nullptr); //TODO nullptr
@@ -46,7 +53,7 @@ namespace blox
 		Block* blocks = InitBlocks();
 	}
 
-	auto getByID(ID id) -> Block
+	Block& getByID(ID id)
 	{
 		return blocks[id];
 	}

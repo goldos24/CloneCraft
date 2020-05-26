@@ -35,10 +35,15 @@ namespace chunks
 	{
 		Chunk()
 		{
-			this->calculateFaces();
+			//this->calculateFaces();
 		}
 
-		std::vector<renderData::BlockFace> renderData;
+		void collectPointers()
+		{
+			delete this->blocks;
+		}
+
+		std::vector<renderData::BlockFace> renderData = std::vector<renderData::BlockFace>();
 
 		maths::Vec3i chunkPos;
 
@@ -97,24 +102,21 @@ namespace chunks
 					, absoluteX, absoluteY, absoluteZ, swapSides));
 		}
 
-		auto calculateBlockWithIndex(int i)
-		{
-			int x, y, z;
-			indexToCoordinate(i, x, y, z);
-			this-> calculateAndPushBlock(x, y , z);
-		}
-
 		void calculateFaces()
 		{
 			this->renderData.clear();
-			for (int i = 0; i < (sizeof(this->blocks) / sizeof(blox::ID)); i++)
-				this->calculateBlockWithIndex(i);
+			for (int i = 0; i <= size; i++)
+				for (int j = 0; j <= size; j++)
+					for (int k = 0; k <= size; k++)
+					{
+						calculateAndPushBlock(i, j, k);
+					}
 		}
 
 		auto Render() //TODO replace loop
 		{
 			for (auto face : renderData)
-				face.render(chunkPos.x, chunkPos.y, chunkPos.z);
+				face.render();
 		}
 
 	};
@@ -128,7 +130,7 @@ namespace chunks
 				for (int k = 0; k < size; k++)
 				{
 					chunk.setBlock(
-						(j > 1 || i > 14 || k > 14 ? blox::air : blox::stone),
+						(j > 1  ? blox::air : blox::stone),
 						i, j, k
 					);
 				}
