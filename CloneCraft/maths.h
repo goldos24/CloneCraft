@@ -4,6 +4,14 @@
 
 namespace maths
 {
+	template<class num> num compareThreeWay(num a, num b)
+	{
+		num result = num(0);
+		if (a < b) result--;
+		if (a > b) result++;
+		return result;
+	}
+
 	typedef unsigned char uint8;
 	typedef unsigned short uint16;
 
@@ -29,6 +37,35 @@ namespace maths
 				this->y * factor,
 				this->z * factor
 			);
+		}
+
+		genericVec3<num> operator + (genericVec3<num> theOtherVec3)
+		{
+			return genericVec3<num>(
+				this->x + theOtherVec3.x,
+				this->y + theOtherVec3.y,
+				this->z + theOtherVec3.z
+				);
+		}
+
+		auto& operator += (genericVec3<num>&& theOtherVec3)
+		{
+			this->x += theOtherVec3.x;
+			this->y += theOtherVec3.y;
+			this->z += theOtherVec3.z;
+
+			return *this;
+		}
+
+		bool isInBounds(genericVec3<num> a, genericVec3<num> b)
+		{
+			return
+				this->x >= a.x &&
+				this->y >= a.y &&
+				this->z >= a.z &&
+				this->x < b.x &&
+				this->y < b.y &&
+				this->z < b.z;
 		}
 	};
 
@@ -117,12 +154,12 @@ namespace maths
 
 		void normalizeRef(sf::Color& color)
 		{
-			color = sf::Color(
+			/*color = sf::Color(
 				normalizeChannel(color.r),
 				normalizeChannel(color.g),
 				normalizeChannel(color.b),
 				color.a
-			);
+			);*/
 		}
 	}
 }

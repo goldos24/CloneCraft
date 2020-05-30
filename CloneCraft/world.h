@@ -11,18 +11,17 @@ namespace world
 		World()
 		{
 			size = maths::cubeof(this->chunkRenderDistance);
-			this-> chunks = new chunks::Chunk[size];
-			for (int i = 0;i < this-> size; i++)
+			this->chunks = std::vector<chunks::Chunk>();
+			for (int i = 0; i < size; i++)
 			{
-				auto& chunk = chunks[i];
 				int x, y, z;
-				maths::coord::indexToCoordinate(i, x, y, z, chunkRenderDistance);
-				chunk = chunks::initFlatChunk(maths::Vec3i(x * 16, y * 16, z * 16));
+				maths::coord::indexToCoordinate(i, x, y, z, this->chunkRenderDistance);
+				this->chunks.push_back( chunks::initFlatChunk(maths::Vec3i(x * 16, y * 16, z * 16)) );
 			}
 		}
 		int size;
-		int chunkRenderDistance = 7;
-		chunks::Chunk* chunks;
+		int chunkRenderDistance = 3;
+		std::vector<chunks::Chunk> chunks;
 
 		auto chunkPosFromIndex(int i)
 		{
@@ -30,30 +29,51 @@ namespace world
 			maths::coord::indexToCoordinate(i, x, y, z, chunkRenderDistance);
 			return maths::Vec3i(x, y, z);
 		}
-
-		/*void move(maths::Vec3i movement)
+		
+		void moveTo(maths::Vec3i destination)
 		{
-			// TODO Multithreading
+			// Rounding the movement
+			destination.x /= chunks::size;destination.y /= chunks::size;destination.z /= chunks::size;
+			destination.x *= chunks::size;destination.y *= chunks::size;destination.z *= chunks::size;
 
-			for (int i = 0; i < maths::cubeof(chunkRenderDistance); i++)
+			auto worldStart = maths::Vec3i(MAXINT, MAXINT, MAXINT);
+			auto worldEnd = maths::Vec3i(MININT, MININT, MININT);
+
+			for (auto chunk : this->chunks)
 			{
-				int x, y, z;
-				maths::coord::indexToCoordinate(i, x, y, z, chunkRenderDistance);
-
-				x += movement.x; 
-				y += movement.y; 
-				z += movement.z;
-
-				
+				if (chunk.chunkPos.x < worldStart.x) worldStart.x = chunk.chunkPos.x;
+				if (chunk.chunkPos.y < worldStart.y) worldStart.y = chunk.chunkPos.y;
+				if (chunk.chunkPos.z < worldStart.z) worldStart.z = chunk.chunkPos.z;
 			}
-		}*/
+
+			worldEnd = worldStart + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size) ;
+
+			auto destEnd = destination + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
+
+			for (int i = destination.x; i < destEnd.x; i += chunks::size)
+				for (int j = destination.y; j < destEnd.y; j += chunks::size)
+					for (int k = destination.z; k < destEnd.z; k += chunks::size)
+					{ 
+						auto currentChunkPos = maths::Vec3i(i, j, k);
+						if (!currentChunkPos.isInBounds(worldStart, worldEnd))
+						{
+							this->loadChunk(currentChunkPos);
+						}
+					}
+		}
+
+		void loadChunk(maths::Vec3i chunkPos)
+		{
+			this->chunks.push_back(
+				chunks::initFlatChunk(chunkPos)
+			);
+		}
 
 		void Render() //TODO replace
 		{
-			for (int i = 0; i < this->size; i++)
+			for (auto chunk : this->chunks)
 			{
-				chunks[i].chunkPos = chunkPosFromIndex(i) * 16;
-				chunks[i].Render();
+				chunk.Render();
 			}
 		}
 	};

@@ -15,21 +15,21 @@ namespace renderData
 	{
 		BlockFace(facePos::FacePosition position, blox::ID blockID, maths::Vec3i blockPosition)
 			:
-			vertices(renderer::vertices::faces[position])
+			vertices(renderer::vertices::faces + position)
 		{
 			blox::eliminateFalseID(blockID);
 			this->position = maths::Vec3( float(blockPosition.x), float(blockPosition.y), float(blockPosition.z)) ;
 			this->texture = blox::getByID(blockID).texture->getFaceTexture(position);
 		}
 
-		const renderer::FaceVertexContainer& vertices;
+		const renderer::FaceVertexContainer* vertices;
 		textures::FaceTexture* texture;
 
 		maths::Vec3 position;
 
 		void render()
 		{
-			renderer::block::drawFace(this->texture, 0.f, vertices.addVec3f(this->position));
+			renderer::block::drawFace(this->texture, 0.f, vertices->addVec3f(this->position));
 		}
 	};
 

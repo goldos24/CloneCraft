@@ -41,13 +41,16 @@ namespace chunks
 		void collectPointers()
 		{
 			delete this->blocks;
+			renderData.~vector();
 		}
 
 		std::vector<renderData::BlockFace> renderData = std::vector<renderData::BlockFace>();
 
 		maths::Vec3i chunkPos;
 
-		blox::ID blocks[maths::cubeof(size)];
+		blox::ID* blocks = new blox::ID[maths::cubeof(size)];
+
+
 
 		auto getBlock(int x, int y, int z)
 		{

@@ -42,7 +42,7 @@ namespace renderer
 
     namespace vertices
     {
-        const FaceVertexContainer faces[] = {
+        const FaceVertexContainer faces[] = { 
             //top
                 { 1.f, 0.f, 0.f, // Top Right Of The Quad (Top)
                 0.f, 0.f, 0.f, // Top Left Of The Quad (Top)

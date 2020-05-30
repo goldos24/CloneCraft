@@ -11,7 +11,10 @@
 #include "world.h"
 
 struct Game {
-    Game() {}
+    Game() 
+    {
+        this->gameWorld.moveTo(maths::Vec3i (0, 16, 0));
+    }
 
     bool isPaused = false;
 
@@ -88,6 +91,8 @@ struct Game {
 
     void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
     {
+        printf("\nChunks :%d\n", gameWorld.chunks.size());
+
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
         glMatrixMode(GL_PROJECTION);
@@ -100,6 +105,7 @@ struct Game {
         if(!this-> isPaused) updateRotation(wsize, window);
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) this->isPaused = !this->isPaused; //TODO Replace by something much better
+        //if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) this->gameWorld.move(maths::Vec3i(0, 1, 0));
         glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
         glRotatef(- this-> player.rotation.y, 0.f, -1.f, 0.f);
 
