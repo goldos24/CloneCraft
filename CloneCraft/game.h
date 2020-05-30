@@ -13,7 +13,7 @@
 struct Game {
     Game() 
     {
-        this->gameWorld.moveTo(maths::Vec3i (0, 16, 0));
+        // Put some code here if you want to
     }
 
     bool isPaused = false;
@@ -21,6 +21,19 @@ struct Game {
     world::World gameWorld = world::World();
 
     player::Player player;
+    maths::Vec3i lastChunkUpdatePosition;
+
+    void updateLoadedChunks()
+    {
+        maths::Vec3i playerPositionInt = maths::Vec3i(int(this->player.position.x), int(this->player.position.y), int(this->player.position.z));
+
+        if (lastChunkUpdatePosition.overlySimpleDistanceTo(playerPositionInt) > 16)
+        {
+            this->gameWorld.moveTo(playerPositionInt - maths::Vec3i(gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2) );
+            this->lastChunkUpdatePosition = playerPositionInt;
+        }
+    }
+
     float movementSpeed = 6.9f;
     float rotation = 0.f;
     sf::Vector2f windowCenter;
@@ -91,6 +104,7 @@ struct Game {
 
     void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
     {
+        this->updateLoadedChunks();
         printf("\nChunks :%d\n", gameWorld.chunks.size());
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);

@@ -4,6 +4,7 @@
 #include "maths.h"
 #include "renderData.h"
 #include <vector>
+#include "terrainGenerator.h"
 
 namespace chunks 
 {
@@ -38,17 +39,16 @@ namespace chunks
 			//this->calculateFaces();
 		}
 
-		void collectPointers()
+		~Chunk()
 		{
-			delete this->blocks;
-			renderData.~vector();
+			
 		}
 
 		std::vector<renderData::BlockFace> renderData = std::vector<renderData::BlockFace>();
 
 		maths::Vec3i chunkPos;
 
-		blox::ID* blocks = new blox::ID[maths::cubeof(size)];
+		blox::ID blocks[maths::cubeof(size)];
 
 
 
@@ -138,6 +138,36 @@ namespace chunks
 					);
 				}
 		chunk.setBlock(blox::grass, 8, 14, 8);
+		chunk.calculateFaces();
+		return chunk;
+	}
+
+	auto initNormalChunk(maths::Vec3i chunkPos)
+	{
+		Chunk chunk;
+		chunk.chunkPos = chunkPos;
+
+		if (chunkPos.y < 0 || chunkPos.y >= 16)
+		{
+			for (blox::ID& id : chunk.blocks)
+			{
+				id = blox::air;
+			}
+			chunk.calculateFaces();
+			return chunk;
+		}
+
+		auto heightMap = terrainGen::createHeightMap( maths::Vec2<float>( float(chunkPos.x), float(chunkPos.z)) );
+
+		for (int i = 0; i < size; i++)
+			for (int j = 0; j < size; j++)
+				for (int k = 0; k < size; k++)
+				{
+					chunk.setBlock(
+						(heightMap[i * 16 + k] < float(j - 8) ? blox::air : blox::grass),
+						i, j, k
+					);
+				}
 		chunk.calculateFaces();
 		return chunk;
 	}

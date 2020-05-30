@@ -1,6 +1,7 @@
 #pragma once
 #include <math.h>
 #include <SFML/Graphics/Color.hpp>
+#include <string>
 
 namespace maths
 {
@@ -48,6 +49,15 @@ namespace maths
 				);
 		}
 
+		genericVec3<num> operator - (genericVec3<num> theOtherVec3)
+		{
+			return genericVec3<num>(
+				this->x - theOtherVec3.x,
+				this->y - theOtherVec3.y,
+				this->z - theOtherVec3.z
+				);
+		}
+
 		auto& operator += (genericVec3<num>&& theOtherVec3)
 		{
 			this->x += theOtherVec3.x;
@@ -66,6 +76,19 @@ namespace maths
 				this->x < b.x &&
 				this->y < b.y &&
 				this->z < b.z;
+		}
+
+		num overlySimpleDistanceTo(genericVec3<num> otherVec3)
+		{
+			num distance = abs(this->x - otherVec3.x);
+			if(abs(this->y - otherVec3.y) > distance) distance = abs(this->y - otherVec3.y);
+			if (abs(this->z - otherVec3.z) > distance) distance = abs(this->z - otherVec3.z);
+			return distance;
+		}
+
+		std::string toString()
+		{
+			return "( x : " + std::to_string(this->x) + " y : " + std::to_string(this->y) + " z : " + std::to_string(this->z) + " )";
 		}
 	};
 
