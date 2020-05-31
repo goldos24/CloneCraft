@@ -18,7 +18,7 @@ namespace facePos
 	FacePosition swap(FacePosition facePos)
 	{
 		return FacePosition(
-			(facePos % 2 == 0) ? (facePos + 1) :
+			!(facePos & 1) ? (facePos + 1) :
 			(facePos - 1)
 		);
 	}

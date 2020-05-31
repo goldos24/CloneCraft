@@ -166,6 +166,24 @@ namespace maths
 	constexpr float cubeof(float x) { return x * x * x; };
 	constexpr int cubeof(int x) { return x * x * x; };
 
+	bool isInRange(int v, int min, int max)
+	{
+		return v > min && v < max;
+	}
+
+	bool isInRangeF(float v, float min, float max)
+	{
+		return v > min && v < max;
+	}
+
+	bool is3dCoordInRange(int x, int y, int z, int min, int max)
+	{
+		return
+			isInRange(x, min, max) &&
+			isInRange(y, min, max) &&
+			isInRange(z, min, max);
+	}
+
 	namespace coord
 	{
 		auto coordinateToIndex(int x, int y, int z, int size) -> int
