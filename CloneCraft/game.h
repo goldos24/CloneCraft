@@ -14,6 +14,7 @@ struct Game {
     Game() 
     {
         // Put some code here if you want to
+        this->player.position = maths::Vec3(0, 20, 0);
     }
 
     bool isPaused = false;
