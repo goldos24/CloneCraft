@@ -68,41 +68,35 @@ namespace chunks
 
 		auto calculateAndPushBlock(int x, int y, int z)
 		{
-			int absoluteX = x + this->chunkPos.x;
-			int absoluteY = y + this->chunkPos.y;
-			int absoluteZ = z + this->chunkPos.z;
-
 			bool isSelectedBlockTransparent = blox::isTransparent(this->getBlock(x, y, z));
+
+			calculateAndPushFace(x, y, z, maths::unitVectors::down, isSelectedBlockTransparent, facePos::bottom);
+			calculateAndPushFace(x, y, z, maths::unitVectors::back, isSelectedBlockTransparent, facePos::back);
+			calculateAndPushFace(x, y, z, maths::unitVectors::right, isSelectedBlockTransparent, facePos::right);
+		}
+
+		void calculateAndPushFace(int x, int y, int z, maths::Vec3i off,
+			bool isSelectedBlockTransparent,
+			facePos::FacePosition swappedFacePosition)
+		{
 			bool swapSides = !isSelectedBlockTransparent;
-			if (isSelectedBlockTransparent ^
-				blox::isTransparent(this->getBlock(x, y - 1, z)))
-				this->renderData.push_back(
-				renderData::makeBottomFace(
-					(swapSides) ?
-					this->getBlock(x, y, z)
-					:
-					this->getBlock(x, y - 1, z)
-					, absoluteX, absoluteY, absoluteZ, swapSides));
+			bool isOffsetBlockTransparent = blox::isTransparent(this->getBlock(x + off.x, y + off.y, z + off.z));
 
-			if (isSelectedBlockTransparent ^
-				blox::isTransparent(this->getBlock(x, y, z - 1)))
+			if (isSelectedBlockTransparent ^ isOffsetBlockTransparent)
 				this->renderData.push_back(
-				renderData::makeFrontFace(
-					(swapSides) ?
-					this->getBlock(x, y, z)
-					:
-					this->getBlock(x, y, z - 1)
-					, absoluteX, absoluteY, absoluteZ, swapSides));
+					calculateFace(x, y, z, off, swapSides, facePos::swap(swappedFacePosition), swappedFacePosition));
+		}
 
-			if (isSelectedBlockTransparent ^
-				blox::isTransparent(this->getBlock(x - 1, y, z)))
-				this->renderData.push_back(
-				renderData::makeLeftFace(
-					(swapSides) ?
-					this->getBlock(x, y, z)
-					:
-					this->getBlock(x - 1, y, z)
-					, absoluteX, absoluteY, absoluteZ, swapSides));
+		renderData::BlockFace calculateFace(int x, int y, int z, maths::Vec3i off,
+			bool swapSides,
+			facePos::FacePosition facePosition, facePos::FacePosition swappedFacePosition)
+		{
+			return renderData::makeFace(
+				(swapSides) ? 
+				this->getBlock(x, y, z)
+				: 
+				this->getBlock(x + off.x, y + off.y, z + off.z), 
+				x + this->chunkPos.x, y + this->chunkPos.y, z + this->chunkPos.z, swapSides, facePosition, swappedFacePosition);
 		}
 
 		void calculateFaces()

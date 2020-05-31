@@ -95,6 +95,22 @@ namespace maths
 	typedef genericVec3<float> Vec3;
 	typedef genericVec3<int> Vec3i;
 
+	namespace unitVectors
+	{
+		// Shorthand for the vector (0, 1, 0)
+		Vec3i up(0, 1, 0);
+		// Shorthand for the vector (0, -1, 0)
+		Vec3i down(0, -1, 0);
+		// Shorthand for the vector (1, 0, 0)
+		Vec3i left(1, 0, 0);
+		// Shorthand for the vector (-1, 0, 0)
+		Vec3i right(-1, 0, 0);
+		// Shorthand for the vector (0, 0, 1)
+		Vec3i front(0, 0, 1);
+		// Shorthand for the vector (0, 0, -1)
+		Vec3i back(0, 0, -1);
+	}
+
 	template<class num>
 	struct Vec2
 	{

@@ -33,30 +33,12 @@ namespace renderData
 		}
 	};
 
-	auto makeBottomFace(blox::ID id, int x, int y, int z, bool swapSides)
+	auto makeFace(blox::ID id, int x, int y, int z, bool swapSides, facePos::FacePosition facePosition, facePos::FacePosition swappedFacePosition)
 	{
 		auto position = !swapSides ?
-			facePos::top
+			facePosition
 			:
-			facePos::bottom;
-		return BlockFace(position, id, maths::Vec3i(x, y, z));
-	}
-
-	auto makeFrontFace(blox::ID id, int x, int y, int z, bool swapSides)
-	{
-		auto position = !swapSides ?
-			facePos::front
-			:
-			facePos::back;
-		return BlockFace(position, id, maths::Vec3i(x, y, z));
-	}
-
-	auto makeLeftFace(blox::ID id, int x, int y, int z, bool swapSides)
-	{
-		auto position = !swapSides ?
-			facePos::left
-			:
-			facePos::right;
+			swappedFacePosition;
 		return BlockFace(position, id, maths::Vec3i(x, y, z));
 	}
 }

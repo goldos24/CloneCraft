@@ -82,7 +82,6 @@ namespace textures
 
 	namespace faceTextures
 	{
-		FaceTexture* air = new FaceTexture("resources/air.png");
 		FaceTexture* stone = new FaceTexture("resources/stone.png");
 		FaceTexture* dirt = new FaceTexture("resources/dirt.png");
 		FaceTexture* grass_side = new FaceTexture("resources/grass_side.png");
