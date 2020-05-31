@@ -168,12 +168,12 @@ namespace maths
 
 	bool isInRange(int v, int min, int max)
 	{
-		return v > min && v < max;
+		return v >= min && v < max;
 	}
 
 	bool isInRangeF(float v, float min, float max)
 	{
-		return v > min && v < max;
+		return v >= min && v < max;
 	}
 
 	bool is3dCoordInRange(int x, int y, int z, int min, int max)

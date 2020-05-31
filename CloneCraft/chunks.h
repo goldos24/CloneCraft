@@ -23,7 +23,7 @@ namespace chunks
 
 	auto isCoordinateInBounds(int x, int y, int z)
 	{
-		return maths::is3dCoordInRange(x, y, z, -1, size);
+		return maths::is3dCoordInRange(x, y, z, 0, size);
 	}
 
 	struct Chunk
