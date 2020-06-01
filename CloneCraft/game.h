@@ -27,6 +27,7 @@ struct Game {
     maths::Vec3i lastChunkUpdatePosition;
     ui::Text debugText = ui::Text("Debug", ui::fonts::comicSansBold, 1, 0, 18);
     ui::Text debugInfoText = ui::Text("Yeet", ui::fonts::comicSans, 1, 25, 13);
+    std::ostringstream stream;
 
     void updateLoadedChunks()
     {
@@ -145,7 +146,7 @@ struct Game {
 
     void updateDebugInfo()
     {
-        std::ostringstream stream;
+        stream.clear();
         stream << "Chunks: " << gameWorld.chunks.size() << "\n" 
                << "Position: " << this->player.position.toString() << "\n"
                << "Rotation: " << this->player.rotation.toString() << "\n"

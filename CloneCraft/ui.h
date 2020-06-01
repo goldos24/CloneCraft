@@ -25,9 +25,9 @@ namespace ui
 
 	struct Text
 	{
-		Text(std::string text, fonts::UIFont* font, int x, int y, unsigned int charSize = 12u)
+		Text(std::string text, fonts::UIFont* uiFont, int x, int y, unsigned int charSize = 12u)
 		{
-			this->textElement = sf::Text(text, font->font, charSize);
+			this->textElement = sf::Text(text, uiFont->font, charSize);
 			this->textElement.setPosition(x, y);
 		}
 
