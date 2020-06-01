@@ -142,7 +142,7 @@ namespace maths
 
 	void capDegrees(float& angle)
 	{
-		while (angle < 0)
+		while (angle <= 0)
 		{
 			angle += 360;
 		}

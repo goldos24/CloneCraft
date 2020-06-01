@@ -19,6 +19,8 @@ namespace player
 			this-> rotation.y += Y * mouseSpeed;
 			if (this->rotation.x < -90.f) this->rotation.x = -90.f;
 			if (this->rotation.x > 90.f) this->rotation.x = 90.f;
+
+			maths::capDegrees(this->rotation.y);
 		}
 	};
 

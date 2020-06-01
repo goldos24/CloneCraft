@@ -3,12 +3,14 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include <sstream>
 #include "oldFunctions.h"
 #include "blocks.h"
 #include "chunks.h"
 #include "player.h"
 #include "maths.h"
 #include "world.h"
+#include "ui.h"
 
 struct Game {
     Game() 
@@ -23,6 +25,8 @@ struct Game {
 
     player::Player player;
     maths::Vec3i lastChunkUpdatePosition;
+    ui::Text debugText = ui::Text("Debug", ui::fonts::comicSansBold, 1, 0, 18);
+    ui::Text debugInfoText = ui::Text("Yeet", ui::fonts::comicSans, 1, 25, 13);
 
     void updateLoadedChunks()
     {
@@ -106,7 +110,7 @@ struct Game {
     void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
     {
         this->updateLoadedChunks();
-        printf("\nChunks :%d\n", gameWorld.chunks.size());
+        updateDebugInfo();
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
@@ -136,5 +140,24 @@ struct Game {
         this-> gameWorld.Render();
 
         glEnd();
+        drawUI(window);
+    }
+
+    void updateDebugInfo()
+    {
+        std::ostringstream stream;
+        stream << "Chunks: " << gameWorld.chunks.size() << "\n" 
+               << "Position: " << this->player.position.toString() << "\n"
+               << "Rotation: " << this->player.rotation.toString() << "\n"
+            ;
+        debugInfoText.updateText(stream.str());
+    }
+
+    void drawUI(sf::RenderWindow& window)
+    {
+        window.pushGLStates();
+        window.draw(debugText.textElement);
+        window.draw(debugInfoText.textElement);
+        window.popGLStates();
     }
 };
