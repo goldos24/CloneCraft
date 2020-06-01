@@ -82,10 +82,10 @@ namespace textures
 
 	namespace faceTextures
 	{
-		FaceTexture* stone = new FaceTexture("resources/stone.png");
-		FaceTexture* dirt = new FaceTexture("resources/dirt.png");
-		FaceTexture* grass_side = new FaceTexture("resources/grass_side.png");
-		FaceTexture* grass_top = new FaceTexture("resources/grass_top.png");
+		FaceTexture* stone = new FaceTexture("resources/textures/blocks/stone.png");
+		FaceTexture* dirt = new FaceTexture("resources/textures/blocks/dirt.png");
+		FaceTexture* grass_side = new FaceTexture("resources/textures/blocks/grass_side.png");
+		FaceTexture* grass_top = new FaceTexture("resources/textures/blocks/grass_top.png");
 	}
 
 	namespace shadingFactors
