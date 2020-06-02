@@ -161,13 +161,7 @@ namespace maths
 			angle -= 360;
 		}
 	}
-
-	float invertAngle(float angle)
-	{
-		capDegrees(angle);
-		return 360 - angle;
-	}
-	
+		
 	float cosd(float angle)
 	{
 		return (float)cos(degreesToRadians(angle));
@@ -178,8 +172,16 @@ namespace maths
 		return (float)sin(degreesToRadians(angle));
 	}
 
+	float tand(float angle)
+	{
+		return (float)tan(degreesToRadians(angle));
+	}
+
 	constexpr float cubeof(float x) { return x * x * x; };
 	constexpr int cubeof(int x) { return x * x * x; };
+
+	constexpr float squareof(float x) { return x * x; };
+	constexpr int squareof(int x) { return x * x; };
 
 	bool isInRange(int v, int min, int max)
 	{

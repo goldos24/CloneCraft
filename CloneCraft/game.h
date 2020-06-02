@@ -128,6 +128,7 @@ struct Game {
 
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) this->isPaused = !this->isPaused; //TODO Replace by something much better
         //if (sf::Keyboard::isKeyPressed(sf::Keyboard::E)) this->gameWorld.move(maths::Vec3i(0, 1, 0));
+        window.setMouseCursorVisible(this->isPaused);
         glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
         glRotatef(- this-> player.rotation.y, 0.f, -1.f, 0.f);
 
