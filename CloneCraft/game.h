@@ -18,6 +18,8 @@ struct Game {
 	{
 		// Put some code here if you want to
 		this->player.position = maths::Vec3(0, 20, 0);
+		this->testButton = ui::Button(1, 200, 200, 46, sf::Color(0, 0, 0, 125), "Yeet", ui::fonts::comicSans, sf::Color::Red, 30, []() { std::cout << "YEEEEEEEET!" << std::endl; });
+		this->backToGameButton = ui::Button(1, 260, 200, 46, sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::comicSans, sf::Color::Red, 30, [this]() { this->isPaused = false; });
 	}
 
 	bool isPaused = false;
@@ -30,7 +32,8 @@ struct Game {
 
 	ui::Text debugText = ui::Text("Debug", ui::fonts::comicSansBold, sf::Color::White, 1, 0, 18);
 	ui::Text debugInfoText = ui::Text("", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
-	ui::Button testButton = ui::Button(1, 200, 200, 46, sf::Color(0, 0, 0, 125), "Yeet", ui::fonts::comicSans, sf::Color::Red, 30, []() { std::cout << "YEEEEEEEET!" << std::endl; });;
+	ui::Button testButton;
+	ui::Button backToGameButton;
 
 	void updateLoadedChunks()
 	{
@@ -129,6 +132,7 @@ struct Game {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) this->isPaused = !this->isPaused; //TODO Replace by something much better
 		window.setMouseCursorVisible(this->isPaused);
 		this->testButton.setVisible(this->isPaused);
+		this->backToGameButton.setVisible(this->isPaused);
 
 		if (!this->isPaused)
 		{
@@ -174,8 +178,14 @@ struct Game {
 		window.pushGLStates();
 		debugText.drawToWindow(window);
 		debugInfoText.drawToWindow(window);
-		testButton.drawToWindow(window);
-		testButton.tryCallOnClick(window);
+		drawAndUpdateButton(this->testButton, window);
+		drawAndUpdateButton(this->backToGameButton, window);
 		window.popGLStates();
+	}
+
+	void drawAndUpdateButton(ui::Button button, sf::RenderWindow& window)
+	{
+		button.drawToWindow(window);
+		button.tryCallOnClick(window);
 	}
 };

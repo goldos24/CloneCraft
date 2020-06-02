@@ -28,6 +28,7 @@ namespace ui
 
 	struct Text
 	{
+		Text() {}
 		Text(std::string text, fonts::UIFont* uiFont, sf::Color textColor, int x, int y, unsigned int charSize)
 		{
 			this->textElement = sf::Text(text, uiFont->font, charSize);
@@ -69,6 +70,7 @@ namespace ui
 
 	struct Rect
 	{
+		Rect() {}
 		Rect(int x, int y, int w, int h, sf::Color fillColor)
 		{
 			this->sfRectangle.setPosition(x, y);
@@ -86,6 +88,7 @@ namespace ui
 
 	struct Button
 	{
+		Button() {}
 		Button(int x, int y, int w, int h, sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
 			buttonRect(x, y, w, h, fillColor), centerText(buttonText, buttonFont, textColor, x, y, charSize)
 		{
