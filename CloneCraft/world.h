@@ -116,9 +116,9 @@ namespace world
 		chunks::Chunk findChunkFromPlayerPosition(maths::Vec3 playerPosition)
 		{
 			int size = chunks::size;
-			int x = std::floor(playerPosition.x / size);
-			int y = std::floor(playerPosition.y / size);
-			int z = std::floor(playerPosition.z / size);
+			int x = int(playerPosition.x / size);
+			int y = int(playerPosition.y / size);
+			int z = int(playerPosition.z / size);
 
 			return getChunk(maths::Vec3i(x, y, z));
 		}
@@ -128,15 +128,15 @@ namespace world
 			chunks::Chunk currentChunk = findChunkFromPlayerPosition(playerPosition);
 			maths::Vec3i chunkPos = currentChunk.chunkPos;
 
-			float sX = (chunkPos.x) * chunks::size;
-			float sY = (chunkPos.y) * chunks::size;
-			float sZ = (chunkPos.z) * chunks::size;
+			float sX = chunkPos.x * chunks::size;
+			float sY = chunkPos.y * chunks::size;
+			float sZ = chunkPos.z * chunks::size;
 
 			float pX = maths::mapFromRangeToRange(playerPosition.x, sX, sX + chunks::size, 0, chunks::size);
 			float pY = maths::mapFromRangeToRange(playerPosition.y, sY, sY + chunks::size, 0, chunks::size);
 			float pZ = maths::mapFromRangeToRange(playerPosition.z, sZ, sZ + chunks::size, 0, chunks::size);
 
-			return maths::Vec3(pX, pY, pZ);
+			return maths::Vec3(std::abs(pX), std::abs(pY), std::abs(pZ));
 		}
 
 		void loadChunk(maths::Vec3i chunkPos)
