@@ -11,7 +11,7 @@ namespace chunks
 
 	const int size = 16;
 
-	auto coordinateToIndex(int x, int y, int z) -> int
+	auto coordinateToIndex(int x, int y, int z)
 	{
 		return maths::coord::coordinateToIndex(x, y, z, size);
 	}

@@ -11,6 +11,7 @@
 #include "maths.h"
 #include "world.h"
 #include "ui.h"
+#include "playerWorldInteraction.h"
 
 struct Game {
     Game() 
@@ -26,8 +27,8 @@ struct Game {
     player::Player player;
     maths::Vec3i lastChunkUpdatePosition;
     ui::Text debugText = ui::Text("Debug", ui::fonts::comicSansBold, 1, 0, 18);
-    ui::Text debugInfoText = ui::Text("Yeet", ui::fonts::comicSans, 1, 25, 13);
-    std::ostringstream stream;
+    ui::Text debugInfoText = ui::Text("", ui::fonts::comicSans, 1, 25, 13);
+    std::ostringstream debugInfoStream;
 
     void updateLoadedChunks()
     {
@@ -111,7 +112,6 @@ struct Game {
     void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
     {
         this->updateLoadedChunks();
-        updateDebugInfo();
 
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
@@ -121,6 +121,8 @@ struct Game {
         
         glMatrixMode(GL_MODELVIEW);
         glLoadIdentity();
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 
         if(!this-> isPaused) updateRotation(wsize, window);
 
@@ -141,17 +143,23 @@ struct Game {
         this-> gameWorld.Render();
 
         glEnd();
+
+        updateDebugInfo();
         drawUI(window);
     }
 
     void updateDebugInfo()
     {
-        stream.clear();
-        stream << "Chunks: " << gameWorld.chunks.size() << "\n" 
-               << "Position: " << this->player.position.toString() << "\n"
-               << "Rotation: " << this->player.rotation.toString() << "\n"
-            ;
-        debugInfoText.updateText(stream.str());
+        debugInfoStream.clear();
+        debugInfoStream.str("");
+        debugInfoStream
+            << "Chunks: " << gameWorld.chunks.size() << "\n"
+            << "Position: " << this->player.position.toString() << "\n"
+            << "Rotation: " << this->player.rotation.toString() << "\n"
+            << "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position).chunkPos.toString() << "\n"
+            << "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
+            << "Block pos in front of player inside current chunk: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertFromVec3ToVec3i(gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position))).toString() << "\n";
+        debugInfoText.updateText(debugInfoStream.str());
     }
 
     void drawUI(sf::RenderWindow& window)

@@ -13,7 +13,7 @@ namespace player
 		maths::Vec3 position;
 		maths::Vec3 rotation;
 
-		auto rotate(float X, float Y, float mouseSpeed)
+		void rotate(float X, float Y, float mouseSpeed)
 		{
 			this-> rotation.x += X * mouseSpeed;
 			this-> rotation.y += Y * mouseSpeed;

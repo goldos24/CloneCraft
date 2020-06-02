@@ -40,6 +40,15 @@ namespace maths
 			);
 		}
 
+		genericVec3<num> operator / (genericVec3<num> theOtherVec3)
+		{
+			return genericVec3<num>(
+				this->x / theOtherVec3.x,
+				this->y / theOtherVec3.y,
+				this->z / theOtherVec3.z
+				);
+		}
+
 		genericVec3<num> operator + (genericVec3<num> theOtherVec3)
 		{
 			return genericVec3<num>(
@@ -88,7 +97,7 @@ namespace maths
 
 		std::string toString()
 		{
-			return "( x : " + std::to_string(this->x) + " y : " + std::to_string(this->y) + " z : " + std::to_string(this->z) + " )";
+			return "( x : " + std::to_string(this->x) + ", y : " + std::to_string(this->y) + ", z : " + std::to_string(this->z) + " )";
 		}
 	};
 
@@ -152,6 +161,12 @@ namespace maths
 			angle -= 360;
 		}
 	}
+
+	float invertAngle(float angle)
+	{
+		capDegrees(angle);
+		return 360 - angle;
+	}
 	
 	float cosd(float angle)
 	{
@@ -182,6 +197,16 @@ namespace maths
 			isInRange(x, min, max) &&
 			isInRange(y, min, max) &&
 			isInRange(z, min, max);
+	}
+
+	float mapFromRangeToRange(float v, float aMin, float aMax, float bMin, float bMax)
+	{
+		return bMin + (bMax - bMin) * ((v - aMin) / (aMax - aMin));
+	}
+
+	Vec3i convertFromVec3ToVec3i(Vec3 vec)
+	{
+		return Vec3i(int(vec.x), int(vec.y), int(vec.z));
 	}
 
 	namespace coord
