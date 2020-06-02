@@ -10,35 +10,21 @@ namespace playerWorldInteraction
 	void fixOutOfBoundsChunkPositionAndUpdateChunk(world::World world, chunks::Chunk& chunk, int& x, int& y, int& z)
 	{
 		if (x < 0)
-		{
 			x += chunks::size;
-			chunk = world.findChunkFromPlayerPosition(maths::Vec3(x, 0, 0));
-		}
-		if (x >= chunks::size)
-		{
+		else if (x >= chunks::size)
 			x -= chunks::size;
-			chunk = world.findChunkFromPlayerPosition(maths::Vec3(x, 0, 0));
-		}
+
 		if (y < 0)
-		{
 			y += chunks::size;
-			chunk = world.findChunkFromPlayerPosition(maths::Vec3(0, y, 0));
-		}
-		if (y >= chunks::size)
-		{
+		else if (y >= chunks::size)
 			y -= chunks::size;
-			chunk = world.findChunkFromPlayerPosition(maths::Vec3(0, y, 0));
-		}
+
 		if (z < 0)
-		{
 			y += chunks::size;
-			chunk = world.findChunkFromPlayerPosition(maths::Vec3(0, 0, z));
-		}
-		if (z >= chunks::size)
-		{
+		else if (z >= chunks::size)
 			z -= chunks::size;
-			chunk = world.findChunkFromPlayerPosition(maths::Vec3(0, 0, z));
-		}
+
+		chunk = world.findChunkFromPlayerPosition(maths::Vec3(x, y, z));
 
 		if (!maths::Vec3(x, y, z).isInBounds(maths::Vec3(0, 0, 0), maths::Vec3(chunks::size, chunks::size, chunks::size)))
 		{
