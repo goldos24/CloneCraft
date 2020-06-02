@@ -28,8 +28,8 @@ struct Game {
 	maths::Vec3i lastChunkUpdatePosition;
 	std::ostringstream debugInfoStream;
 
-	ui::Text debugText = ui::Text("Debug", ui::fonts::comicSansBold, 1, 0, 18);
-	ui::Text debugInfoText = ui::Text("", ui::fonts::comicSans, 1, 25, 13);
+	ui::Text debugText = ui::Text("Debug", ui::fonts::comicSansBold, sf::Color::White, 1, 0, 18);
+	ui::Text debugInfoText = ui::Text("", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
 	ui::Button testButton = ui::Button(1, 200, 200, 46, sf::Color(0, 0, 0, 125), "Yeet", ui::fonts::comicSans, sf::Color::Red, 30, []() { std::cout << "YEEEEEEEET!" << std::endl; });;
 
 	void updateLoadedChunks()

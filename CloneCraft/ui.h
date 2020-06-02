@@ -28,13 +28,14 @@ namespace ui
 
 	struct Text
 	{
-		Text(std::string text, fonts::UIFont* uiFont, int x, int y, unsigned int charSize)
+		Text(std::string text, fonts::UIFont* uiFont, sf::Color textColor, int x, int y, unsigned int charSize)
 		{
 			this->textElement = sf::Text(text, uiFont->font, charSize);
 			this->x = x;
 			this->y = y;
 
 			this->textElement.setPosition(x, y);
+			this->textElement.setFillColor(textColor);
 			this->visible = true;
 		}
 
@@ -86,7 +87,7 @@ namespace ui
 	struct Button
 	{
 		Button(int x, int y, int w, int h, sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
-			buttonRect(x, y, w, h, fillColor), centerText(buttonText, buttonFont, x, y, charSize)
+			buttonRect(x, y, w, h, fillColor), centerText(buttonText, buttonFont, textColor, x, y, charSize)
 		{
 			this->visible = true;
 			this->x = x;
