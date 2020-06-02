@@ -40,6 +40,15 @@ namespace maths
 			);
 		}
 
+		genericVec3<num> operator / (genericVec3<num> theOtherVec3)
+		{
+			return genericVec3<num>(
+				this->x / theOtherVec3.x,
+				this->y / theOtherVec3.y,
+				this->z / theOtherVec3.z
+				);
+		}
+
 		genericVec3<num> operator + (genericVec3<num> theOtherVec3)
 		{
 			return genericVec3<num>(
@@ -88,12 +97,28 @@ namespace maths
 
 		std::string toString()
 		{
-			return "( x : " + std::to_string(this->x) + " y : " + std::to_string(this->y) + " z : " + std::to_string(this->z) + " )";
+			return "( x : " + std::to_string(this->x) + ", y : " + std::to_string(this->y) + ", z : " + std::to_string(this->z) + " )";
 		}
 	};
 
 	typedef genericVec3<float> Vec3;
 	typedef genericVec3<int> Vec3i;
+
+	namespace unitVectors
+	{
+		// Shorthand for the vector (0, 1, 0)
+		Vec3i up(0, 1, 0);
+		// Shorthand for the vector (0, -1, 0)
+		Vec3i down(0, -1, 0);
+		// Shorthand for the vector (1, 0, 0)
+		Vec3i left(1, 0, 0);
+		// Shorthand for the vector (-1, 0, 0)
+		Vec3i right(-1, 0, 0);
+		// Shorthand for the vector (0, 0, 1)
+		Vec3i front(0, 0, 1);
+		// Shorthand for the vector (0, 0, -1)
+		Vec3i back(0, 0, -1);
+	}
 
 	template<class num>
 	struct Vec2
@@ -126,7 +151,7 @@ namespace maths
 
 	void capDegrees(float& angle)
 	{
-		while (angle < 0)
+		while (angle <= 0)
 		{
 			angle += 360;
 		}
@@ -136,7 +161,7 @@ namespace maths
 			angle -= 360;
 		}
 	}
-	
+		
 	float cosd(float angle)
 	{
 		return (float)cos(degreesToRadians(angle));
@@ -147,8 +172,44 @@ namespace maths
 		return (float)sin(degreesToRadians(angle));
 	}
 
+	float tand(float angle)
+	{
+		return (float)tan(degreesToRadians(angle));
+	}
+
 	constexpr float cubeof(float x) { return x * x * x; };
 	constexpr int cubeof(int x) { return x * x * x; };
+
+	constexpr float squareof(float x) { return x * x; };
+	constexpr int squareof(int x) { return x * x; };
+
+	bool isInRange(int v, int min, int max)
+	{
+		return v >= min && v < max;
+	}
+
+	bool isInRangeF(float v, float min, float max)
+	{
+		return v >= min && v < max;
+	}
+
+	bool is3dCoordInRange(int x, int y, int z, int min, int max)
+	{
+		return
+			isInRange(x, min, max) &&
+			isInRange(y, min, max) &&
+			isInRange(z, min, max);
+	}
+
+	float mapFromRangeToRange(float v, float aMin, float aMax, float bMin, float bMax)
+	{
+		return bMin + (bMax - bMin) * ((v - aMin) / (aMax - aMin));
+	}
+
+	Vec3i convertFromVec3ToVec3i(Vec3 vec)
+	{
+		return Vec3i(int(vec.x), int(vec.y), int(vec.z));
+	}
 
 	namespace coord
 	{

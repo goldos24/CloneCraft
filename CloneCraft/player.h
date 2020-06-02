@@ -4,6 +4,7 @@
 
 namespace player
 {
+	const float ROTATION_Y_BOUND = 89.f;
 
 	struct Player
 	{
@@ -13,12 +14,14 @@ namespace player
 		maths::Vec3 position;
 		maths::Vec3 rotation;
 
-		auto rotate(float X, float Y, float mouseSpeed)
+		void rotate(float X, float Y, float mouseSpeed)
 		{
 			this-> rotation.x += X * mouseSpeed;
 			this-> rotation.y += Y * mouseSpeed;
-			if (this->rotation.x < -90.f) this->rotation.x = -90.f;
-			if (this->rotation.x > 90.f) this->rotation.x = 90.f;
+			if (this->rotation.x < -ROTATION_Y_BOUND) this->rotation.x = -ROTATION_Y_BOUND;
+			if (this->rotation.x > ROTATION_Y_BOUND) this->rotation.x = ROTATION_Y_BOUND;
+
+			maths::capDegrees(this->rotation.y);
 		}
 	};
 

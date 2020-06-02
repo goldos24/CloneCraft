@@ -68,17 +68,17 @@ namespace world
 
 			this->chunks = newChunks;
 		}
-		
+
 		void moveTo(maths::Vec3i destination)
 		{
 			// Rounding the movement
-			destination.x /= chunks::size;destination.y /= chunks::size;destination.z /= chunks::size;
-			destination.x *= chunks::size;destination.y *= chunks::size;destination.z *= chunks::size;
+			destination.x /= chunks::size; destination.y /= chunks::size; destination.z /= chunks::size;
+			destination.x *= chunks::size; destination.y *= chunks::size; destination.z *= chunks::size;
 
 			auto worldStart = this->worldPos;
 			auto worldEnd = maths::Vec3i(MININT, MININT, MININT);
 
-			worldEnd = worldStart + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size) ;
+			worldEnd = worldStart + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
 
 			auto destEnd = destination + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
 
@@ -95,21 +95,48 @@ namespace world
 			for (int i = destination.x; i < destEnd.x; i += chunks::size)
 				for (int j = destination.y; j < destEnd.y; j += chunks::size)
 					for (int k = destination.z; k < destEnd.z; k += chunks::size)
-					{ 
+					{
 						auto currentChunkPos = maths::Vec3i(i, j, k);
 						if (!currentChunkPos.isInBounds(worldStart, worldEnd))
 						{
 							this->loadChunk(currentChunkPos);
 						}
 					}
-			
+
 			this->worldPos = destination;
 			this->cleanupChunkVector();
 		}
 
+		// TODO access already existing chunks
 		chunks::Chunk getChunk(maths::Vec3i chunkPos)
 		{
 			return chunks::initNormalChunk(chunkPos);
+		}
+
+		chunks::Chunk findChunkFromPlayerPosition(maths::Vec3 playerPosition)
+		{
+			int size = chunks::size;
+			int x = int(playerPosition.x / size);
+			int y = int(playerPosition.y / size);
+			int z = int(playerPosition.z / size);
+
+			return getChunk(maths::Vec3i(x, y, z));
+		}
+
+		maths::Vec3 getPlayerPositionInsideCurrentChunk(maths::Vec3 playerPosition)
+		{
+			chunks::Chunk currentChunk = findChunkFromPlayerPosition(playerPosition);
+			maths::Vec3i chunkPos = currentChunk.chunkPos;
+
+			float sX = chunkPos.x * chunks::size;
+			float sY = chunkPos.y * chunks::size;
+			float sZ = chunkPos.z * chunks::size;
+
+			float pX = maths::mapFromRangeToRange(playerPosition.x, sX, sX + chunks::size, 0, chunks::size);
+			float pY = maths::mapFromRangeToRange(playerPosition.y, sY, sY + chunks::size, 0, chunks::size);
+			float pZ = maths::mapFromRangeToRange(playerPosition.z, sZ, sZ + chunks::size, 0, chunks::size);
+
+			return maths::Vec3(std::abs(pX), std::abs(pY), std::abs(pZ));
 		}
 
 		void loadChunk(maths::Vec3i chunkPos)

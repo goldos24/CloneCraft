@@ -14,4 +14,12 @@ namespace facePos
 		left = 4,
 		right = 5
 	};
+
+	FacePosition swap(FacePosition facePos)
+	{
+		return FacePosition(
+			!(facePos & 1) ? (facePos + 1) :
+			(facePos - 1)
+		);
+	}
 }
