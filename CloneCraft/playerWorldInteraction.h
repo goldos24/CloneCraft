@@ -73,7 +73,7 @@ namespace playerWorldInteraction
 		int z = int(blockPosInFrontOfPlayer.z);
 
 		fixOutOfBoundsChunkPositionAndUpdateChunk(world, currChunk, x, y, z);
-		std::cout << x << ", " << y << ", " << z;
+		std::cout << "Block pos: " << x << ", " << y << ", " << z << std::endl;
 		currChunk.setBlock(blox::air, x, y, z);
 		
 		// TODO break block in currChunk and update world. This doesn't work at the time, though, because the world isn't saved.
