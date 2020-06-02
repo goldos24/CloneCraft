@@ -3,6 +3,7 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include <string>
 #include "oldFunctions.h"
 #include "blocks.h"
 #include "chunks.h"
@@ -105,8 +106,6 @@ struct Game {
     void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
     {
         this->updateLoadedChunks();
-        printf("\nChunks :%d\n", gameWorld.chunks.size());
-
         glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
         glMatrixMode(GL_PROJECTION);
@@ -125,6 +124,7 @@ struct Game {
 
         sf::Time elapsed = clock.restart();
         float elapsedSeconds = elapsed.asSeconds();
+        window.setTitle( "Player position :" + this->player.position.toString() + "                                   " + "FPS: " + std::to_string(int(1.f / elapsedSeconds)));
 
         updatePosition(elapsedSeconds);
 
