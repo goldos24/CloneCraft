@@ -20,7 +20,7 @@ namespace playerWorldInteraction
 			y -= chunks::size;
 
 		if (z < 0)
-			y += chunks::size;
+			z += chunks::size;
 		else if (z >= chunks::size)
 			z -= chunks::size;
 
