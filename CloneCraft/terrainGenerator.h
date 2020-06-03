@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <math.h>
 #include "randomNumbers.h"
 #include "maths.h"
 
@@ -27,19 +28,21 @@ namespace terrainGen
 
 	void applyPerlinNoiseOnRow(std::vector<float>& heightMap, int rowIndex, int rowElemSize)
 	{
-		auto oldHeightMap = heightMap;
-		for (int i = rowIndex; i < rowIndex + rowElemSize * 16; i += rowElemSize) heightMap[i] = 0.f;
+		std::vector<float> newHeightMap = std::vector<float>(heightMap.size());
+		
+		float average = 0.f;
 
-		for(int exp = 1; exp < 4; exp++)
-			for (int i = 0; i < 16; i += 1 << exp)
-			{
-				int start = rowIndex + i * rowElemSize;
-				int end = start + (1 << exp) * rowElemSize;
-				for (int j = start; j < end; j += rowElemSize)
-				{
-					heightMap[j] += (float(j - start) / float(end - start) * oldHeightMap[start] + (1.f - float(j - start) / float(end - start)) * oldHeightMap[end - 1]) / float(1 << exp);
-				}
-			}
+		for (int i = rowIndex; i < rowIndex + rowElemSize * 16; i += rowElemSize) average += heightMap[i] / 16.f;
+
+		int IterationCount = 2;
+		for (int j = 0; j < IterationCount; j++)
+		{
+			for (int i = rowIndex; i < rowIndex + rowElemSize * 16; i += rowElemSize) newHeightMap[i] += (heightMap[i]
+				+ i > rowIndex + rowElemSize ? heightMap[i - rowElemSize] : heightMap[i]
+				+ i < rowIndex + rowElemSize * 15 ? heightMap[i + rowElemSize] : heightMap[i]) / float(IterationCount);
+
+			for (int i = rowIndex; i < rowIndex + rowElemSize * 16; i += rowElemSize) heightMap[i] = newHeightMap[i];
+		}
 	}
 
 	void applyPerlinNoise(std::vector<float>& heightMap)
@@ -47,7 +50,7 @@ namespace terrainGen
 		for (int i = 0; i < 256; i += 16)
 			applyPerlinNoiseOnRow(heightMap, i, 1);
 
-		for (int i = 0; i < 16; i++) \
+		for (int i = 0; i < 16; i++) 
 			applyPerlinNoiseOnRow(heightMap, i, 16);
 
 		for (int i = 0; i < 256; i += 16)

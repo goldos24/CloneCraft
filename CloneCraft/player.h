@@ -11,8 +11,7 @@ namespace player
 		Player()
 		{}
 
-		maths::Vec3 position;
-		maths::Vec3 rotation;
+		maths::Vec3 position, rotation, movement;
 
 		void rotate(float X, float Y, float mouseSpeed)
 		{

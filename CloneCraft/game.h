@@ -12,6 +12,7 @@
 #include "world.h"
 #include "ui.h"
 #include "playerWorldInteraction.h"
+#include "physics.h"
 
 struct Game {
 	Game()
@@ -79,26 +80,32 @@ struct Game {
 
 	void moveRight(float elapsedTime)
 	{
-		player.position.x += maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
-		player.position.z -= maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
+		/*player.position.x += maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
+		player.position.z -= maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;*/
+		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(maths::cosd(-player.rotation.y) * movementSpeed, 0.f, -maths::sind(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveLeft(float elapsedTime)
 	{
-		player.position.x -= maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
-		player.position.z += maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
+		/*player.position.x -= maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
+		player.position.z += maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;*/
+
+		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(-maths::cosd(-player.rotation.y) * movementSpeed, 0.f, maths::sind(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveForward(float elapsedTime)
 	{
-		player.position.x -= maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
-		player.position.z -= maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
+		/*player.position.x -= maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
+		player.position.z -= maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;*/
+		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(-maths::sind(-player.rotation.y) * movementSpeed, 0.f, -maths::cosd(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveBackward(float elapsedTime)
 	{
-		player.position.x += maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
-		player.position.z += maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
+		/*player.position.x += maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
+		player.position.z += maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;*/
+
+		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(maths::sind(-player.rotation.y) * movementSpeed, 0.f, maths::cosd(-player.rotation.y) * movementSpeed));
 	}
 
 	void updatePosition(float elapsedTime)
@@ -112,6 +119,8 @@ struct Game {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) moveRight(elapsedTime);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) moveUp(elapsedTime);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) moveDown(elapsedTime);
+		physixx::applyMovement(this->player, elapsedTime);
+		physixx::applyFriction(this->player, elapsedTime, 1.f);
 	}
 
 	void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
