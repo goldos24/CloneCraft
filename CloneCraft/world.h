@@ -1,7 +1,10 @@
 #pragma once
 
 #include <iostream>
-#include <vector>
+#include <memory>
+#include <map>
+#include <cstdint>
+#include "chunkData.h"
 #include "chunks.h"
 #include "maths.h"
 
@@ -12,7 +15,6 @@ namespace world
 		World()
 		{
 			size = maths::cubeof(this->chunkRenderDistance);
-			this->chunks = std::vector<chunks::Chunk>();
 			for (int i = 0; i < size; i++)
 			{
 				int x, y, z;
@@ -23,114 +25,60 @@ namespace world
 
 		maths::Vec3i worldPos = maths::Vec3i(0, 0, 0);
 		int size;
-		int chunkRenderDistance = 5;
-		std::vector<chunks::Chunk> chunks;
+		int chunkRenderDistance = 7;
+		std::map<uint64_t, std::shared_ptr<chunks::Chunk>> chunks;
 
-		auto chunkPosFromIndex(int i)
-		{
-			int x, y, z;
-			maths::coord::indexToCoordinate(i, x, y, z, chunkRenderDistance);
-			return maths::Vec3i(x, y, z);
-		}
-
-		void cleanupChunkVector()
-		{
-			auto newChunks = std::vector<chunks::Chunk>(maths::cubeof(this->chunkRenderDistance));
-			auto chunkExistenceData = std::vector<bool>(newChunks.size()); for (int i = 0; i < chunkExistenceData.size(); i++) chunkExistenceData[i] = false;
-
-
-			// Copying existing chunks
-			for (auto chunk : this->chunks)
-			{
-				if (chunk.chunkPos.isInBounds(worldPos, maths::Vec3i(worldPos.x + chunkRenderDistance * chunks::size, worldPos.y + chunkRenderDistance * chunks::size, worldPos.z + chunkRenderDistance * chunks::size)))
-				{
-					auto chunkArrayPosition = maths::Vec3i((chunk.chunkPos.x - this->worldPos.x) / chunks::size, (chunk.chunkPos.y - this->worldPos.y) / chunks::size, (chunk.chunkPos.z - this->worldPos.z) / chunks::size);
-					auto chunkIndex = maths::coord::coordinateToIndex(chunkArrayPosition.x, chunkArrayPosition.y, chunkArrayPosition.z, this->chunkRenderDistance);
-
-					//std::cout << chunkArrayPosition.toString() << " " << chunk.chunkPos.toString() << " " << worldPos.toString() << " " << maths::Vec3i(worldPos.x + chunkRenderDistance * chunks::size, worldPos.y + chunkRenderDistance * chunks::size, worldPos.z + chunkRenderDistance * chunks::size).toString() << " " << chunkIndex << std::endl;
-					newChunks[chunkIndex] = chunk;
-					chunkExistenceData[chunkIndex] = true;
-				}
-			}
-
-			// Loading missing chunks
-
-			for (int i = 0; i < chunkExistenceData.size(); i++)
-			{
-				if (!chunkExistenceData[i])
-				{
-					int x, y, z;
-					maths::coord::indexToCoordinate(i, x, y, z, this->chunkRenderDistance);
-
-					newChunks[i] = getChunk(this->worldPos + maths::Vec3i(x, y, z) * chunks::size);
-				}
-			}
-
-			this->chunks = newChunks;
-		}
-
-		void moveTo(maths::Vec3i destination)
-		{
+		void moveTo(maths::Vec3i destination) {
 			// Rounding the movement
-			destination.x /= chunks::size; destination.y /= chunks::size; destination.z /= chunks::size;
-			destination.x *= chunks::size; destination.y *= chunks::size; destination.z *= chunks::size;
-
-			auto worldStart = this->worldPos;
-			auto worldEnd = maths::Vec3i(MININT, MININT, MININT);
-
-			worldEnd = worldStart + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
-
-			auto destEnd = destination + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
-
-			// Deleting chunks too far away
-			for (int i = 0; i < this->chunks.size(); i++)
-			{
-				if (!chunks[i].chunkPos.isInBounds(destination, destEnd))
-				{
-					this->unloadChunk(i);
-				}
-			}
+			destination = chunks::convertToChunkPos(destination);
 
 			// Loading new Chunks
+			auto destEnd = destination + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
+
 			for (int i = destination.x; i < destEnd.x; i += chunks::size)
 				for (int j = destination.y; j < destEnd.y; j += chunks::size)
 					for (int k = destination.z; k < destEnd.z; k += chunks::size)
 					{
 						auto currentChunkPos = maths::Vec3i(i, j, k);
-						if (!currentChunkPos.isInBounds(worldStart, worldEnd))
-						{
 							this->loadChunk(currentChunkPos);
-						}
 					}
 
 			this->worldPos = destination;
-			this->cleanupChunkVector();
+			this->unloadGarbageChunks();
 		}
 
-		// TODO access already existing chunks
-		chunks::Chunk getChunk(maths::Vec3i chunkPos)
+		std::shared_ptr<chunks::Chunk> getChunk(maths::Vec3i chunkPos)
 		{
-			return chunks::initNormalChunk(chunkPos);
+			if(!this->containsChunk(chunkPos))
+				return chunks::initNormalChunk(chunkPos);
+			return this->chunks[chunks::createKeyFromPosition(chunkPos).num];
 		}
 
-		chunks::Chunk findChunkFromPlayerPosition(maths::Vec3 playerPosition)
+		blox::ID getBlockID(maths::Vec3i blockPos)
 		{
-			int size = chunks::size;
-			int x = int(playerPosition.x / size);
-			int y = int(playerPosition.y / size);
-			int z = int(playerPosition.z / size);
+			auto chunk = this->getChunk(chunks::convertToChunkPos(maths::convertVec3<int, float>(blockPos)));
+			return chunk->getBlock(blockPos.x % chunks::size, blockPos.y % chunks::size, blockPos.z % chunks::size);
+		}
 
-			return getChunk(maths::Vec3i(x, y, z));
+		void setBlockID(maths::Vec3i blockPos, blox::ID id)
+		{
+			auto chunk = this->getChunk(chunks::convertToChunkPos(maths::convertVec3<int, float>(blockPos)));
+			chunk->placeBlock(id, blockPos.x % chunks::size, blockPos.y % chunks::size, blockPos.z % chunks::size);
+		}
+
+		std::shared_ptr<chunks::Chunk> findChunkFromPlayerPosition(maths::Vec3 playerPosition)
+		{
+			return getChunk(chunks::convertToChunkPos(playerPosition));
 		}
 
 		maths::Vec3 getPlayerPositionInsideCurrentChunk(maths::Vec3 playerPosition)
 		{
-			chunks::Chunk currentChunk = findChunkFromPlayerPosition(playerPosition);
-			maths::Vec3i chunkPos = currentChunk.chunkPos;
+			std::shared_ptr<chunks::Chunk> currentChunk = findChunkFromPlayerPosition(playerPosition);
+			maths::Vec3i chunkPos = currentChunk->chunkPos;
 
-			float sX = chunkPos.x * chunks::size;
-			float sY = chunkPos.y * chunks::size;
-			float sZ = chunkPos.z * chunks::size;
+			float sX = chunkPos.x;
+			float sY = chunkPos.y;
+			float sZ = chunkPos.z;
 
 			float pX = maths::mapFromRangeToRange(playerPosition.x, sX, sX + chunks::size, 0, chunks::size);
 			float pY = maths::mapFromRangeToRange(playerPosition.y, sY, sY + chunks::size, 0, chunks::size);
@@ -141,22 +89,59 @@ namespace world
 
 		void loadChunk(maths::Vec3i chunkPos)
 		{
-			this->chunks.push_back(
+			if (this->containsChunk(chunkPos)) return;
+
+			this->chunks[chunks::createKeyFromPosition(chunkPos).num] =
 				this->getChunk(chunkPos)
-			);
+			;
 		}
 
-		void unloadChunk(int index)
+		void unloadGarbageChunks()
 		{
-			this->chunks.erase(this->chunks.begin() + index);
+			if(!this->save()) return;
+
+			auto worldSize = maths::Vec3i(this->chunkRenderDistance, this->chunkRenderDistance, this->chunkRenderDistance) * chunks::size;
+			auto worldEnd = this->worldPos + worldSize * 2;
+			auto worldStart = worldPos - worldSize;
+
+			for (auto chunkKeyPair : this->chunks)
+			{
+				if (!chunkKeyPair.second->chunkPos.isInBounds(worldStart, worldEnd))
+				{
+					this->chunks.erase(this->chunks.find(chunkKeyPair.first));;
+				}
+			}
+
+			this->size = this->chunks.size();
 		}
 
 		void Render() //TODO replace
 		{
-			for (auto chunk : this->chunks)
-			{
-				chunk.Render();
-			}
+			// Making the variable with the best name you've seen in a while
+			auto worldEnd = this->worldPos + maths::Vec3i(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
+
+			for (int i = this->worldPos.x; i < worldEnd.x; i += chunks::size)
+				for (int j = this->worldPos.y; j < worldEnd.y; j += chunks::size)
+					for (int k = this->worldPos.z; k < worldEnd.z; k += chunks::size)
+					{
+						this->getChunk(maths::Vec3i(i, j, k))->Render();
+					}
 		}
+
+		bool save() 
+		{
+			return true; // TODO Save the world
+		}
+
+		bool containsChunk(maths::Vec3i chunkPos)
+		{
+			auto key = chunks::createKeyFromPosition(chunkPos).num;
+			if (this->chunks.find(key) == this->chunks.end()) return false;
+			return this->chunks[key]->chunkPos == chunkPos;
+		}
+
+		private:
+
+		// Only for state modifications corrupting the data
 	};
 }

@@ -7,7 +7,7 @@
 
 namespace playerWorldInteraction
 {
-	void fixOutOfBoundsChunkPositionAndUpdateChunk(world::World world, chunks::Chunk& chunk, int& x, int& y, int& z)
+	void fixOutOfBoundsChunkPositionAndUpdateChunk(world::World world, std::shared_ptr<chunks::Chunk> chunk, int& x, int& y, int& z)
 	{
 		if (x < 0)
 			x += chunks::size;
@@ -64,7 +64,7 @@ namespace playerWorldInteraction
 
 	void breakBlockInFrontOfPlayer(world::World world, player::Player player)
 	{
-		chunks::Chunk currChunk = world.findChunkFromPlayerPosition(player.position);
+		auto currChunk = world.findChunkFromPlayerPosition(player.position);
 		maths::Vec3i playerPosI = maths::convertFromVec3ToVec3i(world.getPlayerPositionInsideCurrentChunk(player.position));
 		maths::Vec3i blockPosInFrontOfPlayer = playerWorldInteraction::getBlockPosInFrontOfPlayer(world, player, 3) + playerPosI;
 
@@ -74,7 +74,7 @@ namespace playerWorldInteraction
 
 		fixOutOfBoundsChunkPositionAndUpdateChunk(world, currChunk, x, y, z);
 		std::cout << "Block pos: " << x << ", " << y << ", " << z << std::endl;
-		currChunk.setBlock(blox::air, x, y, z);
+		currChunk->setBlock(blox::air, x, y, z);
 		
 		// TODO break block in currChunk and update world. This doesn't work at the time, though, because the world isn't saved.
 	}

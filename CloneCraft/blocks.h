@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <iostream>
 #include "textures.h"
 
 namespace blox 
@@ -57,4 +58,22 @@ namespace blox
 	{
 		return blocks[id];
 	}
+
+	Block& getByName(std::string name)
+	{
+		for (int i = 0; i < enumSize; i++)
+		{
+			if (blocks[i].name == name)
+			{
+				return blocks[i];
+			}
+		}
+		std::cout << "Couldn't find block with ID: " << name << std::endl;
+		return blocks[air];
+	}
+}
+
+std::ostream& operator << (std::ostream& output, blox::ID id)
+{
+	return output << blox::getByID(id).name;
 }

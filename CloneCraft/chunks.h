@@ -4,13 +4,12 @@
 #include "maths.h"
 #include "renderData.h"
 #include <vector>
+#include <memory>
 #include "terrainGenerator.h"
+#include "chunkData.h"
 
 namespace chunks 
 {
-
-	const int size = 16;
-
 	auto coordinateToIndex(int x, int y, int z)
 	{
 		return maths::coord::coordinateToIndex(x, y, z, size);
@@ -58,6 +57,12 @@ namespace chunks
 			if (!isCoordinateInBounds(x, y, z))
 				return;
 			this-> blocks[coordinateToIndex(x, y, z)] = id;
+		}
+
+		void placeBlock(blox::ID id, int x, int y, int z)
+		{
+			this->setBlock(id, x, y, z);
+			this->calculateFaces();
 		}
 
 		void calculateAndPushBlock(int x, int y, int z)
@@ -121,34 +126,34 @@ namespace chunks
 
 	auto initFlatChunk(maths::Vec3i chunkPos)
 	{
-		Chunk chunk;
-		chunk.chunkPos = chunkPos;
+		std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
+		chunk->chunkPos = chunkPos;
 		for (int i = 0; i < size; i++)
 			for (int j = 0; j < size; j++)
 				for (int k = 0; k < size; k++)
 				{
-					chunk.setBlock(
+					chunk->setBlock(
 						(j > 1  ? blox::air : blox::stone),
 						i, j, k
 					);
 				}
-		chunk.setBlock(blox::grass, 8, 14, 8);
-		chunk.calculateFaces();
+		chunk->setBlock(blox::grass, 8, 14, 8);
+		chunk->calculateFaces();
 		return chunk;
 	}
 
 	auto initNormalChunk(maths::Vec3i chunkPos)
 	{
-		Chunk chunk;
-		chunk.chunkPos = chunkPos;
+		std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
+		chunk->chunkPos = chunkPos;
 
 		if (chunkPos.y < 0 || chunkPos.y >= 16)
 		{
-			for (blox::ID& id : chunk.blocks)
+			for (blox::ID& id : chunk->blocks)
 			{
 				id = blox::air;
 			}
-			chunk.calculateFaces();
+			chunk->calculateFaces();
 			return chunk;
 		}
 
@@ -158,12 +163,12 @@ namespace chunks
 			for (int j = 0; j < size; j++)
 				for (int k = 0; k < size; k++)
 				{
-					chunk.setBlock(
+					chunk->setBlock(
 						(heightMap[i * 16 + k] < float(j - 8) ? blox::air : blox::grass),
 						i, j, k
 					);
 				}
-		chunk.calculateFaces();
+		chunk->calculateFaces();
 		return chunk;
 	}
 }
