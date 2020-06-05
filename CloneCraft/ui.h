@@ -3,6 +3,9 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/System.hpp>
 #include <functional>
 
 #include "input.h"
@@ -11,7 +14,6 @@ namespace ui
 {
 	namespace fonts
 	{
-
 		struct UIFont
 		{
 			UIFont(std::string path)
@@ -28,9 +30,25 @@ namespace ui
 		UIFont* comicSansBoldItalic = new UIFont("resources/fonts/comicz.ttf");
 	}
 
-	struct Text
+	struct UIElement
 	{
-		Text() {}
+		UIElement() { }
+
+		virtual void drawToWindow(sf::RenderWindow& window) = 0;
+
+		void setVisible(bool visible)
+		{
+			this->visible = visible;
+		}
+
+		bool visible;
+		int x;
+		int y;
+	};
+
+	struct Text : public UIElement
+	{
+		Text() { }
 		Text(std::string text, fonts::UIFont* uiFont, sf::Color textColor, int x, int y, unsigned int charSize)
 		{
 			this->textElement = sf::Text(text, uiFont->font, charSize);
@@ -59,38 +77,33 @@ namespace ui
 			if (this->visible) window.draw(this->textElement);
 		}
 
-		void setVisible(bool visible)
-		{
-			this->visible = visible;
-		}
-
-		bool visible;
-		int x;
-		int y;
 		sf::Text textElement;
 	};
 
-	struct Rect
+	struct Rect : public UIElement
 	{
-		Rect() {}
+		Rect() { }
 		Rect(int x, int y, int w, int h, sf::Color fillColor)
 		{
+			this->x = x;
+			this->y = y;
 			this->sfRectangle.setPosition(x, y);
 			this->sfRectangle.setSize(sf::Vector2f(w, h));
 			this->sfRectangle.setFillColor(fillColor);
+			this->visible = true;
 		}
 
 		void drawToWindow(sf::RenderWindow& window)
 		{
-			window.draw(this->sfRectangle);
+			if (this->visible) window.draw(this->sfRectangle);
 		}
 
 		sf::RectangleShape sfRectangle;
 	};
 
-	struct Button
+	struct Button : public UIElement
 	{
-		Button() {}
+		Button() { }
 		Button(int x, int y, int w, int h, sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
 			buttonRect(x, y, w, h, fillColor), centerText(buttonText, buttonFont, textColor, x, y, charSize)
 		{
@@ -125,14 +138,6 @@ namespace ui
 			}
 		}
 
-		void setVisible(bool visible)
-		{
-			this->visible = visible;
-		}
-
-		bool visible;
-		int x;
-		int y;
 		int w;
 		int h;
 		Text centerText;

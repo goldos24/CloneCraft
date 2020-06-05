@@ -12,7 +12,7 @@
 #include "player.h"
 #include "maths.h"
 #include "world.h"
-#include "ui.h"
+#include "gui.h"
 #include "playerWorldInteraction.h"
 #include "physics.h"
 #include "input.h"
@@ -24,6 +24,10 @@ struct Game {
 		this->player.position = maths::Vec3(0, 20, 0);
 		this->testButton = ui::Button(1, 200, 200, 46, sf::Color(0, 0, 0, 125), "Yeet", ui::fonts::comicSans, sf::Color::Red, 30, []() { std::cout << "YEEEEEEEET!" << std::endl; });
 		this->backToGameButton = ui::Button(1, 260, 200, 46, sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::comicSans, sf::Color::Red, 30, [this]() { this->isPaused = false; });
+
+		this->options = gui::Gui(sf::Color::Black);
+		this->options.addElement(&this->testButton);
+		this->options.addElement(&this->backToGameButton);
 	}
 
 	bool isPaused = false;
@@ -38,7 +42,9 @@ struct Game {
 	ui::Text debugInfoText = ui::Text("", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
 	ui::Button testButton;
 	ui::Button backToGameButton;
+	gui::Gui options;
 	input::InputManager inputManager;
+	
 
 	void updateLoadedChunks()
 	{
@@ -213,8 +219,7 @@ struct Game {
 		window.pushGLStates();
 		debugText.drawToWindow(window);
 		debugInfoText.drawToWindow(window);
-		testButton.drawToWindow(window);
-		backToGameButton.drawToWindow(window);
+		if (this->isPaused) options.draw(window);
 		window.popGLStates();
 	}
 
