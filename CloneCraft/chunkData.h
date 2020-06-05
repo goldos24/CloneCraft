@@ -28,6 +28,9 @@ namespace chunks
 
 	maths::Vec3i convertToChunkPos(maths::Vec3i position)
 	{
+		if (position.x <= 0) position.x -= chunks::size;
+		if (position.y <= 0) position.y -= chunks::size;
+		if (position.z <= 0) position.z -= chunks::size;
 		position.x /= chunks::size; position.y /= chunks::size; position.z /= chunks::size;
 		position.x *= chunks::size; position.y *= chunks::size; position.z *= chunks::size;
 		return position;

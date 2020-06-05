@@ -11,6 +11,7 @@ namespace input
 		{
 			this->addMouseButton(sf::Mouse::Left);
 			this->addKey(sf::Keyboard::Escape);
+			this->addKey(sf::Keyboard::Space);
 		}
 
 		void update()
