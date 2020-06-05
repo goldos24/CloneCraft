@@ -152,7 +152,9 @@ struct Game {
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		
+
+		if (!this->isPaused && inputManager.isMouseButtonPressed(sf::Mouse::Left)) 
+			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 		this->manageKeys();
 		this->inputManager.update();
 
@@ -162,18 +164,17 @@ struct Game {
 
 		if (!this->isPaused)
 		{
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 			updateRotation(wsize, window);
 			sf::Time elapsed = clock.restart();
 			float elapsedSeconds = elapsed.asSeconds();
 
 			updatePosition(elapsedSeconds);
 		}
-		
+
 		glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
 		glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
 		glTranslatef(-player.position.x, -player.position.y, -player.position.z);
-		
+
 		glBegin(GL_QUADS);      // Draw The Cubes Using quads
 
 		this->gameWorld.Render();
@@ -196,7 +197,7 @@ struct Game {
 			<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
 			<< "Block pos in front of player inside current chunk: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertFromVec3ToVec3i(gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position))).toString() << "\n"
 			<< "Looking at block with ID:" << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n"
-			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n" ;
+			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n";
 		debugInfoText.updateText(debugInfoStream.str());
 	}
 
