@@ -82,31 +82,21 @@ struct Game {
 
 	void moveRight(float elapsedTime)
 	{
-		/*player.position.x += maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
-		player.position.z -= maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;*/
 		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(maths::cosd(-player.rotation.y) * movementSpeed, 0.f, -maths::sind(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveLeft(float elapsedTime)
 	{
-		/*player.position.x -= maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;
-		player.position.z += maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;*/
-
 		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(-maths::cosd(-player.rotation.y) * movementSpeed, 0.f, maths::sind(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveForward(float elapsedTime)
 	{
-		/*player.position.x -= maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
-		player.position.z -= maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;*/
 		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(-maths::sind(-player.rotation.y) * movementSpeed, 0.f, -maths::cosd(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveBackward(float elapsedTime)
 	{
-		/*player.position.x += maths::sind(-player.rotation.y) * movementSpeed * elapsedTime;
-		player.position.z += maths::cosd(-player.rotation.y) * movementSpeed * elapsedTime;*/
-
 		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(maths::sind(-player.rotation.y) * movementSpeed, 0.f, maths::cosd(-player.rotation.y) * movementSpeed));
 	}
 
@@ -121,6 +111,7 @@ struct Game {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) moveRight(elapsedTime);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) moveUp(elapsedTime);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) moveDown(elapsedTime);
+		physixx::clipMovement(this->player, elapsedTime, this->gameWorld);
 		physixx::applyMovement(this->player, elapsedTime);
 		physixx::applyFriction(this->player, elapsedTime, 1.f);
 	}
@@ -135,6 +126,18 @@ struct Game {
 			std::string blockName;
 			std::cin >> x >> y >> z >> blockName;
 			this->gameWorld.setBlockID(maths::Vec3i(x, y, z), blox::getByName(blockName).id);
+		} 
+		else if (command == "teleport")
+		{
+			float x, y, z;
+			std::cin >> x >> y >> z;
+			this->player.position = maths::Vec3(x, y, z);
+		}
+		else if (command == "getblock")
+		{
+			int x, y, z;
+			std::cin >> x >> y >> z;
+			std::cout << gameWorld.getBlockID(maths::Vec3i(x, y, z));
 		}
 	}
 
@@ -193,7 +196,7 @@ struct Game {
 			<< "Rotation: " << this->player.rotation.toString() << "\n"
 			<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
 			<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
-			<< "Block pos in front of player inside current chunk: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertFromVec3ToVec3i(gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position))).toString() << "\n"
+			<< "Block pos in front of player inside current chunk: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position))).toString() << "\n"
 			<< "Looking at block with ID:" << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n"
 			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n" ;
 		debugInfoText.updateText(debugInfoStream.str());

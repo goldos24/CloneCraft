@@ -44,7 +44,7 @@ namespace world
 					}
 
 			this->worldPos = destination;
-			this->unloadGarbageChunks();
+			if(this->chunks.size() > maths::cubeof(this->chunkRenderDistance) * 100)this->unloadGarbageChunks();
 		}
 
 		std::shared_ptr<chunks::Chunk> getChunk(maths::Vec3i chunkPos)

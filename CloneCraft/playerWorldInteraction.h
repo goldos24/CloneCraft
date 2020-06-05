@@ -38,9 +38,9 @@ namespace playerWorldInteraction
 		int rightAngleMinusFixedRotationX = 90 - fixedRotationX;
 		int rightAngleMinusRotationY = 90 - player.rotation.y;
 
-		float tX = maths::cosd(rightAngleMinusRotationY) * playerReach;
+		float tX = maths::cosd(rightAngleMinusRotationY) * playerReach * maths::cosd(rightAngleMinusFixedRotationX);
 		float tY = maths::sind(rightAngleMinusFixedRotationX) * playerReach;
-		float tZ = maths::sind(-rightAngleMinusRotationY) * playerReach;
+		float tZ = maths::sind(-rightAngleMinusRotationY) * playerReach * maths::cosd(rightAngleMinusFixedRotationX);
 		
 		// TODO cast ray to (tX, tY, tZ) and get nearest block
 		//This would approximately work like this:
@@ -65,7 +65,7 @@ namespace playerWorldInteraction
 	void breakBlockInFrontOfPlayer(world::World world, player::Player player)
 	{
 		auto currChunk = world.findChunkFromPlayerPosition(player.position);
-		maths::Vec3i playerPosI = maths::convertFromVec3ToVec3i(world.getPlayerPositionInsideCurrentChunk(player.position));
+		maths::Vec3i playerPosI = maths::convertVec3<float, int>(world.getPlayerPositionInsideCurrentChunk(player.position));
 		maths::Vec3i blockPosInFrontOfPlayer = playerWorldInteraction::getBlockPosInFrontOfPlayer(world, player, 3) + playerPosI;
 
 		int x = int(blockPosInFrontOfPlayer.x);

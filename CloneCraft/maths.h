@@ -253,11 +253,6 @@ namespace maths
 		return bMin + (bMax - bMin) * ((v - aMin) / (aMax - aMin));
 	}
 
-	Vec3i convertFromVec3ToVec3i(Vec3 vec) // TODO fucking remove 'cause we're using generics to type fewer functions
-	{
-		return convertVec3<float, int>(vec);
-	}
-
 	namespace coord
 	{
 		auto coordinateToIndex(int x, int y, int z, int size) -> int
