@@ -56,8 +56,10 @@ namespace world
 
 		blox::ID getBlockID(maths::Vec3i blockPos)
 		{
-			auto chunk = this->getChunk(chunks::convertToChunkPos(maths::convertVec3<int, float>(blockPos)));
-			return chunk->getBlock(blockPos.x % chunks::size, blockPos.y % chunks::size, blockPos.z % chunks::size);
+			auto blockPosF = maths::convertVec3<int, float>(blockPos);
+			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
+			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
+			return chunk->getBlock(positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 		}
 
 		void setBlockID(maths::Vec3i blockPos, blox::ID id)
