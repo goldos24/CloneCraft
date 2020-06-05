@@ -15,6 +15,7 @@
 #include "ui.h"
 #include "playerWorldInteraction.h"
 #include "physics.h"
+#include "input.h"
 
 struct Game {
 	Game()
@@ -37,6 +38,7 @@ struct Game {
 	ui::Text debugInfoText = ui::Text("", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
 	ui::Button testButton;
 	ui::Button backToGameButton;
+	input::InputManager inputManager;
 
 	void updateLoadedChunks()
 	{
@@ -150,10 +152,10 @@ struct Game {
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) this->getAndRunCommand();
+		
+		this->manageKeys();
+		this->inputManager.update();
 
-		window.setKeyRepeatEnabled(false);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) this->isPaused = !this->isPaused; //TODO Replace by something much better
 		window.setMouseCursorVisible(this->isPaused);
 		this->testButton.setVisible(this->isPaused);
 		this->backToGameButton.setVisible(this->isPaused);
@@ -165,7 +167,6 @@ struct Game {
 			sf::Time elapsed = clock.restart();
 			float elapsedSeconds = elapsed.asSeconds();
 
-			window.setKeyRepeatEnabled(true);
 			updatePosition(elapsedSeconds);
 		}
 		
@@ -212,6 +213,18 @@ struct Game {
 	void drawAndUpdateButton(ui::Button button, sf::RenderWindow& window)
 	{
 		button.drawToWindow(window);
-		button.tryCallOnClick(window);
+		button.tryCallOnClick(window, this->inputManager);
+	}
+
+	void manageKeys()
+	{
+		if (inputManager.isKeyPressed(sf::Keyboard::Escape))
+		{
+			this->isPaused = !this->isPaused; //TODO Replace by something much better
+		}
+		else if (inputManager.isKeyPressed(sf::Keyboard::Tab))
+		{
+			this->getAndRunCommand();
+		}
 	}
 };

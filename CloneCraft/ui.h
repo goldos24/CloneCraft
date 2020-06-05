@@ -5,6 +5,8 @@
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <functional>
 
+#include "input.h"
+
 namespace ui
 {
 	namespace fonts
@@ -101,14 +103,14 @@ namespace ui
 			this->onClick = onClick;
 		}
 
-		void tryCallOnClick(sf::RenderWindow& window)
+		void tryCallOnClick(sf::RenderWindow& window, input::InputManager inputManager)
 		{
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
 			if (this->visible &&
 				mousePos.x >= this->x && mousePos.x <= this->x + this->w &&
 				mousePos.y >= this->y && mousePos.y <= this->y + this->h &&
-				sf::Mouse::isButtonPressed(sf::Mouse::Left))
+				inputManager.isMouseButtonPressed(sf::Mouse::Left))
 			{
 				this->onClick();
 			}
