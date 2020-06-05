@@ -64,8 +64,10 @@ namespace world
 
 		void setBlockID(maths::Vec3i blockPos, blox::ID id)
 		{
-			auto chunk = this->getChunk(chunks::convertToChunkPos(maths::convertVec3<int, float>(blockPos)));
-			chunk->placeBlock(id, blockPos.x % chunks::size, blockPos.y % chunks::size, blockPos.z % chunks::size);
+			auto blockPosF = maths::convertVec3<int, float>(blockPos);
+			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
+			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
+			return chunk->setBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 		}
 
 		std::shared_ptr<chunks::Chunk> findChunkFromPlayerPosition(maths::Vec3 playerPosition)

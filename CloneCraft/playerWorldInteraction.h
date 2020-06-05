@@ -42,24 +42,15 @@ namespace playerWorldInteraction
 		float tY = maths::sind(rightAngleMinusFixedRotationX) * playerReach;
 		float tZ = maths::sind(-rightAngleMinusRotationY) * playerReach * maths::cosd(rightAngleMinusFixedRotationX);
 		
-		// TODO cast ray to (tX, tY, tZ) and get nearest block
-		//This would approximately work like this:
-		/*	std::vector<maths::Vec3i> blockPositions = raycast::bresenham(player.position.x, player.position.y, player.position.z, tX, tY, tZ);
-			maths::Vec3i targetBlockPos;
-			for (maths::Vec3i pos : blockPositions)
-				if (!blox::isTransparent(world.getBlock(pos).id))
-				{
-					targetBlockPos = pos;
-					break;
-				}
+		maths::Vec3 finalBlockPos;
+		for (float i = 0.f; i < 100.f; i++)
+		{
+			finalBlockPos = maths::Vec3(tX, tY, tZ) * i / 100.f;
+			auto blockID = world.getBlockID(maths::convertVec3<float, int>(finalBlockPos));
+			if (blockID != blox::air)break;
+		}
 
-			fixOutOfBoundsChunkPositionAndUpdateChunk(world, chunk, targetBlockPos.x, targetBlockPos.y, targetBlockPos.z);
-			tX = targetBlockPos.x;
-			tY = targetBlockPos.y;
-			tZ = targetBlockPos.z;
-		*/
-
-		return maths::Vec3i(int(tX), int(tY), int(tZ));
+		return maths::convertVec3<float, int>(finalBlockPos);
 	}
 
 	void breakBlockInFrontOfPlayer(world::World world, player::Player player)
