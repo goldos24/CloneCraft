@@ -153,8 +153,6 @@ struct Game {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-		if (!this->isPaused && inputManager.isMouseButtonPressed(sf::Mouse::Left)) 
-			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 		this->manageKeys();
 		this->inputManager.update();
 
@@ -180,9 +178,15 @@ struct Game {
 		this->gameWorld.Render();
 
 		glEnd();
-		updateDebugInfo();
 
+		updateDebugInfo();
 		drawUI(window);
+
+		if (!this->isPaused && inputManager.isMouseButtonPressed(sf::Mouse::Left))
+			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
+
+		this->testButton.tryCallOnClick(window, this->inputManager);
+		this->backToGameButton.tryCallOnClick(window, this->inputManager);
 	}
 
 	void updateDebugInfo()
@@ -206,15 +210,9 @@ struct Game {
 		window.pushGLStates();
 		debugText.drawToWindow(window);
 		debugInfoText.drawToWindow(window);
-		drawAndUpdateButton(this->testButton, window);
-		drawAndUpdateButton(this->backToGameButton, window);
+		testButton.drawToWindow(window);
+		backToGameButton.drawToWindow(window);
 		window.popGLStates();
-	}
-
-	void drawAndUpdateButton(ui::Button button, sf::RenderWindow& window)
-	{
-		button.drawToWindow(window);
-		button.tryCallOnClick(window, this->inputManager);
 	}
 
 	void manageKeys()
