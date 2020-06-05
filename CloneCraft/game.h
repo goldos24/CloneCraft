@@ -15,6 +15,7 @@
 #include "ui.h"
 #include "playerWorldInteraction.h"
 #include "physics.h"
+#include "input.h"
 
 struct Game {
 	Game()
@@ -37,6 +38,7 @@ struct Game {
 	ui::Text debugInfoText = ui::Text("", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
 	ui::Button testButton;
 	ui::Button backToGameButton;
+	input::InputManager inputManager;
 
 	void updateLoadedChunks()
 	{
@@ -153,37 +155,41 @@ struct Game {
 
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Tab)) this->getAndRunCommand();
 
-		window.setKeyRepeatEnabled(false);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape)) this->isPaused = !this->isPaused; //TODO Replace by something much better
+		this->manageKeys();
+		this->inputManager.update();
+
 		window.setMouseCursorVisible(this->isPaused);
 		this->testButton.setVisible(this->isPaused);
 		this->backToGameButton.setVisible(this->isPaused);
 
 		if (!this->isPaused)
 		{
-			if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 			updateRotation(wsize, window);
 			sf::Time elapsed = clock.restart();
 			float elapsedSeconds = elapsed.asSeconds();
 
-			window.setKeyRepeatEnabled(true);
 			updatePosition(elapsedSeconds);
 		}
-		
+
 		glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
 		glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
 		glTranslatef(-player.position.x, -player.position.y, -player.position.z);
-		
+
 		glBegin(GL_QUADS);      // Draw The Cubes Using quads
 
 		this->gameWorld.Render();
 
 		glEnd();
-		updateDebugInfo();
 
+		updateDebugInfo();
 		drawUI(window);
+
+		if (!this->isPaused && inputManager.isMouseButtonPressed(sf::Mouse::Left))
+			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
+
+		this->testButton.tryCallOnClick(window, this->inputManager);
+		this->backToGameButton.tryCallOnClick(window, this->inputManager);
 	}
 
 	void updateDebugInfo()
@@ -198,7 +204,7 @@ struct Game {
 			<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
 			<< "Block pos in front of player inside current chunk: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position))).toString() << "\n"
 			<< "Looking at block with ID:" << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n"
-			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n" ;
+			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n";
 		debugInfoText.updateText(debugInfoStream.str());
 	}
 
@@ -207,14 +213,20 @@ struct Game {
 		window.pushGLStates();
 		debugText.drawToWindow(window);
 		debugInfoText.drawToWindow(window);
-		drawAndUpdateButton(this->testButton, window);
-		drawAndUpdateButton(this->backToGameButton, window);
+		testButton.drawToWindow(window);
+		backToGameButton.drawToWindow(window);
 		window.popGLStates();
 	}
 
-	void drawAndUpdateButton(ui::Button button, sf::RenderWindow& window)
+	void manageKeys()
 	{
-		button.drawToWindow(window);
-		button.tryCallOnClick(window);
+		if (inputManager.isKeyPressed(sf::Keyboard::Escape))
+		{
+			this->isPaused = !this->isPaused; //TODO Replace by something much better
+		}
+		else if (inputManager.isKeyPressed(sf::Keyboard::Tab))
+		{
+			this->getAndRunCommand();
+		}
 	}
 };
