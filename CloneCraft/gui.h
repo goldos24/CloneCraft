@@ -9,9 +9,9 @@ namespace gui
 			backgroundColor(color)
 		{ }
 
-		void setImage(sf::Image image)
+		BackgroundResource(sf::Image image) :
+			backgroundImage(image)
 		{
-			this->backgroundImage = image;
 			this->useImage = true;
 		}
 
@@ -22,24 +22,28 @@ namespace gui
 
 	struct Gui
 	{
-		Gui() { }
-		Gui(BackgroundResource background)
+		Gui(std::string name) : guiName(name)
+		{
+			this->drawBackground = false;
+		}
+
+		Gui(std::string name, BackgroundResource background) : guiName(name)
 		{
 			this->background = background;
 		}
 
-		Gui(sf::Color backgroundColor)
+		Gui(std::string name, sf::Color backgroundColor) : guiName(name)
 		{
 			this->background = BackgroundResource(backgroundColor);
 		}
 
 		void draw(sf::RenderWindow& window)
 		{
-			window.clear(this->background.backgroundColor);
+			if (this->drawBackground) window.clear(this->background.backgroundColor);
 			
 			window.pushGLStates();
 
-			if (this->background.useImage)
+			if (this->background.useImage && this->drawBackground)
 			{
 				sf::Texture backgroundTexture;
 				backgroundTexture.loadFromImage(this->background.backgroundImage);
@@ -51,6 +55,7 @@ namespace gui
 			{
 				element->drawToWindow(window);
 			}
+			ui::Text(this->guiName, this->guiName, ui::fonts::comicSansBoldItalic, sf::Color::Red, 1, 1, 15).drawToWindow(window);
 
 			window.popGLStates();
 		}
@@ -60,6 +65,8 @@ namespace gui
 			this->uiElements.push_back(elem);
 		}
 
+		std::string guiName;
+		bool drawBackground = true;
 		std::vector<ui::UIElement*> uiElements;
 		BackgroundResource background;
 	};

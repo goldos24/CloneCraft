@@ -32,7 +32,7 @@ namespace ui
 
 	struct UIElement
 	{
-		UIElement() { }
+		UIElement(std::string parentGuiName) : parentGuiName(parentGuiName) { }
 
 		virtual void drawToWindow(sf::RenderWindow& window) = 0;
 
@@ -44,12 +44,14 @@ namespace ui
 		bool visible;
 		int x;
 		int y;
+		std::string parentGuiName;
 	};
 
 	struct Text : public UIElement
 	{
-		Text() { }
-		Text(std::string text, fonts::UIFont* uiFont, sf::Color textColor, int x, int y, unsigned int charSize)
+		Text(std::string parentGuiName) : UIElement(parentGuiName) { }
+		Text(std::string parentGuiName, std::string text, fonts::UIFont* uiFont, sf::Color textColor, int x, int y, unsigned int charSize)
+			: UIElement(parentGuiName)
 		{
 			this->textElement = sf::Text(text, uiFont->font, charSize);
 			this->x = x;
@@ -82,8 +84,9 @@ namespace ui
 
 	struct Rect : public UIElement
 	{
-		Rect() { }
-		Rect(int x, int y, int w, int h, sf::Color fillColor)
+		Rect(std::string parentGuiName) : UIElement(parentGuiName) { }
+		Rect(std::string parentGuiName, int x, int y, int w, int h, sf::Color fillColor)
+			: UIElement(parentGuiName)
 		{
 			this->x = x;
 			this->y = y;
@@ -103,9 +106,10 @@ namespace ui
 
 	struct Button : public UIElement
 	{
-		Button() { }
-		Button(int x, int y, int w, int h, sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
-			buttonRect(x, y, w, h, fillColor), centerText(buttonText, buttonFont, textColor, x, y, charSize)
+		Button(std::string parentGuiName) : UIElement(parentGuiName), centerText(parentGuiName), buttonRect(parentGuiName) { }
+		Button(std::string parentGuiName, int x, int y, int w, int h, sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
+			buttonRect(parentGuiName, x, y, w, h, fillColor), centerText(parentGuiName, buttonText, buttonFont, textColor, x, y, charSize), 
+			UIElement(parentGuiName)
 		{
 			this->visible = true;
 			this->x = x;
@@ -116,14 +120,18 @@ namespace ui
 			this->onClick = onClick;
 		}
 
-		void tryCallOnClick(sf::RenderWindow& window, input::InputManager inputManager)
+		void updateHoverState(sf::RenderWindow& window)
 		{
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-			if (this->visible &&
+			this->hovered =
 				mousePos.x >= this->x && mousePos.x <= this->x + this->w &&
-				mousePos.y >= this->y && mousePos.y <= this->y + this->h &&
-				inputManager.isMouseButtonPressed(sf::Mouse::Left))
+				mousePos.y >= this->y && mousePos.y <= this->y + this->h;
+		}
+
+		void tryCallOnClick(input::InputManager inputManager)
+		{
+			if (this->visible && this->hovered && inputManager.isMouseButtonPressed(sf::Mouse::Left))
 			{
 				this->onClick();
 			}
@@ -138,6 +146,7 @@ namespace ui
 			}
 		}
 
+		bool hovered;
 		int w;
 		int h;
 		Text centerText;
