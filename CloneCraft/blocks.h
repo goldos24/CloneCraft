@@ -10,6 +10,7 @@ namespace blox
 		air,
 		stone,
 		grass,
+		dirt,
 
 		enumSize
 	};
@@ -45,9 +46,11 @@ namespace blox
 		{
 			auto* blocks = new Block[256];
 			blocks[air] = Block(air, "air", nullptr); //TODO nullptr
+			
 			blocks[stone] = Block(stone, "stone", textures::blockTextures::stone);
-
 			blocks[grass] = Block(grass, "grass", textures::blockTextures::grass);
+			blocks[dirt] = Block(dirt, "dirt", textures::blockTextures::dirt);
+
 			return blocks;
 		}
 

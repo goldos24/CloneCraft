@@ -64,14 +64,15 @@ struct Game {
 
 	ui::Rect simpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 125));
 	ui::Rect darkerSimpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 195));
-	
+
 	ui::Rect crosshairRectangle1 = ui::Rect("", 0, 0, 18, 2, sf::Color(255, 255, 255, 255));
 	ui::Rect crosshairRectangle2 = ui::Rect("", 0, 0, 2, 18, sf::Color(255, 255, 255, 255));
 
 	gui::Gui optionsGui = gui::Gui("options");
 	gui::Gui pauseGui = gui::Gui("pause");
+	gui::Gui emptyGui = gui::Gui("empty");
 	gui::Gui* currentGuiPtr = nullptr;
-	
+
 	input::InputManager inputManager;
 
 	void updateLoadedChunks()
@@ -122,6 +123,9 @@ struct Game {
 
 	void getAndRunCommand()
 	{
+		if (this->currentGuiPtr != nullptr) return;
+		this->currentGuiPtr = &this->emptyGui;
+
 		std::string command;
 		std::cin >> command;
 		if (command == "setblock")
@@ -130,7 +134,7 @@ struct Game {
 			std::string blockName;
 			std::cin >> x >> y >> z >> blockName;
 			this->gameWorld.setBlockID(maths::Vec3i(x, y, z), blox::getByName(blockName).id);
-		} 
+		}
 		else if (command == "teleport")
 		{
 			float x, y, z;
@@ -143,6 +147,7 @@ struct Game {
 			std::cin >> x >> y >> z;
 			std::cout << gameWorld.getBlockID(maths::Vec3i(x, y, z));
 		}
+		this->currentGuiPtr = nullptr;
 	}
 
 	void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
@@ -158,18 +163,15 @@ struct Game {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
-
-		sf::Time elapsed = clock.restart();
-		float elapsedSeconds = elapsed.asSeconds();
 		if (this->currentGuiPtr == nullptr)
 		{
+			sf::Time elapsed = clock.restart();
+			float elapsedSeconds = elapsed.asSeconds();
 			updatePosition(elapsedSeconds);
 			updateRotation(wsize, window);
 		}
 
 		this->manageKeys();
-		if (!this->currentGuiPtr && inputManager.isMouseButtonPressed(sf::Mouse::Right))
-			playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
 		for (ui::Button button : this->buttons)
 		{
 			if (this->currentGuiPtr)
@@ -179,8 +181,15 @@ struct Game {
 					button.tryCallOnClick(this->inputManager);
 				}
 		}
-		if (!this->currentGuiPtr && inputManager.isMouseButtonPressed(sf::Mouse::Left))
-			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
+
+		if (this->currentGuiPtr == nullptr)
+		{
+			if (inputManager.isMouseButtonPressed(sf::Mouse::Right))
+				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
+			if (inputManager.isMouseButtonPressed(sf::Mouse::Left))
+				playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
+		}
+
 		this->inputManager.update();
 
 		window.setMouseCursorVisible(this->currentGuiPtr);
@@ -201,7 +210,7 @@ struct Game {
 
 		this->simpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
 		this->darkerSimpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
-		
+
 		float w1 = this->crosshairRectangle1.sfRectangle.getSize().x;
 		float h1 = this->crosshairRectangle1.sfRectangle.getSize().y;
 		this->crosshairRectangle1.sfRectangle.setPosition(sf::Vector2f(wsize.x / 2 - w1 / 2, wsize.y / 2 - h1 / 2));
@@ -223,8 +232,8 @@ struct Game {
 			<< "Rotation: " << this->player.rotation.toString() << "\n"
 			<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
 			<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
-			<< "Looking at block with ID:" << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n"
-			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n";
+			<< "Looking at block with ID: " << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n"
+			<< "Looking at block: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n";
 		debugInfoText.updateText(debugInfoStream.str());
 	}
 
