@@ -74,14 +74,14 @@ namespace world
 			auto blockPosF = maths::convertVec3<int, float>(blockPos);
 			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
 			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
-			return chunk->setBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
+			return chunk->placeBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 		}
 
 		void setBlockID(maths::Vec3 blockPosF, blox::ID id)
 		{
 			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
 			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
-			return chunk->setBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
+			return chunk->placeBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 		}
 
 		std::shared_ptr<chunks::Chunk> findChunkFromPlayerPosition(maths::Vec3 playerPosition)

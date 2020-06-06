@@ -212,9 +212,8 @@ struct Game {
 			<< "Rotation: " << this->player.rotation.toString() << "\n"
 			<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
 			<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
-			<< "Block pos in front of player inside current chunk: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position))).toString() << "\n"
-			<< "Looking at block with ID:" << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n"
-			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3) + maths::convertVec3<float, int>(this->player.position)) << "\n";
+			<< "Looking at block with ID:" << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3)) << "\n"
+			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3)) << "\n";
 		debugInfoText.updateText(debugInfoStream.str());
 	}
 
