@@ -177,6 +177,8 @@ struct Game {
 					button.tryCallOnClick(this->inputManager);
 				}
 		}
+		if (!this->currentGuiPtr && inputManager.isMouseButtonPressed(sf::Mouse::Left))
+			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 		this->inputManager.update();
 
 		window.setMouseCursorVisible(this->currentGuiPtr);
@@ -199,9 +201,6 @@ struct Game {
 		this->darkerSimpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
 		
 		drawUI(window);
-
-		if (!this->currentGuiPtr && inputManager.isMouseButtonPressed(sf::Mouse::Left))
-			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 	}
 
 	void updateDebugInfo()
