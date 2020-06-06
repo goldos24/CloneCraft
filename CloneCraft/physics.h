@@ -22,6 +22,23 @@ namespace physixx
 		float frictionFactor = (1 < friction * elapsedTime) ? 0.f : 1 - friction * elapsedTime;
 		player.movement = player.movement * frictionFactor;
 	}
+
+	bool isColliding(player::Player& player, world::World& world)
+	{
+		for (float i = -player.hitbox.x / 2.f; i < player.hitbox.x / 2.f; i++)
+			for (float j = 0; j < player.hitbox.y; j++)
+				for (float k = -player.hitbox.z / 2.f; k < player.hitbox.z / 2.f; k++)
+				{
+					if (world.getBlockID(player.position + maths::Vec3(
+						i > player.hitbox.x / 2.f ? player.hitbox.x / 2.f : i,
+						-(j + 1 > player.hitbox.y ? player.hitbox.y : j),
+						k > player.hitbox.z / 2.f ? player.hitbox.z / 2.f : k
+					)))
+						return true;
+				}
+		return false;
+	}
+
 	void clipMovement(player::Player& player, float elapsedTime, world::World& world)
 	{
 		if (player.position.z == 0.f) player.position.z = 0.001f;

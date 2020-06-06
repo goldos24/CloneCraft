@@ -4,6 +4,7 @@
 #include "player.h"
 #include "physics.h"
 #include "maths.h"
+#include "blocks.h"
 
 namespace playerControls
 {
@@ -39,6 +40,7 @@ namespace playerControls
 
 	void jump(player::Player& player, float height, world::World& world)
 	{
+		if(world.getBlockID(player.position - maths::Vec3(0.f, player.hitbox.y, 0.f)) != blox::air)
 		player.movement.y = height;
 	}
 

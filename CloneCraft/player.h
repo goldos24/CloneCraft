@@ -11,6 +11,8 @@ namespace player
 		Player()
 		{}
 
+		static float playerReach;
+
 		maths::Vec3 position, rotation, movement, hitbox = maths::Vec3(0.7f, 1.8f, 0.7f);
 
 		void rotate(float X, float Y, float mouseSpeed)
@@ -23,5 +25,6 @@ namespace player
 			maths::capDegrees(this->rotation.y);
 		}
 	};
-
 }
+
+float player::Player::playerReach = 5.f;

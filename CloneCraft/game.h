@@ -111,7 +111,7 @@ struct Game {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) playerControls::moveBackward(this->player, elapsedTime, this->movementSpeed);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) playerControls::moveLeft(this->player, elapsedTime, this->movementSpeed);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) playerControls::moveRight(this->player, elapsedTime, this->movementSpeed);
-		if (this->inputManager.isKeyPressed(sf::Keyboard::Space)) playerControls::jump(this->player, 10.f, this->gameWorld);
+		if (this->inputManager.isKeyBeingPressed(sf::Keyboard::Space)) playerControls::jump(this->player, 10.f, this->gameWorld);
 		playerControls::applyGravity(this->player, elapsedTime, 18.f);
 		physixx::clipMovement(this->player, elapsedTime, this->gameWorld);
 		physixx::applyMovement(this->player, elapsedTime);
@@ -167,7 +167,7 @@ struct Game {
 
 		this->manageKeys();
 		if (!this->currentGuiPtr && inputManager.isMouseButtonPressed(sf::Mouse::Right))
-			playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player, 3.f);
+			playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
 		for (ui::Button button : this->buttons)
 		{
 			if (this->currentGuiPtr)
@@ -213,8 +213,8 @@ struct Game {
 			<< "Rotation: " << this->player.rotation.toString() << "\n"
 			<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
 			<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
-			<< "Looking at block with ID:" << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3)) << "\n"
-			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player, 3)) << "\n";
+			<< "Looking at block with ID:" << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n"
+			<< "Looking at block :" << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n";
 		debugInfoText.updateText(debugInfoStream.str());
 	}
 
