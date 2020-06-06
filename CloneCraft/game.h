@@ -111,8 +111,8 @@ struct Game {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) playerControls::moveBackward(this->player, elapsedTime, this->movementSpeed);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) playerControls::moveLeft(this->player, elapsedTime, this->movementSpeed);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) playerControls::moveRight(this->player, elapsedTime, this->movementSpeed);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) playerControls::moveUp(this->player, elapsedTime, this->movementSpeed);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) playerControls::moveDown(this->player, elapsedTime, this->movementSpeed);
+		if (this->inputManager.isKeyPressed(sf::Keyboard::Space)) playerControls::jump(this->player, 10.f, this->gameWorld);
+		playerControls::applyGravity(this->player, elapsedTime, 18.f);
 		physixx::clipMovement(this->player, elapsedTime, this->gameWorld);
 		physixx::applyMovement(this->player, elapsedTime);
 		physixx::applyFriction(this->player, elapsedTime, 1.f);
@@ -156,21 +156,21 @@ struct Game {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+
+		sf::Time elapsed = clock.restart();
+		float elapsedSeconds = elapsed.asSeconds();
+		if (this->currentGuiPtr == nullptr)
+		{
+			updatePosition(elapsedSeconds);
+			updateRotation(wsize, window);
+		}
+
 		this->manageKeys();
 		this->inputManager.update();
 
 		window.setMouseCursorVisible(this->currentGuiPtr);
 		this->testButton.setVisible(this->currentGuiPtr);
 		this->backToGameButton.setVisible(this->currentGuiPtr);
-
-		if (!this->currentGuiPtr)
-		{
-			updateRotation(wsize, window);
-			sf::Time elapsed = clock.restart();
-			float elapsedSeconds = elapsed.asSeconds();
-
-			updatePosition(elapsedSeconds);
-		}
 
 		glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
 		glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
@@ -238,5 +238,6 @@ struct Game {
 		{
 			this->getAndRunCommand();
 		}
+
 	}
 };

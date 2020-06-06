@@ -24,6 +24,8 @@ namespace physixx
 	}
 	void clipMovement(player::Player& player, float elapsedTime, world::World& world)
 	{
+		if (player.position.z == 0.f) player.position.z = 0.001f;
+		if (player.position.x == 0.f) player.position.x = 0.001f;
 		auto appliedMovementVector = player.movement * elapsedTime;
 		for (float j = 0; j < player.hitbox.y; j++)
 		{
