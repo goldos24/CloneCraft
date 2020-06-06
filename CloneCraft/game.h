@@ -166,6 +166,8 @@ struct Game {
 		}
 
 		this->manageKeys();
+		if (!this->currentGuiPtr && inputManager.isMouseButtonPressed(sf::Mouse::Right))
+			playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player, 3.f);
 		for (ui::Button button : this->buttons)
 		{
 			if (this->currentGuiPtr)

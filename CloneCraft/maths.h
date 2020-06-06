@@ -148,7 +148,6 @@ namespace maths
 		}
 	};
 
-
 	template <class sourceNum, class targetNum> 
 	genericVec3<targetNum> convertVec3(genericVec3<sourceNum> source)
 	{
@@ -229,6 +228,19 @@ namespace maths
 	float tand(float angle)
 	{
 		return (float)tan(degreesToRadians(angle));
+	}
+
+	template <class num>
+	genericVec3<num> positionFromRotation(genericVec3<num> rotation)
+	{
+		num fixedRotationX = rotation.x + num(90);
+		num rightAngleMinusFixedRotationX = num(90) - fixedRotationX;
+		num rightAngleMinusRotationY = num(90) - rotation.y;
+
+		num tX = cosd(rightAngleMinusRotationY) * abs(cosd(rightAngleMinusFixedRotationX));
+		num tY = sind(rightAngleMinusFixedRotationX);
+		num tZ = sind(-rightAngleMinusRotationY) * abs(cosd(rightAngleMinusFixedRotationX));
+		return genericVec3<num>(tX, tY, tZ);
 	}
 
 	constexpr float cubeof(float x) { return x * x * x; };

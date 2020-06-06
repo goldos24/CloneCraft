@@ -10,6 +10,7 @@ namespace input
 		InputManager()
 		{
 			this->addMouseButton(sf::Mouse::Left);
+			this->addMouseButton(sf::Mouse::Right);
 			this->addKey(sf::Keyboard::Escape);
 			this->addKey(sf::Keyboard::Space);
 		}
