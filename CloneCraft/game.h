@@ -22,7 +22,7 @@ struct Game {
 	Game()
 	{
 		this->player.position = maths::Vec3(0, 20, 0);
-		
+
 		this->pauseGui.addElement(&this->simpleBackgroundRect);
 		this->addButton(this->pauseGui, this->testButton);
 		this->addButton(this->pauseGui, this->optionsButton);
@@ -65,11 +65,13 @@ struct Game {
 	ui::Rect simpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 125));
 	ui::Rect darkerSimpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 195));
 	
+	ui::Rect crosshairRectangle1 = ui::Rect("", 0, 0, 18, 2, sf::Color(255, 255, 255, 255));
+	ui::Rect crosshairRectangle2 = ui::Rect("", 0, 0, 2, 18, sf::Color(255, 255, 255, 255));
+
 	gui::Gui optionsGui = gui::Gui("options");
 	gui::Gui pauseGui = gui::Gui("pause");
-	
 	gui::Gui* currentGuiPtr = nullptr;
-
+	
 	input::InputManager inputManager;
 
 	void updateLoadedChunks()
@@ -200,6 +202,14 @@ struct Game {
 		this->simpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
 		this->darkerSimpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
 		
+		float w1 = this->crosshairRectangle1.sfRectangle.getSize().x;
+		float h1 = this->crosshairRectangle1.sfRectangle.getSize().y;
+		this->crosshairRectangle1.sfRectangle.setPosition(sf::Vector2f(wsize.x / 2 - w1 / 2, wsize.y / 2 - h1 / 2));
+
+		float w2 = this->crosshairRectangle2.sfRectangle.getSize().x;
+		float h2 = this->crosshairRectangle2.sfRectangle.getSize().y;
+		this->crosshairRectangle2.sfRectangle.setPosition(sf::Vector2f(wsize.x / 2 - w2 / 2, wsize.y / 2 - h2 / 2));
+
 		drawUI(window);
 	}
 
@@ -221,8 +231,10 @@ struct Game {
 	void drawUI(sf::RenderWindow& window)
 	{
 		window.pushGLStates();
-		debugText.drawToWindow(window);
-		debugInfoText.drawToWindow(window);
+		this->debugText.drawToWindow(window);
+		this->debugInfoText.drawToWindow(window);
+		this->crosshairRectangle1.drawToWindow(window);
+		this->crosshairRectangle2.drawToWindow(window);
 		if (this->currentGuiPtr) this->currentGuiPtr->draw(window);
 		window.popGLStates();
 	}
