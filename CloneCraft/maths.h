@@ -86,6 +86,13 @@ namespace maths
 			return genericVec3<num>( num(resultDouble.x), num(resultDouble.y), num(resultDouble.z));
 		}
 
+		genericVec3<num> ceil(num unitSize)
+		{
+			auto resultDouble = genericVec3<double>(round(double(this->x) / double(unitSize) + 0.499), round(double(this->y) / double(unitSize) + 0.499), round(double(this->z) / double(unitSize) + 0.499));
+			resultDouble *= double(unitSize);
+			return genericVec3<num>(num(resultDouble.x), num(resultDouble.y), num(resultDouble.z));
+		}
+
 		auto& operator += (genericVec3<num>&& theOtherVec3)
 		{
 			this->x += theOtherVec3.x;

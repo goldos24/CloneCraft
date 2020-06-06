@@ -38,6 +38,9 @@ namespace chunks
 
 	maths::Vec3i convertToChunkPos(maths::Vec3 position)
 	{
+		if (position.x > 0.f && position.x < 1.f) position.x = 1.f;
+		if (position.y > 0.f && position.y < 1.f) position.y = 1.f;
+		if (position.z > 0.f && position.z < 1.f) position.z = 1.f;
 		return convertToChunkPos(maths::convertVec3<float, int>(position));
 	}
 }

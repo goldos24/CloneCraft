@@ -62,9 +62,23 @@ namespace world
 			return chunk->getBlock(positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 		}
 
+		blox::ID getBlockID(maths::Vec3 blockPosF)
+		{
+			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
+			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
+			return chunk->getBlock(positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
+		}
+
 		void setBlockID(maths::Vec3i blockPos, blox::ID id)
 		{
 			auto blockPosF = maths::convertVec3<int, float>(blockPos);
+			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
+			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
+			return chunk->setBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
+		}
+
+		void setBlockID(maths::Vec3 blockPosF, blox::ID id)
+		{
 			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
 			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
 			return chunk->setBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
@@ -77,7 +91,6 @@ namespace world
 
 		maths::Vec3 getPlayerPositionInsideCurrentChunk(maths::Vec3 playerPosition)
 		{
-			std::shared_ptr<chunks::Chunk> currentChunk = findChunkFromPlayerPosition(playerPosition);
 			maths::Vec3i chunkPos = chunks::convertToChunkPos(playerPosition);
 
 			float sX = chunkPos.x;
@@ -87,10 +100,6 @@ namespace world
 			float pX = maths::mapFromRangeToRange(playerPosition.x, sX, sX + chunks::size, 0, chunks::size);
 			float pY = maths::mapFromRangeToRange(playerPosition.y, sY, sY + chunks::size, 0, chunks::size);
 			float pZ = maths::mapFromRangeToRange(playerPosition.z, sZ, sZ + chunks::size, 0, chunks::size);
-
-			if (playerPosition.x <= 0.f) pX--;
-			if (playerPosition.y <= 0.f) pY--;
-			if (playerPosition.z <= 0.f) pZ--;
 
 			if (pX < 0.f) { pX += float(chunks::size); }
 			if (pY < 0.f) { pY += float(chunks::size); }

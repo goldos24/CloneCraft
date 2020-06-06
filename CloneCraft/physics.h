@@ -25,6 +25,6 @@ namespace physixx
 	void clipMovement(player::Player& player, float elapsedTime, world::World& world)
 	{
 		auto newPosition = player.position + player.movement * elapsedTime;
-		if (world.getBlockID(maths::convertVec3<float, int>(newPosition + maths::Vec3(0.f, 0.f, 0.f))) != blox::air) player.movement = maths::Vec3(0.f, 0.f, 0.f);
+		if (world.getBlockID(newPosition + maths::Vec3(0.f, 0.f, 0.f)) != blox::air) player.movement = maths::Vec3(0.f, 0.f, 0.f);
 	}
 }
