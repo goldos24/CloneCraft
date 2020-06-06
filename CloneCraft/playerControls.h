@@ -40,7 +40,7 @@ namespace playerControls
 
 	void jump(player::Player& player, float height, world::World& world)
 	{
-		if(world.getBlockID(player.position - maths::Vec3(0.f, player.hitbox.y, 0.f)) != blox::air)
+		if(player.isStandingOnASurface(world))
 		player.movement.y = height;
 	}
 

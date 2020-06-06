@@ -85,6 +85,7 @@ struct Game {
 
 	float movementSpeed = 6.9f;
 	float rotation = 0.f;
+	float friction = 1.f;
 	sf::Vector2f windowCenter;
 
 	void updateRotation(sf::Vector2u wsize, sf::RenderWindow& window)
@@ -107,6 +108,17 @@ struct Game {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) this->movementSpeed = 24.f;
 		else this->movementSpeed = 6.9f;
 
+		if (player.isStandingOnASurface(this->gameWorld))
+		{
+			movementSpeed *= 5.f;
+			this->friction = 10.f;
+		}
+		else
+		{
+			this->friction = 1.f;
+			this->movementSpeed = 1.f;
+		}
+
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) playerControls::moveForward(this->player, elapsedTime, this->movementSpeed);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) playerControls::moveBackward(this->player, elapsedTime, this->movementSpeed);
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) playerControls::moveLeft(this->player, elapsedTime, this->movementSpeed);
@@ -115,7 +127,7 @@ struct Game {
 		playerControls::applyGravity(this->player, elapsedTime, 18.f);
 		physixx::clipMovement(this->player, elapsedTime, this->gameWorld);
 		physixx::applyMovement(this->player, elapsedTime);
-		physixx::applyFriction(this->player, elapsedTime, 1.f);
+		physixx::applyFriction(this->player, elapsedTime, friction);
 	}
 
 	void getAndRunCommand()

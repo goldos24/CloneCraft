@@ -47,7 +47,10 @@ namespace physixx
 		for (float j = 0; j < player.hitbox.y; j++)
 		{
 			if (world.getBlockID(player.position + maths::Vec3(appliedMovementVector.x + player.movement.x > 0 ? 0.35 : -0.35, -j, 0.f)) != blox::air) player.movement.x = 0.f;
-			if (world.getBlockID(player.position + maths::Vec3(0.f, appliedMovementVector.y + player.movement.y > 0 ? 0.f : -( j + 1 > player.hitbox.y ? player.hitbox.y : j ), 0.f)) != blox::air) player.movement.y = 0.f;
+			// TODO fix bug with ze collision
+			for (float i = -player.hitbox.x / 2.f; i < player.hitbox.x / 2.f; i += player.hitbox.x / 2.f)
+				for (float k = -player.hitbox.z / 2.f; k < player.hitbox.z / 2.f; k += player.hitbox.z / 2.f)
+					if (world.getBlockID(player.position + maths::Vec3(i, appliedMovementVector.y + player.movement.y > 0 ? 0.f : -( j + 1 > player.hitbox.y ? player.hitbox.y : j ), k)) != blox::air) player.movement.y = 0.f;
 			if (world.getBlockID(player.position + maths::Vec3(0.f, -j, appliedMovementVector.z + player.movement.z > 0 ? 0.35 : -0.35)) != blox::air) player.movement.z = 0.f;
 		}
 	}
