@@ -166,6 +166,15 @@ struct Game {
 		}
 
 		this->manageKeys();
+		for (ui::Button button : this->buttons)
+		{
+			if (this->currentGuiPtr)
+				if (this->currentGuiPtr->guiName == button.parentGuiName)
+				{
+					button.updateHoverState(window);
+					button.tryCallOnClick(this->inputManager);
+				}
+		}
 		this->inputManager.update();
 
 		window.setMouseCursorVisible(this->currentGuiPtr);
@@ -191,16 +200,6 @@ struct Game {
 
 		if (!this->currentGuiPtr && inputManager.isMouseButtonPressed(sf::Mouse::Left))
 			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
-
-		for (ui::Button button : this->buttons)
-		{
-			if (this->currentGuiPtr)
-				if (this->currentGuiPtr->guiName == button.parentGuiName)
-				{
-					button.updateHoverState(window);
-					button.tryCallOnClick(this->inputManager);
-				}
-		}
 	}
 
 	void updateDebugInfo()
