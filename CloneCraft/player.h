@@ -11,7 +11,7 @@ namespace player
 		Player()
 		{}
 
-		maths::Vec3 position, rotation, movement;
+		maths::Vec3 position, rotation, movement, hitbox = maths::Vec3(0.7f, 1.8f, 0.7f);
 
 		void rotate(float X, float Y, float mouseSpeed)
 		{

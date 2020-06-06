@@ -46,7 +46,7 @@ namespace playerWorldInteraction
 		for (float i = 0.f; i < 100.f; i++)
 		{
 			finalBlockPos = maths::Vec3(tX, tY, tZ) * i / 100.f;
-			auto blockID = world.getBlockID(maths::convertVec3<float, int>(finalBlockPos));
+			auto blockID = world.getBlockID(finalBlockPos + player.position);
 			if (blockID != blox::air)break;
 		}
 

@@ -25,8 +25,11 @@ namespace physixx
 	void clipMovement(player::Player& player, float elapsedTime, world::World& world)
 	{
 		auto appliedMovementVector = player.movement * elapsedTime;
-		if (world.getBlockID(player.position + maths::Vec3(appliedMovementVector.x, 0.f, 0.f)) != blox::air) player.movement.x = 0.f;
-		if (world.getBlockID(player.position + maths::Vec3(0.f, appliedMovementVector.y, 0.f)) != blox::air) player.movement.y = 0.f;
-		if (world.getBlockID(player.position + maths::Vec3(0.f , 0.f, appliedMovementVector.z)) != blox::air) player.movement.z = 0.f;
+		for (float j = 0; j < player.hitbox.y; j++)
+		{
+			if (world.getBlockID(player.position + maths::Vec3(appliedMovementVector.x + player.movement.x > 0 ? 0.35 : -0.35, -j, 0.f)) != blox::air) player.movement.x = 0.f;
+			if (world.getBlockID(player.position + maths::Vec3(0.f, appliedMovementVector.y + player.movement.y > 0 ? 0.f : -( j + 1 > player.hitbox.y ? player.hitbox.y : j ), 0.f)) != blox::air) player.movement.y = 0.f;
+			if (world.getBlockID(player.position + maths::Vec3(0.f, -j, appliedMovementVector.z + player.movement.z > 0 ? 0.35 : -0.35)) != blox::air) player.movement.z = 0.f;
+		}
 	}
 }
