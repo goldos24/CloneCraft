@@ -12,21 +12,33 @@
 #include "player.h"
 #include "maths.h"
 #include "world.h"
-#include "ui.h"
+#include "gui.h"
 #include "playerWorldInteraction.h"
 #include "physics.h"
 #include "input.h"
+#include "playerControls.h"
 
 struct Game {
 	Game()
 	{
-		// Put some code here if you want to
 		this->player.position = maths::Vec3(0, 20, 0);
-		this->testButton = ui::Button(1, 200, 200, 46, sf::Color(0, 0, 0, 125), "Yeet", ui::fonts::comicSans, sf::Color::Red, 30, []() { std::cout << "YEEEEEEEET!" << std::endl; });
-		this->backToGameButton = ui::Button(1, 260, 200, 46, sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::comicSans, sf::Color::Red, 30, [this]() { this->isPaused = false; });
+		
+		this->pauseGui.addElement(&this->simpleBackgroundRect);
+		this->addButton(this->pauseGui, this->testButton);
+		this->addButton(this->pauseGui, this->optionsButton);
+		this->addButton(this->pauseGui, this->backToGameButton);
+
+		this->optionsGui.addElement(&this->darkerSimpleBackgroundRect);
+		this->addButton(this->optionsGui, this->backToPauseGuiButton);
 	}
 
-	bool isPaused = false;
+	void addButton(gui::Gui& gui, ui::Button& button)
+	{
+		gui.addElement(&button);
+		buttons.push_back(button);
+	}
+
+	std::vector<ui::Button> buttons;
 
 	world::World gameWorld = world::World();
 
@@ -34,10 +46,30 @@ struct Game {
 	maths::Vec3i lastChunkUpdatePosition;
 	std::ostringstream debugInfoStream;
 
-	ui::Text debugText = ui::Text("Debug", ui::fonts::comicSansBold, sf::Color::White, 1, 0, 18);
-	ui::Text debugInfoText = ui::Text("", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
-	ui::Button testButton;
-	ui::Button backToGameButton;
+	ui::Text debugText = ui::Text("", "Debug", ui::fonts::comicSansBold, sf::Color::White, 1, 0, 18);
+	ui::Text debugInfoText = ui::Text("", "", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
+
+	ui::Button testButton = ui::Button("pause", 1, 200, 200, 46,
+		sf::Color(0, 0, 0, 125), "Test", ui::fonts::comicSans, sf::Color::White, 30,
+		[]() { std::cout << "Test!" << std::endl; });
+	ui::Button optionsButton = ui::Button("pause", 1, 260, 200, 46,
+		sf::Color(0, 0, 0, 125), "Options", ui::fonts::comicSans, sf::Color::White, 30,
+		[this]() { this->currentGuiPtr = &this->optionsGui; });
+	ui::Button backToGameButton = ui::Button("pause", 1, 320, 200, 46,
+		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::comicSans, sf::Color::White, 30,
+		[this]() { this->currentGuiPtr = nullptr; });
+	ui::Button backToPauseGuiButton = ui::Button("options", 1, 380, 200, 46,
+		sf::Color(0, 0, 0, 125), "Back", ui::fonts::comicSans, sf::Color::White, 30,
+		[this]() { this->currentGuiPtr = &this->pauseGui; });
+
+	ui::Rect simpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 125));
+	ui::Rect darkerSimpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 195));
+	
+	gui::Gui optionsGui = gui::Gui("options");
+	gui::Gui pauseGui = gui::Gui("pause");
+	
+	gui::Gui* currentGuiPtr = nullptr;
+
 	input::InputManager inputManager;
 
 	void updateLoadedChunks()
@@ -55,8 +87,6 @@ struct Game {
 	float rotation = 0.f;
 	sf::Vector2f windowCenter;
 
-	float lastElapsed = 0;
-
 	void updateRotation(sf::Vector2u wsize, sf::RenderWindow& window)
 	{
 		sf::Vector2f halfWindowSize = sf::Vector2f(float(wsize.x) / 2, float(wsize.y) / 2);
@@ -72,47 +102,17 @@ struct Game {
 		this->player.rotate(float(positionDifference.y), float(positionDifference.x), 1.f);
 	}
 
-	void moveUp(float elapsedTime)
-	{
-		player.position.y += movementSpeed * elapsedTime;
-	}
-
-	void moveDown(float elapsedTime)
-	{
-		player.position.y -= movementSpeed * elapsedTime;
-	}
-
-	void moveRight(float elapsedTime)
-	{
-		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(maths::cosd(-player.rotation.y) * movementSpeed, 0.f, -maths::sind(-player.rotation.y) * movementSpeed));
-	}
-
-	void moveLeft(float elapsedTime)
-	{
-		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(-maths::cosd(-player.rotation.y) * movementSpeed, 0.f, maths::sind(-player.rotation.y) * movementSpeed));
-	}
-
-	void moveForward(float elapsedTime)
-	{
-		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(-maths::sind(-player.rotation.y) * movementSpeed, 0.f, -maths::cosd(-player.rotation.y) * movementSpeed));
-	}
-
-	void moveBackward(float elapsedTime)
-	{
-		physixx::applyAcceleration(this->player, elapsedTime, maths::Vec3(maths::sind(-player.rotation.y) * movementSpeed, 0.f, maths::cosd(-player.rotation.y) * movementSpeed));
-	}
-
 	void updatePosition(float elapsedTime)
 	{
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) movementSpeed = 24.f;
-		else movementSpeed = 6.9f;
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) this->movementSpeed = 24.f;
+		else this->movementSpeed = 6.9f;
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) moveForward(elapsedTime);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) moveBackward(elapsedTime);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) moveLeft(elapsedTime);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) moveRight(elapsedTime);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) moveUp(elapsedTime);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) moveDown(elapsedTime);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) playerControls::moveForward(this->player, elapsedTime, this->movementSpeed);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) playerControls::moveBackward(this->player, elapsedTime, this->movementSpeed);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) playerControls::moveLeft(this->player, elapsedTime, this->movementSpeed);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) playerControls::moveRight(this->player, elapsedTime, this->movementSpeed);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) playerControls::moveUp(this->player, elapsedTime, this->movementSpeed);
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) playerControls::moveDown(this->player, elapsedTime, this->movementSpeed);
 		physixx::clipMovement(this->player, elapsedTime, this->gameWorld);
 		physixx::applyMovement(this->player, elapsedTime);
 		physixx::applyFriction(this->player, elapsedTime, 1.f);
@@ -159,11 +159,11 @@ struct Game {
 		this->manageKeys();
 		this->inputManager.update();
 
-		window.setMouseCursorVisible(this->isPaused);
-		this->testButton.setVisible(this->isPaused);
-		this->backToGameButton.setVisible(this->isPaused);
+		window.setMouseCursorVisible(this->currentGuiPtr);
+		this->testButton.setVisible(this->currentGuiPtr);
+		this->backToGameButton.setVisible(this->currentGuiPtr);
 
-		if (!this->isPaused)
+		if (!this->currentGuiPtr)
 		{
 			updateRotation(wsize, window);
 			sf::Time elapsed = clock.restart();
@@ -183,13 +183,24 @@ struct Game {
 		glEnd();
 
 		updateDebugInfo();
+
+		this->simpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
+		this->darkerSimpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
+		
 		drawUI(window);
 
-		if (!this->isPaused && inputManager.isMouseButtonPressed(sf::Mouse::Left))
+		if (!this->currentGuiPtr && inputManager.isMouseButtonPressed(sf::Mouse::Left))
 			playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 
-		this->testButton.tryCallOnClick(window, this->inputManager);
-		this->backToGameButton.tryCallOnClick(window, this->inputManager);
+		for (ui::Button button : this->buttons)
+		{
+			if (this->currentGuiPtr)
+				if (this->currentGuiPtr->guiName == button.parentGuiName)
+				{
+					button.updateHoverState(window);
+					button.tryCallOnClick(this->inputManager);
+				}
+		}
 	}
 
 	void updateDebugInfo()
@@ -213,8 +224,7 @@ struct Game {
 		window.pushGLStates();
 		debugText.drawToWindow(window);
 		debugInfoText.drawToWindow(window);
-		testButton.drawToWindow(window);
-		backToGameButton.drawToWindow(window);
+		if (this->currentGuiPtr) this->currentGuiPtr->draw(window);
 		window.popGLStates();
 	}
 
@@ -222,7 +232,7 @@ struct Game {
 	{
 		if (inputManager.isKeyPressed(sf::Keyboard::Escape))
 		{
-			this->isPaused = !this->isPaused; //TODO Replace by something much better
+			this->currentGuiPtr = !(this->currentGuiPtr) ? &this->pauseGui : nullptr;
 		}
 		else if (inputManager.isKeyPressed(sf::Keyboard::Tab))
 		{
