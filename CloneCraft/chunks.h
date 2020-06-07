@@ -163,11 +163,15 @@ namespace chunks
 			for (int j = 0; j < size; j++)
 				for (int k = 0; k < size; k++)
 				{
+					float height = heightMap[i * 16 + k];
 					chunk->setBlock(
-						(heightMap[i * 16 + k] < float(j - 8) ? blox::air : blox::grass),
+						(height < float(j - 12) ? blox::air : 
+						 height < float(j - 11) ? blox::grass :
+						 height < float(j - 8) ? blox::dirt : blox::stone),
 						i, j, k
 					);
 				}
+
 		chunk->calculateFaces();
 		return chunk;
 	}

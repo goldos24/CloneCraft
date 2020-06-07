@@ -76,6 +76,7 @@ namespace ui
 
 		void drawToWindow(sf::RenderWindow& window)
 		{
+			this->textElement.setPosition(window.mapPixelToCoords(sf::Vector2i(this->x, this->y)));
 			if (this->visible) window.draw(this->textElement);
 		}
 
@@ -96,8 +97,21 @@ namespace ui
 			this->visible = true;
 		}
 
+		void setPosition(int x, int y)
+		{
+			this->x = x;
+			this->y = y;
+			this->sfRectangle.setPosition(x, y);
+		}
+
+		void setPosition(sf::Vector2f pos)
+		{
+			this->setPosition(pos.x, pos.y);
+		}
+
 		void drawToWindow(sf::RenderWindow& window)
 		{
+			this->sfRectangle.setPosition(window.mapPixelToCoords(sf::Vector2i(this->x, this->y)));
 			if (this->visible) window.draw(this->sfRectangle);
 		}
 
@@ -123,10 +137,11 @@ namespace ui
 		void updateHoverState(sf::RenderWindow& window)
 		{
 			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+			sf::Vector2f correctedMousePos = window.mapPixelToCoords(mousePos);
 
 			this->hovered =
-				mousePos.x >= this->x && mousePos.x <= this->x + this->w &&
-				mousePos.y >= this->y && mousePos.y <= this->y + this->h;
+				correctedMousePos.x >= this->x && correctedMousePos.x <= this->x + this->w &&
+				correctedMousePos.y >= this->y && correctedMousePos.y <= this->y + this->h;
 		}
 
 		void tryCallOnClick(input::InputManager inputManager)
