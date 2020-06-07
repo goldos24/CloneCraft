@@ -4,7 +4,7 @@
 
 namespace player
 {
-	const float ROTATION_Y_BOUND = 89.f;
+	const float ROTATION_X_BOUNDS = 89.f;
 
 	struct Player
 	{
@@ -19,12 +19,12 @@ namespace player
 		{
 			this-> rotation.x += X * mouseSpeed;
 			this-> rotation.y += Y * mouseSpeed;
-			if (this->rotation.x < -ROTATION_Y_BOUND) this->rotation.x = -ROTATION_Y_BOUND;
-			if (this->rotation.x > ROTATION_Y_BOUND) this->rotation.x = ROTATION_Y_BOUND;
+			if (this->rotation.x < -ROTATION_X_BOUNDS) this->rotation.x = -ROTATION_X_BOUNDS;
+			if (this->rotation.x > ROTATION_X_BOUNDS) this->rotation.x = ROTATION_X_BOUNDS;
 
 			maths::capDegrees(this->rotation.y);
 		}
 	};
 }
 
-float player::Player::playerReach = 5.f;
+float player::Player::playerReach = 7.f;

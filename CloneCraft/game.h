@@ -185,7 +185,10 @@ struct Game {
 		if (this->currentGuiPtr == nullptr)
 		{
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Right))
+			{
+				std::cout << "Right click" << std::endl;
 				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
+			}
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Left))
 				playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 		}
@@ -208,17 +211,18 @@ struct Game {
 
 		updateDebugInfo();
 
+
+		float windowStretchFactor = 1; // TODO calculate
+
 		this->simpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
 		this->darkerSimpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
 
-		float w1 = this->crosshairRectangle1.sfRectangle.getSize().x;
-		float h1 = this->crosshairRectangle1.sfRectangle.getSize().y;
-		this->crosshairRectangle1.sfRectangle.setPosition(sf::Vector2f(wsize.x / 2 - w1 / 2, wsize.y / 2 - h1 / 2));
+		sf::Vector2f s1 = this->crosshairRectangle1.sfRectangle.getSize();
+		this->crosshairRectangle1.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s1 / 2.f));
 
-		float w2 = this->crosshairRectangle2.sfRectangle.getSize().x;
-		float h2 = this->crosshairRectangle2.sfRectangle.getSize().y;
-		this->crosshairRectangle2.sfRectangle.setPosition(sf::Vector2f(wsize.x / 2 - w2 / 2, wsize.y / 2 - h2 / 2));
-
+		sf::Vector2f s2 = this->crosshairRectangle2.sfRectangle.getSize();
+		this->crosshairRectangle2.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s2 / 2.f));
+		
 		drawUI(window);
 	}
 
