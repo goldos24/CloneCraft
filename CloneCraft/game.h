@@ -159,6 +159,10 @@ struct Game {
 			std::cin >> x >> y >> z;
 			std::cout << gameWorld.getBlockID(maths::Vec3i(x, y, z));
 		}
+		else if (command == "save")
+		{
+			this->gameWorld.save();
+		}
 		this->currentGuiPtr = nullptr;
 	}
 

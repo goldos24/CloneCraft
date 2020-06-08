@@ -15,10 +15,10 @@ namespace world
 	{
 		World()
 		{
-			saveData::Manager mgr;
 			mgr.loadAll();
 			for (auto chonk : mgr.chunks)
 			{
+				chonk->calculateFaces();
 				this->chunks[chunks::createKeyFromPosition(chonk->chunkPos).num] = chonk;
 			}
 			size = maths::cubeof(this->chunkRenderDistance);
@@ -34,6 +34,7 @@ namespace world
 		int size;
 		int chunkRenderDistance = 7;
 		std::map<uint64_t, std::shared_ptr<chunks::Chunk>> chunks;
+		saveData::Manager mgr;
 
 		void moveTo(maths::Vec3i destination) {
 			// Rounding the movement
@@ -158,7 +159,12 @@ namespace world
 
 		bool save() 
 		{
-			return true; // TODO Save the world
+			for (auto keyChunkPair : this->chunks)
+			{
+				mgr.addChunk(keyChunkPair.second);
+			}
+			mgr.saveAll();
+			return true;
 		}
 
 		bool containsChunk(maths::Vec3i chunkPos)
