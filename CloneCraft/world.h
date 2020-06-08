@@ -7,6 +7,7 @@
 #include "chunkData.h"
 #include "chunks.h"
 #include "maths.h"
+#include "files.h"
 
 namespace world
 {
@@ -14,6 +15,12 @@ namespace world
 	{
 		World()
 		{
+			saveData::Manager mgr;
+			mgr.loadAll();
+			for (auto chonk : mgr.chunks)
+			{
+				this->chunks[chunks::createKeyFromPosition(chonk->chunkPos).num] = chonk;
+			}
 			size = maths::cubeof(this->chunkRenderDistance);
 			for (int i = 0; i < size; i++)
 			{
