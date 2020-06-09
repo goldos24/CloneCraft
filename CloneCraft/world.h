@@ -8,6 +8,7 @@
 #include "chunks.h"
 #include "maths.h"
 #include "files.h"
+#include "blockInfo.h"
 
 namespace world
 {
@@ -70,7 +71,7 @@ namespace world
 			return chunk->getBlock(positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 		}
 
-		blox::ID getBlockID(maths::Vec3 blockPosF)
+		blox::ID getBlockID(maths::Vec3f blockPosF)
 		{
 			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
 			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
@@ -85,19 +86,19 @@ namespace world
 			return chunk->placeBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 		}
 
-		void setBlockID(maths::Vec3 blockPosF, blox::ID id)
+		void setBlockID(maths::Vec3f blockPosF, blox::ID id)
 		{
 			auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
 			auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
 			return chunk->placeBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 		}
 
-		std::shared_ptr<chunks::Chunk> findChunkFromPlayerPosition(maths::Vec3 playerPosition)
+		std::shared_ptr<chunks::Chunk> findChunkFromPlayerPosition(maths::Vec3f playerPosition)
 		{
 			return getChunk(chunks::convertToChunkPos(playerPosition));
 		}
 
-		maths::Vec3 getPlayerPositionInsideCurrentChunk(maths::Vec3 playerPosition)
+		maths::Vec3f getPlayerPositionInsideCurrentChunk(maths::Vec3f playerPosition)
 		{
 			maths::Vec3i chunkPos = chunks::convertToChunkPos(playerPosition);
 
@@ -113,7 +114,7 @@ namespace world
 			if (pY < 0.f) { pY += float(chunks::size); }
 			if (pZ < 0.f) { pZ += float(chunks::size); }
 
-			return maths::Vec3(pX, pY, pZ);
+			return maths::Vec3f(pX, pY, pZ);
 		}
 
 		void loadChunk(maths::Vec3i chunkPos)

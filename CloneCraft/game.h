@@ -17,11 +17,12 @@
 #include "physics.h"
 #include "input.h"
 #include "playerControls.h"
+#include "blockInfo.h"
 
 struct Game {
 	Game()
 	{
-		this->player.position = maths::Vec3(0, 20, 0);
+		this->player.position = maths::Vec3f(0, 20, 0);
 
 		this->pauseGui.addElement(&this->simpleBackgroundRect);
 		this->addButton(this->pauseGui, this->testButton);
@@ -151,7 +152,7 @@ struct Game {
 		{
 			float x, y, z;
 			std::cin >> x >> y >> z;
-			this->player.position = maths::Vec3(x, y, z);
+			this->player.position = maths::Vec3f(x, y, z);
 		}
 		else if (command == "getblock")
 		{

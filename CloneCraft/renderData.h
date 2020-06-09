@@ -6,6 +6,7 @@
 #include "renderer.h"
 #include "facePosition.h"
 #include "blocks.h"
+#include "blockInfo.h"
 
 namespace renderData
 {
@@ -18,14 +19,14 @@ namespace renderData
 			vertices(renderer::vertices::faces + position)
 		{
 			blox::eliminateFalseID(blockID);
-			this->position = maths::Vec3( float(blockPosition.x), float(blockPosition.y), float(blockPosition.z)) ;
+			this->position = maths::Vec3f( float(blockPosition.x), float(blockPosition.y), float(blockPosition.z)) ;
 			this->texture = blox::getByID(blockID).texture->getFaceTexture(position);
 		}
 
 		const renderer::FaceVertexContainer* vertices;
 		textures::FaceTexture* texture;
 
-		maths::Vec3 position;
+		maths::Vec3f position;
 
 		void render()
 		{

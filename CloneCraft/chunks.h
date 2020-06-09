@@ -7,6 +7,7 @@
 #include <memory>
 #include "terrainGenerator.h"
 #include "chunkData.h"
+#include "blockInfo.h"
 
 namespace chunks 
 {

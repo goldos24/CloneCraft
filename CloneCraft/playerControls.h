@@ -20,22 +20,22 @@ namespace playerControls
 
 	void moveRight(player::Player& player, float elapsedTime, float movementSpeed)
 	{
-		physixx::applyAcceleration(player, elapsedTime, maths::Vec3(maths::cosd(-player.rotation.y) * movementSpeed, 0.f, -maths::sind(-player.rotation.y) * movementSpeed));
+		physixx::applyAcceleration(player, elapsedTime, maths::Vec3f(maths::cosd(-player.rotation.y) * movementSpeed, 0.f, -maths::sind(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveLeft(player::Player& player, float elapsedTime, float movementSpeed)
 	{
-		physixx::applyAcceleration(player, elapsedTime, maths::Vec3(-maths::cosd(-player.rotation.y) * movementSpeed, 0.f, maths::sind(-player.rotation.y) * movementSpeed));
+		physixx::applyAcceleration(player, elapsedTime, maths::Vec3f(-maths::cosd(-player.rotation.y) * movementSpeed, 0.f, maths::sind(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveForward(player::Player& player, float elapsedTime, float movementSpeed)
 	{
-		physixx::applyAcceleration(player, elapsedTime, maths::Vec3(-maths::sind(-player.rotation.y) * movementSpeed, 0.f, -maths::cosd(-player.rotation.y) * movementSpeed));
+		physixx::applyAcceleration(player, elapsedTime, maths::Vec3f(-maths::sind(-player.rotation.y) * movementSpeed, 0.f, -maths::cosd(-player.rotation.y) * movementSpeed));
 	}
 
 	void moveBackward(player::Player& player, float elapsedTime, float movementSpeed)
 	{
-		physixx::applyAcceleration(player, elapsedTime, maths::Vec3(maths::sind(-player.rotation.y) * movementSpeed, 0.f, maths::cosd(-player.rotation.y) * movementSpeed));
+		physixx::applyAcceleration(player, elapsedTime, maths::Vec3f(maths::sind(-player.rotation.y) * movementSpeed, 0.f, maths::cosd(-player.rotation.y) * movementSpeed));
 	}
 
 	void jump(player::Player& player, float height, world::World& world)
@@ -46,6 +46,6 @@ namespace playerControls
 
 	void applyGravity(player::Player& player, float elapsedTime, float gravity)
 	{
-		physixx::applyAcceleration(player, elapsedTime, maths::Vec3(0.f, -1.f, 0.f) * gravity);
+		physixx::applyAcceleration(player, elapsedTime, maths::Vec3f(0.f, -1.f, 0.f) * gravity);
 	}
 }

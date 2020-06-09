@@ -26,7 +26,6 @@ namespace texStorage
 				for (int j = 0; j < this->textureWidth; j++)
 				{
 					auto pixel = image.getPixel(j, i);
-					maths::color::normalizeRef(pixel);
 					this->contentImage.setPixel(j + currentBeginX, i, pixel);
 				}
 			this->currentTexCoordBeginX += float(this->textureWidth) / float(this->storageWidth);

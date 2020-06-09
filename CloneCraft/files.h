@@ -46,9 +46,11 @@ namespace saveData
 	std::shared_ptr<chunks::Chunk> loadSimpleChunk(std::ifstream& inputFile)
 	{
 		auto chunk = std::make_shared<chunks::Chunk>();
-		chunk->chunkPos.x = (int)loadInt(inputFile).num; if (chunk->chunkPos.x == 1)chunk->chunkPos.x = 0;
-		chunk->chunkPos.y = (int)loadInt(inputFile).num; if (chunk->chunkPos.y == 1)chunk->chunkPos.y = 0;
-		chunk->chunkPos.z = (int)loadInt(inputFile).num; if (chunk->chunkPos.z == 1)chunk->chunkPos.z = 0;
+		chunk->chunkPos.x = (int)loadInt(inputFile).num;
+		chunk->chunkPos.y = (int)loadInt(inputFile).num;
+		chunk->chunkPos.z = (int)loadInt(inputFile).num;
+		bool pront = false;
+		if (chunk->chunkPos.x == 0 && chunk->chunkPos.y == 0 && chunk->chunkPos.z == 0) pront = true;
 		for (int i = 0; i < maths::cubeof(chunks::size); i++)
 		{
 			char c;inputFile.get(c);
@@ -69,17 +71,9 @@ namespace saveData
 	void saveSimpleChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk)
 	{
 		outputFile << char(Format::simpleCharFormat);
-		if (chunk->chunkPos == maths::Vec3i{ 0, 0, 0 })
-		{
-			for (int i = 0; i < 3; i++)
-				saveInt(outputFile, 1);
-		}
-		else
-		{
 			saveInt(outputFile, chunk->chunkPos.x);
 			saveInt(outputFile, chunk->chunkPos.y);
 			saveInt(outputFile, chunk->chunkPos.z);
-		}
 		for (int i = 0; i < maths::cubeof(chunks::size); i++)
 		{
 			outputFile << char(chunk->blocks[i]);

@@ -15,7 +15,7 @@ namespace player
 
 		static float playerReach;
 
-		maths::Vec3 position, rotation, movement, hitbox = maths::Vec3(0.7f, 1.8f, 0.7f);
+		maths::Vec3f position, rotation, movement, hitbox = maths::Vec3f(0.7f, 1.8f, 0.7f);
 
 		void rotate(float X, float Y, float mouseSpeed)
 		{
@@ -32,7 +32,7 @@ namespace player
 			for (float i = -this->hitbox.x / 2.f; i < this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
 				for (float k = -this->hitbox.z / 2.f; k < this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
 				{
-					if (world.getBlockID(this->position + maths::Vec3(i, - this->hitbox.y, k)) != blox::air) return true;
+					if (world.getBlockID(this->position + maths::Vec3f(i, - this->hitbox.y, k)) != blox::air) return true;
 				}
 			return false;
 		}

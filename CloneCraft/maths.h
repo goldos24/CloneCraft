@@ -1,6 +1,5 @@
 #pragma once
 #include <math.h>
-#include <SFML/Graphics/Color.hpp>
 #include <string>
 #include <iostream>
 
@@ -18,11 +17,11 @@ namespace maths
 	typedef unsigned short uint16;
 
 	template<class num>
-	struct genericVec3
+	struct Vec3
 	{
-		genericVec3() {}
+		Vec3() {}
 
-		genericVec3(num x, num y, num z)
+		Vec3(num x, num y, num z)
 		{
 			this->x = x;
 			this->y = y;
@@ -32,68 +31,68 @@ namespace maths
 		num y = 0.f;
 		num z = 0.f;
 
-		genericVec3<num> operator * (num factor)
+		Vec3<num> operator * (num factor)
 		{
-			return genericVec3<num>(
+			return Vec3<num>(
 				this->x * factor,
 				this->y * factor,
 				this->z * factor
 			);
 		}
 
-		genericVec3<num> operator *= (num factor)
+		Vec3<num> operator *= (num factor)
 		{
 			*this = *this * factor;
 			return *this;
 		}
 
-		genericVec3<num> operator / (genericVec3<num> theOtherVec3) // wtf?
+		Vec3<num> operator / (Vec3<num> theOtherVec3) // wtf?
 		{
-			return genericVec3<num>(
+			return Vec3<num>(
 				this->x / theOtherVec3.x,
 				this->y / theOtherVec3.y,
 				this->z / theOtherVec3.z
 				);
 		}
 
-		genericVec3<num> operator / (num divisor)
+		Vec3<num> operator / (num divisor)
 		{
 			return *this * (num(1) / divisor);
 		}
 
-		genericVec3<num> operator + (genericVec3<num> theOtherVec3)
+		Vec3<num> operator + (Vec3<num> theOtherVec3)
 		{
-			return genericVec3<num>(
+			return Vec3<num>(
 				this->x + theOtherVec3.x,
 				this->y + theOtherVec3.y,
 				this->z + theOtherVec3.z
 				);
 		}
 
-		genericVec3<num> operator - (genericVec3<num> theOtherVec3)
+		Vec3<num> operator - (Vec3<num> theOtherVec3)
 		{
-			return genericVec3<num>(
+			return Vec3<num>(
 				this->x - theOtherVec3.x,
 				this->y - theOtherVec3.y,
 				this->z - theOtherVec3.z
 				);
 		}
 
-		genericVec3<num> floor(num unitSize)
+		Vec3<num> floor(num unitSize)
 		{
-			auto resultDouble = genericVec3<double>(round(double(this->x) / double(unitSize) - 0.5), round(double(this->y) / double(unitSize) - 0.5), round(double(this->z) / double(unitSize) - 0.5));
+			auto resultDouble = Vec3<double>(round(double(this->x) / double(unitSize) - 0.5), round(double(this->y) / double(unitSize) - 0.5), round(double(this->z) / double(unitSize) - 0.5));
 			resultDouble *= double(unitSize);
-			return genericVec3<num>( num(resultDouble.x), num(resultDouble.y), num(resultDouble.z));
+			return Vec3<num>( num(resultDouble.x), num(resultDouble.y), num(resultDouble.z));
 		}
 
-		genericVec3<num> ceil(num unitSize)
+		Vec3<num> ceil(num unitSize)
 		{
-			auto resultDouble = genericVec3<double>(round(double(this->x) / double(unitSize) + 0.499), round(double(this->y) / double(unitSize) + 0.499), round(double(this->z) / double(unitSize) + 0.499));
+			auto resultDouble = Vec3<double>(round(double(this->x) / double(unitSize) + 0.499), round(double(this->y) / double(unitSize) + 0.499), round(double(this->z) / double(unitSize) + 0.499));
 			resultDouble *= double(unitSize);
-			return genericVec3<num>(num(resultDouble.x), num(resultDouble.y), num(resultDouble.z));
+			return Vec3<num>(num(resultDouble.x), num(resultDouble.y), num(resultDouble.z));
 		}
 
-		auto& operator += (genericVec3<num>&& theOtherVec3)
+		auto& operator += (Vec3<num>&& theOtherVec3)
 		{
 			this->x += theOtherVec3.x;
 			this->y += theOtherVec3.y;
@@ -102,7 +101,7 @@ namespace maths
 			return *this;
 		}
 
-		bool isInBounds(genericVec3<num> a, genericVec3<num> b)
+		bool isInBounds(Vec3<num> a, Vec3<num> b)
 		{
 			return
 				this->x >= a.x &&
@@ -113,7 +112,7 @@ namespace maths
 				this->z < b.z;
 		}
 
-		num overlySimpleDistanceTo(genericVec3<num> otherVec3)
+		num overlySimpleDistanceTo(Vec3<num> otherVec3)
 		{
 			num distance = abs(this->x - otherVec3.x);
 			if(abs(this->y - otherVec3.y) > distance) distance = abs(this->y - otherVec3.y);
@@ -126,21 +125,21 @@ namespace maths
 			return "( x : " + std::to_string(this->x) + ", y : " + std::to_string(this->y) + ", z : " + std::to_string(this->z) + " )";
 		}
 
-		bool operator == (genericVec3<num>& theOtherVec3)
+		bool operator == (Vec3<num>& theOtherVec3)
 		{
 			return this->x == theOtherVec3.x &&
 				this->y == theOtherVec3.y &&
 				this->z == theOtherVec3.z;
 		}
 
-		bool operator == (genericVec3<num>&& theOtherVec3)
+		bool operator == (Vec3<num>&& theOtherVec3)
 		{
 			return this->x == theOtherVec3.x &&
 				this->y == theOtherVec3.y &&
 				this->z == theOtherVec3.z;
 		}
 
-		bool operator == (genericVec3<num>* theOtherVec3)
+		bool operator == (Vec3<num>* theOtherVec3)
 		{
 			return this->x == theOtherVec3->x &&
 				this->y == theOtherVec3->y &&
@@ -149,13 +148,13 @@ namespace maths
 	};
 
 	template <class sourceNum, class targetNum> 
-	genericVec3<targetNum> convertVec3(genericVec3<sourceNum> source)
+	Vec3<targetNum> convertVec3(Vec3<sourceNum> source)
 	{
-		return genericVec3<targetNum>(targetNum(source.x), targetNum(source.y), targetNum(source.z));
+		return Vec3<targetNum>(targetNum(source.x), targetNum(source.y), targetNum(source.z));
 	}
 
-	typedef genericVec3<float> Vec3;
-	typedef genericVec3<int> Vec3i;
+	typedef Vec3<float> Vec3f;
+	typedef Vec3<int> Vec3i;
 
 	namespace unitVectors
 	{
@@ -188,7 +187,7 @@ namespace maths
 
 		Vec2<num> operator * (num factor)
 		{
-			return genericVec3<num>(
+			return Vec3<num>(
 				this->x * factor,
 				this->y * factor
 				);
@@ -231,7 +230,7 @@ namespace maths
 	}
 
 	template <class num>
-	genericVec3<num> positionFromRotation(genericVec3<num> rotation)
+	Vec3<num> positionFromRotation(Vec3<num> rotation)
 	{
 		num fixedRotationX = rotation.x + num(90);
 		num rightAngleMinusFixedRotationX = num(90) - fixedRotationX;
@@ -240,7 +239,7 @@ namespace maths
 		num tX = cosd(rightAngleMinusRotationY) * abs(cosd(rightAngleMinusFixedRotationX));
 		num tY = sind(rightAngleMinusFixedRotationX);
 		num tZ = sind(-rightAngleMinusRotationY) * abs(cosd(rightAngleMinusFixedRotationX));
-		return genericVec3<num>(tX, tY, tZ);
+		return Vec3<num>(tX, tY, tZ);
 	}
 
 	constexpr float cubeof(float x) { return x * x * x; };
@@ -289,24 +288,6 @@ namespace maths
 			i -= z;
 		}
 	}
-
-	namespace color
-	{
-		uint8 normalizeChannel(uint8 channel)
-		{
-			return uint8( sqrt( float(channel) / 255 ) * 255.f );
-		}
-
-		void normalizeRef(sf::Color& color)
-		{
-			/*color = sf::Color(
-				normalizeChannel(color.r),
-				normalizeChannel(color.g),
-				normalizeChannel(color.b),
-				color.a
-			);*/
-		}
-	}
 }
 
 
@@ -317,7 +298,7 @@ std::ostream& operator<<(std::ostream& output, maths::Vec3i vector)
 	return output << vector.toString();
 }
 
-std::ostream& operator<<(std::ostream& output, maths::Vec3 vector)
+std::ostream& operator<<(std::ostream& output, maths::Vec3f vector)
 {
 	return output << vector.toString();
 }
