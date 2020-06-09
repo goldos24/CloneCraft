@@ -55,22 +55,15 @@ struct Entity
 
 	void clipMovement(float elapsedTime, world::World& world)
 	{
-		auto oldMovementVector = this->movement;
 		auto appliedMovementVector = this->movement * elapsedTime;
-		this->position += appliedMovementVector;
-		if (this->isColliding(world)) this->movement = maths::Vec3<float>(0.f, 0.f, 0.f);
-		this->position -= appliedMovementVector;
-
-		this->position += maths::Vec3<float>(appliedMovementVector.x, 0.f, 0.f);
-		if (!this->isColliding(world)) this->movement.x = oldMovementVector.x;
-		this->position -= maths::Vec3<float>(appliedMovementVector.x, 0.f, 0.f);
-
-		this->position += maths::Vec3<float>(0.f, appliedMovementVector.y, 0.f);
-		if (!this->isColliding(world)) this->movement.y = oldMovementVector.y;
-		this->position -= maths::Vec3<float>(0.f, appliedMovementVector.y, 0.f);
-
-		this->position += maths::Vec3<float>(0.f, 0.f, appliedMovementVector.z);
-		if (!this->isColliding(world)) this->movement.z = oldMovementVector.z;
-		this->position -= maths::Vec3<float>(0.f, 0.f, appliedMovementVector.z);
+		for (float j = 0; j < this->hitbox.y; j++)
+		{
+			if (world.getBlockID(this->position + maths::Vec3<float>(appliedMovementVector.x + this->movement.x > 0 ? 0.35 : -0.35, -j, 0.f)) != blox::air) this->movement.x = 0.f;
+			// TODO fix bug with ze collision
+			for (float i = -this->hitbox.x / 2.f; i < this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
+				for (float k = -this->hitbox.z / 2.f; k < this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
+					if (world.getBlockID(this->position + maths::Vec3<float>(i, appliedMovementVector.y + this->movement.y > 0 ? 0.f : -(j + 1 > this->hitbox.y ? this->hitbox.y : j), k)) != blox::air) this->movement.y = 0.f;
+			if (world.getBlockID(this->position + maths::Vec3<float>(0.f, -j, appliedMovementVector.z + this->movement.z > 0 ? 0.35 : -0.35)) != blox::air) this->movement.z = 0.f;
+		}
 	}
 };
