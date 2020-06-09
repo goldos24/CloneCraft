@@ -14,7 +14,6 @@
 #include "world.h"
 #include "gui.h"
 #include "playerWorldInteraction.h"
-#include "physics.h"
 #include "input.h"
 #include "playerControls.h"
 #include "blockInfo.h"
@@ -129,9 +128,9 @@ struct Game {
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) playerControls::moveRight(this->player, elapsedTime, this->movementSpeed);
 		if (this->inputManager.isKeyBeingPressed(sf::Keyboard::Space)) playerControls::jump(this->player, 10.f, this->gameWorld);
 		playerControls::applyGravity(this->player, elapsedTime, 18.f);
-		physixx::clipMovement(this->player, elapsedTime, this->gameWorld);
-		physixx::applyMovement(this->player, elapsedTime);
-		physixx::applyFriction(this->player, elapsedTime, friction);
+		this->player.clipMovement(elapsedTime, this->gameWorld);
+		this->player.applyMovement(elapsedTime);
+		this->player.applyFriction(elapsedTime, friction);
 	}
 
 	void getAndRunCommand()

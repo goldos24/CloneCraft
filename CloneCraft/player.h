@@ -3,19 +3,20 @@
 #include "maths.h"
 #include "world.h"
 #include "blocks.h"
+#include "Entity.h"
 
 namespace player
 {
 	const float ROTATION_X_BOUNDS = 89.f;
 
-	struct Player
+	struct Player : Entity
 	{
 		Player()
-		{}
+		{
+			this->hitbox = maths::Vec3<float>(0.7f, 1.8f, 0.7f);
+		}
 
 		static float playerReach;
-
-		maths::Vec3<float> position, rotation, movement, hitbox = maths::Vec3<float>(0.7f, 1.8f, 0.7f);
 
 		void rotate(float X, float Y, float mouseSpeed)
 		{
@@ -25,16 +26,6 @@ namespace player
 			if (this->rotation.x > ROTATION_X_BOUNDS) this->rotation.x = ROTATION_X_BOUNDS;
 
 			maths::capDegrees(this->rotation.y);
-		}
-
-		bool isStandingOnASurface(world::World& world)
-		{
-			for (float i = -this->hitbox.x / 2.f; i < this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
-				for (float k = -this->hitbox.z / 2.f; k < this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
-				{
-					if (world.getBlockID(this->position + maths::Vec3<float>(i, - this->hitbox.y, k)) != blox::air) return true;
-				}
-			return false;
 		}
 	};
 }

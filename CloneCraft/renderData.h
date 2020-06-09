@@ -34,7 +34,7 @@ namespace renderData
 		}
 	};
 
-	auto makeFace(blox::ID id, int x, int y, int z, bool swapSides, facePos::FacePosition facePosition)
+	BlockFace makeFace(blox::ID id, int x, int y, int z, bool swapSides, facePos::FacePosition facePosition)
 	{
 		auto position = !swapSides ?
 			facePosition

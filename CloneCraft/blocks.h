@@ -17,7 +17,7 @@ namespace blox
 		if (id >= enumSize)  id = air; 
 	}
 
-	auto isTransparent(ID blockId) -> bool
+	bool isTransparent(ID blockId) 
 	{
 		return blockId == air;
 	}

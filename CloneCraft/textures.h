@@ -50,7 +50,7 @@ namespace textures
 			this->back = back;
 		}
 
-		auto getFaceTexture(facePos::FacePosition position)
+		FaceTexture* getFaceTexture(facePos::FacePosition position)
 		{
 			switch (position)
 			{

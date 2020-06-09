@@ -11,17 +11,17 @@
 
 namespace chunks 
 {
-	auto coordinateToIndex(int x, int y, int z)
+	int coordinateToIndex(int x, int y, int z)
 	{
 		return maths::coord::coordinateToIndex(x, y, z, size);
 	}
 
-	auto indexToCoordinate(int i, int& x, int& y, int& z)
+	void indexToCoordinate(int i, int& x, int& y, int& z)
 	{
 		maths::coord::indexToCoordinate(i, x, y, z, size);
 	}
 
-	auto isCoordinateInBounds(int x, int y, int z)
+	bool isCoordinateInBounds(int x, int y, int z)
 	{
 		return maths::is3dCoordInRange(x, y, z, 0, size);
 	}
@@ -46,14 +46,14 @@ namespace chunks
 
 
 
-		auto getBlock(int x, int y, int z)
+		blox::ID getBlock(int x, int y, int z)
 		{
 			if ( ! isCoordinateInBounds(x, y, z) )
 				return blox::air;
 			return this-> blocks[ coordinateToIndex(x, y, z) ];
 		}
 
-		auto setBlock(blox::ID id, int x, int y, int z)
+		void setBlock(blox::ID id, int x, int y, int z)
 		{
 			if (!isCoordinateInBounds(x, y, z))
 				return;
@@ -117,7 +117,7 @@ namespace chunks
 					}
 		}
 
-		auto Render() //TODO replace loop
+		void Render() //TODO replace loop
 		{
 			for (auto face : renderData)
 				face.render();
@@ -125,7 +125,7 @@ namespace chunks
 
 	};
 
-	auto initFlatChunk(maths::Vec3<int> chunkPos)
+	std::shared_ptr<Chunk> initFlatChunk(maths::Vec3<int> chunkPos)
 	{
 		std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
 		chunk->chunkPos = chunkPos;
@@ -143,7 +143,7 @@ namespace chunks
 		return chunk;
 	}
 
-	auto initNormalChunk(maths::Vec3<int> chunkPos)
+	std::shared_ptr<Chunk> initNormalChunk(maths::Vec3<int> chunkPos)
 	{
 		std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
 		chunk->chunkPos = chunkPos;

@@ -5,7 +5,6 @@
 #include "maths.h"
 #include "blocks.h"
 #include "chunks.h"
-#include "physics.h"
 
 namespace playerWorldInteraction
 {
@@ -38,6 +37,6 @@ namespace playerWorldInteraction
 		if (world.getBlockID(oldBlockPos) == blox::air) return;
 		auto newBlockPos = oldBlockPos + maths::positionFromRotation<float>(player.rotation) * -.5f;
 		world.setBlockID(newBlockPos, blox::stone);
-		if(physixx::isColliding(player, world)) world.setBlockID(newBlockPos, blox::air);
+		if(player.isColliding(world)) world.setBlockID(newBlockPos, blox::air);
 	}
 }

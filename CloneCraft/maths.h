@@ -92,7 +92,7 @@ namespace maths
 			return Vec3<num>(num(resultDouble.x), num(resultDouble.y), num(resultDouble.z));
 		}
 
-		auto& operator += (Vec3<num>&& theOtherVec3)
+		Vec3<num>& operator += (Vec3<num>&& theOtherVec3)
 		{
 			this->x += theOtherVec3.x;
 			this->y += theOtherVec3.y;
@@ -193,7 +193,7 @@ namespace maths
 
 	const float pi = 3.1415926535897932384626433832795;
 
-	auto degreesToRadians(float degrees)
+	float degreesToRadians(float degrees)
 	{
 		return degrees / 180 * pi;
 	}
@@ -257,12 +257,12 @@ namespace maths
 
 	namespace coord
 	{
-		auto coordinateToIndex(int x, int y, int z, int size) -> int
+		int coordinateToIndex(int x, int y, int z, int size)
 		{
 			return x * size * size + y * size + z;
 		}
 
-		auto indexToCoordinate(int i, int& x, int& y, int& z, int size)
+		void indexToCoordinate(int i, int& x, int& y, int& z, int size)
 		{
 			x = i / size / size;
 			i -= x * size * size;

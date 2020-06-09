@@ -18,7 +18,7 @@ namespace renderer
         float x3; float y3; float z3;
         float x4; float y4; float z4;
 
-        auto addVec3f(maths::Vec3<float> absolutePosition) const
+        FaceVertexContainer addVec3f(maths::Vec3<float> absolutePosition) const
         {
             FaceVertexContainer result;
             result.x1 = this->x1 + absolutePosition.x;
