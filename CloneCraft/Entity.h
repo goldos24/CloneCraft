@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cmath>
 #include "world.h"
 
 struct Entity
@@ -12,10 +13,13 @@ struct Entity
 
 	bool isStandingOnASurface(world::World& world)
 	{
-		for (float i = -this->hitbox.x / 2.f; i < this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
-			for (float k = -this->hitbox.z / 2.f; k < this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
+		for (float i = -this->hitbox.x / 2.f; i <= this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
+			for (float k = -this->hitbox.z / 2.f; k <= this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
 			{
-				if (world.getBlockID(this->position + maths::Vec3<float>(i, -this->hitbox.y, k)) != blox::air) return true;
+				if (world.getBlockID(this->position + maths::Vec3<float>(i, -this->hitbox.y -1.f, k)) != blox::air && 
+					world.getBlockID(this->position + maths::Vec3<float>(i, -this->hitbox.y, k)) == blox::air && 
+					this->position.y - this->hitbox.y >= floorf(this->position.y - this->hitbox.y) - 0.01f && this->position.y - this->hitbox.y < floorf(this->position.y - this->hitbox.y) + 0.01f
+					) return true;
 			}
 		return false;
 	}
@@ -39,15 +43,15 @@ struct Entity
 
 	bool isColliding(world::World& world)
 	{
-		for (float i = -this->hitbox.x / 2.f; i < this->hitbox.x / 2.f; i++)
+		for (float i = -this->hitbox.x / 2.f; i <= this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
 			for (float j = 0; j < this->hitbox.y; j++)
-				for (float k = -this->hitbox.z / 2.f; k < this->hitbox.z / 2.f; k++)
+				for (float k = -this->hitbox.z / 2.f; k <= this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
 				{
 					if (world.getBlockID(this->position + maths::Vec3<float>(
 						i > this->hitbox.x / 2.f ? this->hitbox.x / 2.f : i,
 						-(j + 1 > this->hitbox.y ? this->hitbox.y : j),
 						k > this->hitbox.z / 2.f ? this->hitbox.z / 2.f : k
-						)))
+						)) != blox::air)
 						return true;
 				}
 		return false;
@@ -56,14 +60,17 @@ struct Entity
 	void clipMovement(float elapsedTime, world::World& world)
 	{
 		auto appliedMovementVector = this->movement * elapsedTime;
-		for (float j = 0; j < this->hitbox.y; j++)
-		{
-			if (world.getBlockID(this->position + maths::Vec3<float>(appliedMovementVector.x + this->movement.x > 0 ? 0.35 : -0.35, -j, 0.f)) != blox::air) this->movement.x = 0.f;
-			// TODO fix bug with ze collision
-			for (float i = -this->hitbox.x / 2.f; i < this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
-				for (float k = -this->hitbox.z / 2.f; k < this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
-					if (world.getBlockID(this->position + maths::Vec3<float>(i, appliedMovementVector.y + this->movement.y > 0 ? 0.f : -(j + 1 > this->hitbox.y ? this->hitbox.y : j), k)) != blox::air) this->movement.y = 0.f;
-			if (world.getBlockID(this->position + maths::Vec3<float>(0.f, -j, appliedMovementVector.z + this->movement.z > 0 ? 0.35 : -0.35)) != blox::air) this->movement.z = 0.f;
-		}
+
+		this->position += maths::Vec3<float>(appliedMovementVector.x, 0.f, 0.f);
+		if (this->isColliding(world)) this->movement.x = 0.f;
+		this->position -= maths::Vec3<float>(appliedMovementVector.x, 0.f, 0.f);
+
+		this->position += maths::Vec3<float>(0.f, appliedMovementVector.y, 0.f);
+		if (this->isColliding(world)) this->movement.y = 0.f;
+		this->position -= maths::Vec3<float>(0.f, appliedMovementVector.y, 0.f);
+
+		this->position += maths::Vec3<float>(0.f, 0.f, appliedMovementVector.z);
+		if (this->isColliding(world)) this->movement.z = 0.f;
+		this->position -= maths::Vec3<float>(0.f, 0.f, appliedMovementVector.z);
 	}
 };
