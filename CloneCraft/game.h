@@ -30,6 +30,7 @@ struct Game {
 
 		this->optionsGui.addElement(&this->darkerSimpleBackgroundRect);
 		this->addButton(this->optionsGui, this->backToPauseGuiButton);
+		this->addButton(this->optionsGui, this->saveWorldButton);
 	}
 
 	void addButton(gui::Gui& gui, ui::Button& button)
@@ -49,18 +50,21 @@ struct Game {
 	ui::Text debugText = ui::Text("", "Debug", ui::fonts::comicSansBold, sf::Color::White, 1, 0, 18);
 	ui::Text debugInfoText = ui::Text("", "", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
 
-	ui::Button testButton = ui::Button("pause", 1, 200, 200, 46,
+	ui::Button testButton = ui::Button("pause", 1, 190, 200, 46,
 		sf::Color(0, 0, 0, 125), "Test", ui::fonts::comicSans, sf::Color::White, 30,
 		[]() { std::cout << "Test!" << std::endl; });
-	ui::Button optionsButton = ui::Button("pause", 1, 260, 200, 46,
+	ui::Button optionsButton = ui::Button("pause", 1, 250, 200, 46,
 		sf::Color(0, 0, 0, 125), "Options", ui::fonts::comicSans, sf::Color::White, 30,
 		[this]() { this->currentGuiPtr = &this->optionsGui; });
-	ui::Button backToGameButton = ui::Button("pause", 1, 320, 200, 46,
+	ui::Button backToGameButton = ui::Button("pause", 1, 310, 200, 46,
 		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::comicSans, sf::Color::White, 30,
 		[this]() { this->currentGuiPtr = nullptr; });
-	ui::Button backToPauseGuiButton = ui::Button("options", 1, 380, 200, 46,
+	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 200, 46,
 		sf::Color(0, 0, 0, 125), "Back", ui::fonts::comicSans, sf::Color::White, 30,
 		[this]() { this->currentGuiPtr = &this->pauseGui; });
+	ui::Button saveWorldButton = ui::Button("options", 1, 190, 200, 46,
+		sf::Color(0, 0, 0, 125), "Save world", ui::fonts::comicSans, sf::Color::White, 30,
+		[this]() { this->gameWorld.save(); });
 
 	ui::Rect simpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 125));
 	ui::Rect darkerSimpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 195));

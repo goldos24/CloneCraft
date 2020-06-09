@@ -160,6 +160,7 @@ namespace world
 
 		bool save() 
 		{
+			std::cout << "Saved the world." << std::endl;
 			for (auto keyChunkPair : this->chunks)
 			{
 				mgr.addChunk(keyChunkPair.second);
