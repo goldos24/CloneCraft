@@ -13,42 +13,25 @@
 namespace saveData 
 {
 
-	union SavedInt
-	{
-		SavedInt() {}
-
-		SavedInt(int num)
-		{
-			this->num = num;
-		}
-
-		int64_t num;
-
-		char bytes[sizeof(int64_t)];
-	};
-
 	enum class Format : unsigned char
 	{
 		simpleCharFormat = 1
 	};
 
-	SavedInt loadInt(std::ifstream& inputFile)
+	int loadInt(std::ifstream& inputFile)
 	{
-		SavedInt result;
-		for (int i = 0; i < sizeof(int64_t); i++)
-		{
-			char c;inputFile.get(c);
-			result.bytes[i] = c;
-		}
+		int result;
+		inputFile >> result;
+		char c; inputFile.get(c); // Ignoring the next char which is '\n'
 		return result;
 	}
 
 	std::shared_ptr<chunks::Chunk> loadSimpleChunk(std::ifstream& inputFile)
 	{
 		auto chunk = std::make_shared<chunks::Chunk>();
-		chunk->chunkPos.x = (int)loadInt(inputFile).num;
-		chunk->chunkPos.y = (int)loadInt(inputFile).num;
-		chunk->chunkPos.z = (int)loadInt(inputFile).num;
+		chunk->chunkPos.x = loadInt(inputFile);
+		chunk->chunkPos.y = loadInt(inputFile);
+		chunk->chunkPos.z = loadInt(inputFile);
 		bool pront = false;
 		if (chunk->chunkPos.x == 0 && chunk->chunkPos.y == 0 && chunk->chunkPos.z == 0) pront = true;
 		for (int i = 0; i < maths::cubeof(chunks::size); i++)
@@ -61,11 +44,7 @@ namespace saveData
 
 	void saveInt(std::ofstream& outputFile, int data)
 	{
-		SavedInt encodedData(data);
-		for (int i = 0; i < sizeof(int64_t); i++)
-		{
-			outputFile << encodedData.bytes[i];
-		}
+		outputFile << '\n' << data << '\n';
 	}
 
 	void saveSimpleChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk)
