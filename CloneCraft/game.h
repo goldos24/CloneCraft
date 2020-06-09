@@ -47,23 +47,23 @@ struct Game {
 	maths::Vec3<int> lastChunkUpdatePosition;
 	std::ostringstream debugInfoStream;
 
-	ui::Text debugText = ui::Text("", "Debug", ui::fonts::comicSansBold, sf::Color::White, 1, 0, 18);
-	ui::Text debugInfoText = ui::Text("", "", ui::fonts::comicSans, sf::Color::White, 1, 25, 13);
+	ui::Text debugText = ui::Text("", "Debug", ui::fonts::dos, sf::Color::White, 1, 0, 17);
+	ui::Text debugInfoText = ui::Text("", "", ui::fonts::dos, sf::Color::White, 1, 25, 14);
 
-	ui::Button testButton = ui::Button("pause", 1, 190, 200, 46,
-		sf::Color(0, 0, 0, 125), "Test", ui::fonts::comicSans, sf::Color::White, 30,
+	ui::Button testButton = ui::Button("pause", 1, 190, 2, 2,
+		sf::Color(0, 0, 0, 125), "Test", ui::fonts::dos, sf::Color::White, 30,
 		[]() { std::cout << "Test!" << std::endl; });
-	ui::Button optionsButton = ui::Button("pause", 1, 250, 200, 46,
-		sf::Color(0, 0, 0, 125), "Options", ui::fonts::comicSans, sf::Color::White, 30,
+	ui::Button optionsButton = ui::Button("pause", 1, 250, 2, 2,
+		sf::Color(0, 0, 0, 125), "Options", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->currentGuiPtr = &this->optionsGui; });
-	ui::Button backToGameButton = ui::Button("pause", 1, 310, 200, 46,
-		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::comicSans, sf::Color::White, 30,
+	ui::Button backToGameButton = ui::Button("pause", 1, 310, 2, 2,
+		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->currentGuiPtr = nullptr; });
-	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 200, 46,
-		sf::Color(0, 0, 0, 125), "Back", ui::fonts::comicSans, sf::Color::White, 30,
+	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 2, 2,
+		sf::Color(0, 0, 0, 125), "Back", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->currentGuiPtr = &this->pauseGui; });
-	ui::Button saveWorldButton = ui::Button("options", 1, 190, 200, 46,
-		sf::Color(0, 0, 0, 125), "Save world", ui::fonts::comicSans, sf::Color::White, 30,
+	ui::Button saveWorldButton = ui::Button("options", 1, 190, 2, 2,
+		sf::Color(0, 0, 0, 125), "Save world", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->gameWorld.save(); });
 
 	ui::Rect simpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 125));

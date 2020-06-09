@@ -55,7 +55,7 @@ namespace gui
 			{
 				element->drawToWindow(window);
 			}
-			ui::Text(this->guiName, this->guiName, ui::fonts::comicSansBoldItalic, sf::Color::Red, 1, 1, 15).drawToWindow(window);
+			ui::Text(this->guiName, this->guiName, ui::fonts::dos, sf::Color::Red, 1, 1, 15).drawToWindow(window);
 
 			window.popGLStates();
 		}
