@@ -24,10 +24,7 @@ namespace ui
 			sf::Font font;
 		};
 
-		UIFont* comicSans = new UIFont("resources/fonts/comic.ttf");
-		UIFont* comicSansBold = new UIFont("resources/fonts/comicbd.ttf");
-		UIFont* comicSansItalic = new UIFont("resources/fonts/comici.ttf");
-		UIFont* comicSansBoldItalic = new UIFont("resources/fonts/comicz.ttf");
+		UIFont* dos = new UIFont("resources/fonts/dos.ttf");
 	}
 
 	struct UIElement
@@ -121,15 +118,17 @@ namespace ui
 	struct Button : public UIElement
 	{
 		Button(std::string parentGuiName) : UIElement(parentGuiName), centerText(parentGuiName), buttonRect(parentGuiName) { }
-		Button(std::string parentGuiName, int x, int y, int w, int h, sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
-			buttonRect(parentGuiName, x, y, w, h, fillColor), centerText(parentGuiName, buttonText, buttonFont, textColor, x, y, charSize), 
+		Button(std::string parentGuiName, int x, int y, int xSpacing, int ySpacing, 
+			sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
+			buttonRect(parentGuiName, x, y, (int(charSize / 1.7) * buttonText.length()) + 2 * xSpacing, charSize + 2 * ySpacing, fillColor), 
+			centerText(parentGuiName, buttonText, buttonFont, textColor, x + xSpacing, y - ySpacing, charSize),
 			UIElement(parentGuiName)
 		{
 			this->visible = true;
 			this->x = x;
 			this->y = y;
-			this->w = w;
-			this->h = h;
+			this->w = buttonRect.sfRectangle.getSize().x;
+			this->h = buttonRect.sfRectangle.getSize().y;
 			this->fillColor = fillColor;
 			this->onClick = onClick;
 		}
@@ -168,5 +167,74 @@ namespace ui
 		sf::Color fillColor;
 		std::function<void()> onClick;
 		Rect buttonRect;
+	};
+
+	//struct TextFieldFocusManager
+	//{
+	//	TextFieldFocusManager() { }
+
+	//	void addTextField(TextField textField)
+	//	{
+	//		this->textFields.push_back(textField);
+	//	}
+
+	//	std::vector<TextField> textFields;
+	//};
+
+	struct TextField : UIElement
+	{
+		TextField(std::string parentGuiName) : UIElement(parentGuiName), enteredTextElement(parentGuiName), textFieldRect(parentGuiName) { }
+		TextField(std::string parentGuiName, int x, int y, int w, int h, sf::Color fillColor, fonts::UIFont* textFieldFont, sf::Color textColor, int charSize) :
+			textFieldRect(parentGuiName, x, y, w, h, fillColor), enteredTextElement(parentGuiName, "", textFieldFont, textColor, x, y + h / 2, charSize),
+			UIElement(parentGuiName)
+		{
+			this->visible = true;
+			this->x = x;
+			this->y = y;
+			this->w = w;
+			this->h = h;
+			this->fillColor = fillColor;
+		}
+
+		void updateHoverState(sf::RenderWindow& window)
+		{
+			sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+			sf::Vector2f correctedMousePos = window.mapPixelToCoords(mousePos);
+
+			this->hovered =
+				correctedMousePos.x >= this->x && correctedMousePos.x <= this->x + this->w &&
+				correctedMousePos.y >= this->y && correctedMousePos.y <= this->y + this->h;
+		}
+
+		void trySetFocused(input::InputManager inputManager)
+		{
+			this->focused = this->visible && this->hovered && inputManager.isMouseButtonPressed(sf::Mouse::Left);
+		}
+
+		void tryType()
+		{
+			if (this->focused)
+			{
+				// TODO type
+			}
+		}
+
+		void drawToWindow(sf::RenderWindow& window)
+		{
+			if (this->visible)
+			{
+				window.draw(this->textFieldRect.sfRectangle);
+				window.draw(this->enteredTextElement.textElement);
+			}
+		}
+
+		std::string text;
+		bool hovered;
+		bool focused;
+		int w;
+		int h;
+		Text enteredTextElement;
+		sf::Color fillColor;
+		Rect textFieldRect;
 	};
 }
