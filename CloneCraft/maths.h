@@ -245,22 +245,9 @@ namespace maths
 	constexpr float squareof(float x) { return x * x; };
 	constexpr int squareof(int x) { return x * x; };
 
-	bool isInRange(int v, int min, int max)
-	{
-		return v >= min && v < max;
-	}
-
-	bool isInRangeF(float v, float min, float max)
-	{
-		return v >= min && v < max;
-	}
-
 	bool is3dCoordInRange(int x, int y, int z, int min, int max)
 	{
-		return
-			isInRange(x, min, max) &&
-			isInRange(y, min, max) &&
-			isInRange(z, min, max);
+		return Vec3<int>(x, y, z).isInBounds(Vec3<int>(min, min, min), Vec3<int>(max, max, max));
 	}
 
 	float mapFromRangeToRange(float v, float aMin, float aMax, float bMin, float bMax)
