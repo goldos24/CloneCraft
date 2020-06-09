@@ -179,10 +179,11 @@ struct Game {
 		glMatrixMode(GL_MODELVIEW);
 		glLoadIdentity();
 
+
+		sf::Time elapsed = clock.restart();
+		float elapsedSeconds = elapsed.asSeconds();
 		if (this->currentGuiPtr == nullptr)
 		{
-			sf::Time elapsed = clock.restart();
-			float elapsedSeconds = elapsed.asSeconds();
 			updatePosition(elapsedSeconds);
 			updateRotation(wsize, window);
 		}
