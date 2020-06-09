@@ -92,11 +92,20 @@ namespace maths
 			return Vec3<num>(num(resultDouble.x), num(resultDouble.y), num(resultDouble.z));
 		}
 
-		Vec3<num>& operator += (Vec3<num>&& theOtherVec3)
+		Vec3<num>& operator += (Vec3<num> theOtherVec3)
 		{
 			this->x += theOtherVec3.x;
 			this->y += theOtherVec3.y;
 			this->z += theOtherVec3.z;
+
+			return *this;
+		}
+
+		Vec3<num>& operator -= (Vec3<num> theOtherVec3)
+		{
+			this->x -= theOtherVec3.x;
+			this->y -= theOtherVec3.y;
+			this->z -= theOtherVec3.z;
 
 			return *this;
 		}
