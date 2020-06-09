@@ -14,19 +14,19 @@ namespace renderData
 
 	struct BlockFace
 	{
-		BlockFace(facePos::FacePosition position, blox::ID blockID, maths::Vec3i blockPosition)
+		BlockFace(facePos::FacePosition position, blox::ID blockID, maths::Vec3<int> blockPosition)
 			:
 			vertices(renderer::vertices::faces + position)
 		{
 			blox::eliminateFalseID(blockID);
-			this->position = maths::Vec3f( float(blockPosition.x), float(blockPosition.y), float(blockPosition.z)) ;
+			this->position = maths::Vec3<float>( float(blockPosition.x), float(blockPosition.y), float(blockPosition.z)) ;
 			this->texture = blox::getByID(blockID).texture->getFaceTexture(position);
 		}
 
 		const renderer::FaceVertexContainer* vertices;
 		textures::FaceTexture* texture;
 
-		maths::Vec3f position;
+		maths::Vec3<float> position;
 
 		void render()
 		{
@@ -40,6 +40,6 @@ namespace renderData
 			facePosition
 			:
 			facePos::swap(facePosition);
-		return BlockFace(position, id, maths::Vec3i(x, y, z));
+		return BlockFace(position, id, maths::Vec3<int>(x, y, z));
 	}
 }

@@ -153,23 +153,20 @@ namespace maths
 		return Vec3<targetNum>(targetNum(source.x), targetNum(source.y), targetNum(source.z));
 	}
 
-	typedef Vec3<float> Vec3f;
-	typedef Vec3<int> Vec3i;
-
 	namespace unitVectors
 	{
 		// Shorthand for the vector (0, 1, 0)
-		static const Vec3i up(0, 1, 0);
+		static const Vec3<int> up(0, 1, 0);
 		// Shorthand for the vector (0, -1, 0)
-		static const Vec3i down(0, -1, 0);
+		static const Vec3<int> down(0, -1, 0);
 		// Shorthand for the vector (1, 0, 0)
-		static const Vec3i left(1, 0, 0);
+		static const Vec3<int> left(1, 0, 0);
 		// Shorthand for the vector (-1, 0, 0)
-		static const Vec3i right(-1, 0, 0);
+		static const Vec3<int> right(-1, 0, 0);
 		// Shorthand for the vector (0, 0, 1)
-		static const Vec3i front(0, 0, 1);
+		static const Vec3<int> front(0, 0, 1);
 		// Shorthand for the vector (0, 0, -1)
-		static const Vec3i back(0, 0, -1);
+		static const Vec3<int> back(0, 0, -1);
 	}
 
 	template<class num>
@@ -293,12 +290,12 @@ namespace maths
 
 // Yeah, operator overloading isn't perfect...
 
-std::ostream& operator<<(std::ostream& output, maths::Vec3i vector)
+std::ostream& operator<<(std::ostream& output, maths::Vec3<int> vector)
 {
 	return output << vector.toString();
 }
 
-std::ostream& operator<<(std::ostream& output, maths::Vec3f vector)
+std::ostream& operator<<(std::ostream& output, maths::Vec3<float> vector)
 {
 	return output << vector.toString();
 }

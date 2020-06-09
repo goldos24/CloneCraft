@@ -18,7 +18,7 @@ namespace chunks
 		maths::Vec3<uint16_t> vector;
 	};
 
-	chunkKey createKeyFromPosition(maths::Vec3i chunkPos)
+	chunkKey createKeyFromPosition(maths::Vec3<int> chunkPos)
 	{
 		chunkKey result;
 		result.vector = maths::convertVec3<int, uint16_t>(chunkPos);
@@ -26,7 +26,7 @@ namespace chunks
 	}
 
 
-	maths::Vec3i convertToChunkPos(maths::Vec3i position)
+	maths::Vec3<int> convertToChunkPos(maths::Vec3<int> position)
 	{
 		if (position.x <= 0) position.x -= chunks::size;
 		if (position.y <= 0) position.y -= chunks::size;
@@ -36,7 +36,7 @@ namespace chunks
 		return position;
 	}
 
-	maths::Vec3i convertToChunkPos(maths::Vec3f position)
+	maths::Vec3<int> convertToChunkPos(maths::Vec3<float> position)
 	{
 		if (position.x > 0.f && position.x < 1.f) position.x = 1.f;
 		if (position.y > 0.f && position.y < 1.f) position.y = 1.f;

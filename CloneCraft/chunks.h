@@ -40,7 +40,7 @@ namespace chunks
 
 		std::vector<renderData::BlockFace> renderData = std::vector<renderData::BlockFace>();
 
-		maths::Vec3i chunkPos;
+		maths::Vec3<int> chunkPos;
 
 		blox::ID blocks[maths::cubeof(size)];
 
@@ -81,7 +81,7 @@ namespace chunks
 		}
 
 		void calculateAndPushFace(int x, int y, int z, int actualX, int actualY, int actualZ,
-			maths::Vec3i offset,
+			maths::Vec3<int> offset,
 			bool isSelectedBlockTransparent, bool swapSides,
 			facePos::FacePosition swappedFacePosition)
 		{
@@ -94,7 +94,7 @@ namespace chunks
 		}
 
 		renderData::BlockFace calculateFace(int x, int y, int z, int actualX, int actualY, int actualZ,
-			maths::Vec3i offset,
+			maths::Vec3<int> offset,
 			bool swapSides,
 			facePos::FacePosition facePosition)
 		{
@@ -125,7 +125,7 @@ namespace chunks
 
 	};
 
-	auto initFlatChunk(maths::Vec3i chunkPos)
+	auto initFlatChunk(maths::Vec3<int> chunkPos)
 	{
 		std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
 		chunk->chunkPos = chunkPos;
@@ -143,7 +143,7 @@ namespace chunks
 		return chunk;
 	}
 
-	auto initNormalChunk(maths::Vec3i chunkPos)
+	auto initNormalChunk(maths::Vec3<int> chunkPos)
 	{
 		std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
 		chunk->chunkPos = chunkPos;

@@ -22,7 +22,7 @@
 struct Game {
 	Game()
 	{
-		this->player.position = maths::Vec3f(0, 20, 0);
+		this->player.position = maths::Vec3<float>(0, 20, 0);
 
 		this->pauseGui.addElement(&this->simpleBackgroundRect);
 		this->addButton(this->pauseGui, this->testButton);
@@ -44,7 +44,7 @@ struct Game {
 	world::World gameWorld = world::World();
 
 	player::Player player;
-	maths::Vec3i lastChunkUpdatePosition;
+	maths::Vec3<int> lastChunkUpdatePosition;
 	std::ostringstream debugInfoStream;
 
 	ui::Text debugText = ui::Text("", "Debug", ui::fonts::comicSansBold, sf::Color::White, 1, 0, 18);
@@ -78,11 +78,11 @@ struct Game {
 
 	void updateLoadedChunks()
 	{
-		maths::Vec3i playerPositionInt = maths::Vec3i(int(this->player.position.x), int(this->player.position.y), int(this->player.position.z));
+		maths::Vec3<int> playerPositionInt = maths::Vec3<int>(int(this->player.position.x), int(this->player.position.y), int(this->player.position.z));
 
 		if (lastChunkUpdatePosition.overlySimpleDistanceTo(playerPositionInt) > 16)
 		{
-			this->gameWorld.moveTo(playerPositionInt - maths::Vec3i(gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2));
+			this->gameWorld.moveTo(playerPositionInt - maths::Vec3<int>(gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2));
 			this->lastChunkUpdatePosition = playerPositionInt;
 		}
 	}
@@ -146,19 +146,19 @@ struct Game {
 			int x, y, z;
 			std::string blockName;
 			std::cin >> x >> y >> z >> blockName;
-			this->gameWorld.setBlockID(maths::Vec3i(x, y, z), blox::getByName(blockName).id);
+			this->gameWorld.setBlockID(maths::Vec3<int>(x, y, z), blox::getByName(blockName).id);
 		}
 		else if (command == "teleport")
 		{
 			float x, y, z;
 			std::cin >> x >> y >> z;
-			this->player.position = maths::Vec3f(x, y, z);
+			this->player.position = maths::Vec3<float>(x, y, z);
 		}
 		else if (command == "getblock")
 		{
 			int x, y, z;
 			std::cin >> x >> y >> z;
-			std::cout << gameWorld.getBlockID(maths::Vec3i(x, y, z));
+			std::cout << gameWorld.getBlockID(maths::Vec3<int>(x, y, z));
 		}
 		else if (command == "save")
 		{
