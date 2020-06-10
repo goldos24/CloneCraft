@@ -251,13 +251,20 @@ namespace ui
 
 		void trySetFocused(input::InputManager& inputManager, std::vector<TextField*> otherTextFields)
 		{
-			if (this->visible && this->hovered && inputManager.isMouseButtonPressed(sf::Mouse::Left))
+			if (this->visible && inputManager.isMouseButtonPressed(sf::Mouse::Left))
 			{
-				for (TextField* textField : otherTextFields)
+				if (this->hovered)
 				{
-					textField->focused = false;
+					for (TextField* textField : otherTextFields)
+					{
+						textField->focused = false;
+					}
+					this->focused = true;
 				}
-				this->focused = true;
+				else
+				{
+					this->focused = false;
+				}
 			}
 
 			if (this->focused)
