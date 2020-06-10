@@ -219,7 +219,13 @@ namespace maths
 			angle -= 360;
 		}
 	}
-		
+	
+	template <typename T>
+	float abs(T value)
+	{
+		return value < 0 ? -value : value;
+	}
+
 	float cosd(float angle)
 	{
 		return (float)cos(degreesToRadians(angle));

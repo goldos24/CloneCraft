@@ -146,7 +146,7 @@ namespace ui
 		Button(std::string parentGuiName) : UIElement(parentGuiName), centerText(parentGuiName), buttonRect(parentGuiName) { }
 		Button(std::string parentGuiName, int x, int y, int xSpacing, int ySpacing,
 			sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
-			buttonRect(parentGuiName, x, y, (int(charSize / 1.7)* buttonText.length()) + 2 * xSpacing, charSize + 2 * ySpacing, fillColor),
+			buttonRect(parentGuiName, x, y, (int(charSize / 1.7) * buttonText.length()) + 2 * xSpacing, charSize + 2 * ySpacing, fillColor),
 			centerText(parentGuiName, buttonText, buttonFont, textColor, x + xSpacing, y - ySpacing, charSize),
 			UIElement(parentGuiName)
 		{
@@ -228,6 +228,7 @@ namespace ui
 			textFieldRect(parentGuiName, x, y, w, h, fillColor), enteredTextElement(parentGuiName, "", textFieldFont, textColor, x, y, charSize),
 			UIElement(parentGuiName)
 		{
+			this->charSize = charSize;
 			this->visible = true;
 			this->focused = false;
 			this->x = x;
@@ -310,7 +311,18 @@ namespace ui
 					inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Space, .7f))
 					this->text += ' ';
 
-				this->enteredTextElement.textElement.setString(text);
+				int charWidth = int(this->charSize / 1.7);
+				int fittingCharCount = int(this->w / charWidth);
+				if (text.size() > fittingCharCount)
+				{
+					int scrolledIndex = maths::abs<int>(fittingCharCount - text.size());
+					std::string scrolledText = text.substr(scrolledIndex, text.size() - 1);
+					this->enteredTextElement.textElement.setString(scrolledText);
+				}
+				else
+				{
+					this->enteredTextElement.textElement.setString(this->text);
+				}
 			}
 		}
 
@@ -331,6 +343,7 @@ namespace ui
 				this->textFieldRect == other.textFieldRect;
 		}
 
+		int charSize;
 		std::string text;
 		bool hovered;
 		bool focused;
