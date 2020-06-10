@@ -306,6 +306,10 @@ namespace ui
 					}
 				}
 
+				if (inputManager.isKeyPressed(sf::Keyboard::Space) ||
+					inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Space, .7f))
+					this->text += ' ';
+
 				this->enteredTextElement.textElement.setString(text);
 			}
 		}
