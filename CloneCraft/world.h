@@ -160,12 +160,14 @@ namespace world
 
 		bool save() 
 		{
-			std::cout << "Saved the world." << std::endl;
+			std::cout << "Saving the world..." << std::endl;
 			for (auto keyChunkPair : this->chunks)
 			{
 				mgr.addChunk(keyChunkPair.second);
 			}
 			mgr.saveAll();
+			
+			std::cout << "Saved the world." << std::endl;
 			return true;
 		}
 

@@ -199,7 +199,7 @@ struct Game {
 		{
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Right))
 			{
-				std::cout << "Right click" << std::endl;
+				//std::cout << "Right click" << std::endl;
 				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
 			}
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Left))
@@ -248,6 +248,9 @@ struct Game {
 
 	void updateDebugInfo()
 	{
+		maths::Vec3<float> blockPosInFrontOfPlayer = playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player);
+		blox::ID blockIDInFrontOfPlayer = this->gameWorld.getBlockID(blockPosInFrontOfPlayer);
+
 		debugInfoStream.clear();
 		debugInfoStream.str("");
 		debugInfoStream
@@ -256,8 +259,8 @@ struct Game {
 			<< "Rotation: " << this->player.rotation.toString() << "\n"
 			<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
 			<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
-			<< "Looking at block with ID: " << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n"
-			<< "Looking at block: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n";
+			<< "Looking at block with ID: " << blockIDInFrontOfPlayer << " (" << int(blockIDInFrontOfPlayer) << ")\n"
+			<< "Looking at block: " << blockPosInFrontOfPlayer << "\n";
 		debugInfoText.updateText(debugInfoStream.str());
 	}
 
