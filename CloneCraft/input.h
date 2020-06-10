@@ -9,23 +9,44 @@ namespace input
 	{
 		InputManager()
 		{
-			this->addMouseButton(sf::Mouse::Left);
-			this->addMouseButton(sf::Mouse::Right);
-			this->addKey(sf::Keyboard::Escape);
-			this->addKey(sf::Keyboard::Space);
+			for (int i = 0; i < sf::Mouse::Button::ButtonCount; i++) this->addMouseButton((sf::Mouse::Button)i);
+			for (int i = 0; i < sf::Keyboard::Key::KeyCount; i++) this->addKey((sf::Keyboard::Key)i);
 		}
 
 		void update()
 		{
 			for (auto a : this->keyPressStates)
 			{
-				keyPressStates[a.first] = sf::Keyboard::isKeyPressed(a.first);
+				this->keyPressStates[a.first] = sf::Keyboard::isKeyPressed(a.first);
 			}
 
 			for (auto b : this->mouseButtonPressStates)
 			{
-				mouseButtonPressStates[b.first] = sf::Mouse::isButtonPressed(b.first);
+				this->mouseButtonPressStates[b.first] = sf::Mouse::isButtonPressed(b.first);
 			}
+		}
+
+		void resetAllTo(bool value)
+		{
+			for (auto a : this->keyPressStates)
+			{
+				this->keyPressStates[a.first] = value;
+			}
+
+			for (auto b : this->mouseButtonPressStates)
+			{
+				this->mouseButtonPressStates[b.first] = value;
+			}
+		}
+
+		void resetKeyTo(sf::Keyboard::Key key, bool value)
+		{
+			this->keyPressStates[key] = value;
+		}
+
+		void resetMouseButtonTo(sf::Mouse::Button button, bool value)
+		{
+			this->mouseButtonPressStates[button] = value;
 		}
 
 		void addMouseButton(sf::Mouse::Button button)

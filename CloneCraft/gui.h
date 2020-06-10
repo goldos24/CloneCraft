@@ -3,9 +3,10 @@
 
 namespace gui
 {
+
 	struct BackgroundResource
 	{
-		BackgroundResource(sf::Color color = sf::Color::Black) : 
+		BackgroundResource(sf::Color color = sf::Color::Black) :
 			backgroundColor(color)
 		{ }
 
@@ -40,7 +41,7 @@ namespace gui
 		void draw(sf::RenderWindow& window)
 		{
 			if (this->drawBackground) window.clear(this->background.backgroundColor);
-			
+
 			window.pushGLStates();
 
 			if (this->background.useImage && this->drawBackground)
@@ -51,10 +52,12 @@ namespace gui
 				window.draw(bgSprite);
 			}
 
-			for (auto element : uiElements)
+			for (ui::UIElement* element : uiElements)
 			{
-				element->drawToWindow(window);
+				if (element != nullptr)
+					element->drawToWindow(window);
 			}
+
 			ui::Text(this->guiName, this->guiName, ui::fonts::dos, sf::Color::Red, 1, 1, 15).drawToWindow(window);
 
 			window.popGLStates();
@@ -71,4 +74,88 @@ namespace gui
 		BackgroundResource background;
 	};
 
+	struct GuiManager
+	{
+		GuiManager() 
+		{ 
+			this->currentGui = nullptr;
+		}
+
+		void addGui(Gui* gui)
+		{
+			if (this->findGuiByName(gui->guiName) != nullptr) return;
+			this->guis.push_back(gui);
+		}
+
+		void setGuiByName(std::string name)
+		{
+			this->textFieldManager.setFocusForAll(false);
+			Gui* foundGui = this->findGuiByName(name);
+			if (foundGui != nullptr)
+			{
+				this->currentGui = foundGui;
+			}
+		}
+
+		bool isGuiSet()
+		{
+			return this->currentGui != nullptr;
+		}
+
+		void setNoGui()
+		{
+			this->textFieldManager.setFocusForAll(false);
+			this->currentGui = nullptr;
+		}
+
+		gui::Gui* findGuiByName(std::string name)
+		{
+			for (gui::Gui* guiPtr : guis)
+			{
+				if (guiPtr != nullptr)
+					if (guiPtr->guiName == name) return guiPtr;
+			}
+
+			return nullptr;
+		}
+
+		void addUIElementToGuiWithName(ui::UIElement* uiElement, std::string guiName)
+		{
+			gui::Gui* gui = this->findGuiByName(guiName);
+			if (gui != nullptr)
+			{
+				gui->addElement(uiElement);
+			}
+		}
+
+		void addButtonToGuiWithName(ui::Button* button, std::string guiName)
+		{
+			gui::Gui* gui = this->findGuiByName(guiName);
+			if (gui != nullptr)
+			{
+				gui->addElement(button);
+				this->buttonManager.addButton(button);
+			}
+		}
+
+		void addTextFieldToGuiWithName(ui::TextField* textField, std::string guiName)
+		{
+			gui::Gui* gui = this->findGuiByName(guiName);
+			if (gui != nullptr)
+			{
+				gui->addElement(textField);
+				this->textFieldManager.addTextField(textField);
+			}
+		}
+
+		void drawCurrentGuiToWindow(sf::RenderWindow& window)
+		{
+			if (this->currentGui != nullptr) this->currentGui->draw(window);
+		}
+
+		ui::TextFieldManager textFieldManager;
+		ui::ButtonManager buttonManager;
+		std::vector<Gui*> guis;
+		Gui* currentGui;
+	};
 }

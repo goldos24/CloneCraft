@@ -12,6 +12,7 @@
 
 namespace ui
 {
+
 	namespace fonts
 	{
 		struct UIFont
@@ -77,6 +78,16 @@ namespace ui
 			if (this->visible) window.draw(this->textElement);
 		}
 
+		bool operator==(Text& other)
+		{
+			return
+				this->x == other.x &&
+				this->y == other.y &&
+				this->textElement.getFillColor() == other.textElement.getFillColor() &&
+				this->textElement.getString() == other.textElement.getString() &&
+				this->visible == other.visible;
+		}
+
 		sf::Text textElement;
 	};
 
@@ -106,10 +117,25 @@ namespace ui
 			this->setPosition(pos.x, pos.y);
 		}
 
+		void scale(int w, int h)
+		{
+			this->sfRectangle.setSize(sf::Vector2f(w, h));
+		}
+
 		void drawToWindow(sf::RenderWindow& window)
 		{
 			this->sfRectangle.setPosition(window.mapPixelToCoords(sf::Vector2i(this->x, this->y)));
 			if (this->visible) window.draw(this->sfRectangle);
+		}
+
+		bool operator ==(Rect& other)
+		{
+			return
+				this->x == other.x &&
+				this->y == other.y &&
+				this->visible == other.visible &&
+				this->sfRectangle.getSize() == other.sfRectangle.getSize() &&
+				this->sfRectangle.getFillColor() == other.sfRectangle.getFillColor();
 		}
 
 		sf::RectangleShape sfRectangle;
@@ -118,9 +144,9 @@ namespace ui
 	struct Button : public UIElement
 	{
 		Button(std::string parentGuiName) : UIElement(parentGuiName), centerText(parentGuiName), buttonRect(parentGuiName) { }
-		Button(std::string parentGuiName, int x, int y, int xSpacing, int ySpacing, 
+		Button(std::string parentGuiName, int x, int y, int xSpacing, int ySpacing,
 			sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
-			buttonRect(parentGuiName, x, y, (int(charSize / 1.7) * buttonText.length()) + 2 * xSpacing, charSize + 2 * ySpacing, fillColor), 
+			buttonRect(parentGuiName, x, y, (int(charSize / 1.7)* buttonText.length()) + 2 * xSpacing, charSize + 2 * ySpacing, fillColor),
 			centerText(parentGuiName, buttonText, buttonFont, textColor, x + xSpacing, y - ySpacing, charSize),
 			UIElement(parentGuiName)
 		{
@@ -169,31 +195,47 @@ namespace ui
 		Rect buttonRect;
 	};
 
-	//struct TextFieldFocusManager
-	//{
-	//	TextFieldFocusManager() { }
+	struct ButtonManager
+	{
+		ButtonManager() { }
 
-	//	void addTextField(TextField textField)
-	//	{
-	//		this->textFields.push_back(textField);
-	//	}
+		void addButton(Button* button)
+		{
+			this->buttons.push_back(button);
+		}
 
-	//	std::vector<TextField> textFields;
-	//};
+		void update(sf::RenderWindow& window, input::InputManager inputManager, std::string currentGuiName)
+		{
+			for (Button* button : this->buttons)
+			{
+				if (button != nullptr)
+					if (button->parentGuiName == currentGuiName)
+					{
+						button->updateHoverState(window);
+						button->tryCallOnClick(inputManager);
+					}
+			}
+		}
+
+		std::vector<Button*> buttons;
+	};
 
 	struct TextField : UIElement
 	{
 		TextField(std::string parentGuiName) : UIElement(parentGuiName), enteredTextElement(parentGuiName), textFieldRect(parentGuiName) { }
-		TextField(std::string parentGuiName, int x, int y, int w, int h, sf::Color fillColor, fonts::UIFont* textFieldFont, sf::Color textColor, int charSize) :
+		TextField(std::string parentGuiName, int x, int y, int w, int h, sf::Color fillColor, sf::Color focusedFillColor,
+			fonts::UIFont* textFieldFont, sf::Color textColor, int charSize) :
 			textFieldRect(parentGuiName, x, y, w, h, fillColor), enteredTextElement(parentGuiName, "", textFieldFont, textColor, x, y + h / 2, charSize),
 			UIElement(parentGuiName)
 		{
 			this->visible = true;
+			this->focused = false;
 			this->x = x;
 			this->y = y;
 			this->w = w;
 			this->h = h;
 			this->fillColor = fillColor;
+			this->focusedFillColor = focusedFillColor;
 		}
 
 		void updateHoverState(sf::RenderWindow& window)
@@ -206,16 +248,36 @@ namespace ui
 				correctedMousePos.y >= this->y && correctedMousePos.y <= this->y + this->h;
 		}
 
-		void trySetFocused(input::InputManager inputManager)
+		void trySetFocused(input::InputManager inputManager, std::vector<TextField*> otherTextFields)
 		{
-			this->focused = this->visible && this->hovered && inputManager.isMouseButtonPressed(sf::Mouse::Left);
+			if (this->visible && this->hovered && inputManager.isMouseButtonPressed(sf::Mouse::Left))
+			{
+				for (TextField* textField : otherTextFields)
+				{
+					textField->focused = false;
+				}
+				this->focused = true;
+			}
+
+			if (this->focused)
+			{
+				this->textFieldRect.sfRectangle.setFillColor(this->focusedFillColor);
+			}
+			else
+			{
+				this->textFieldRect.sfRectangle.setFillColor(this->fillColor);
+			}
 		}
 
-		void tryType()
+		void tryType(input::InputManager inputManager)
 		{
 			if (this->focused)
 			{
-				// TODO type
+				// TODO typing
+				if (inputManager.isKeyPressed(sf::Keyboard::E))
+				{
+					std::cout << "E" << std::endl;
+				}
 			}
 		}
 
@@ -228,13 +290,57 @@ namespace ui
 			}
 		}
 
+		bool operator ==(TextField& other)
+		{
+			return
+				this->w == other.w &&
+				this->h == other.h &&
+				this->textFieldRect == other.textFieldRect;
+		}
+
 		std::string text;
 		bool hovered;
 		bool focused;
 		int w;
 		int h;
 		Text enteredTextElement;
+		sf::Color focusedFillColor;
 		sf::Color fillColor;
 		Rect textFieldRect;
+	};
+
+	struct TextFieldManager
+	{
+		TextFieldManager() { }
+
+		void addTextField(TextField* textField)
+		{
+			this->textFields.push_back(textField);
+		}
+
+		void update(sf::RenderWindow& window, input::InputManager inputManager, std::string currentGuiName)
+		{
+			for (TextField* textField : this->textFields)
+			{
+				if (textField != nullptr)
+					if (textField->parentGuiName == currentGuiName)
+					{
+						textField->updateHoverState(window);
+						textField->trySetFocused(inputManager, this->textFields);
+						textField->tryType(inputManager);
+					}
+			}
+		}
+
+		void setFocusForAll(bool focused)
+		{
+			for (TextField* textFieldPtr : textFields)
+			{
+				if (textFieldPtr != nullptr)
+					textFieldPtr->focused = focused;
+			}
+		}
+
+		std::vector<TextField*> textFields;
 	};
 }
