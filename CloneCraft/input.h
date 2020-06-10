@@ -5,6 +5,16 @@
 
 namespace input
 {
+
+	struct KeyPressState
+	{
+		KeyPressState() : pressed(false), elapsedTime(0) { }
+		KeyPressState(bool pressed) : pressed(pressed), elapsedTime(0) { }
+
+		float elapsedTime;
+		bool pressed;
+	};
+
 	struct InputManager
 	{
 		InputManager()
@@ -13,13 +23,26 @@ namespace input
 			for (int i = 0; i < sf::Keyboard::Key::KeyCount; i++) this->addKey((sf::Keyboard::Key)i);
 		}
 
-		void update()
+		void updateKeyPresses(float elapsedTime)
 		{
-			for (auto a : this->keyPressStates)
+			for (auto key : this->keyPressStates)
 			{
-				this->keyPressStates[a.first] = sf::Keyboard::isKeyPressed(a.first);
+				this->keyPressStates[key.first].pressed = sf::Keyboard::isKeyPressed(key.first);
+				
+				if (this->isKeyBeingPressed(key.first))
+				{
+					this->keyPressStates[key.first].elapsedTime += elapsedTime;
+				}
+				
+				if (this->isKeyPressed(key.first) || !this->isKeyBeingPressed(key.first))
+				{
+					this->keyPressStates[key.first].elapsedTime = 0;
+				}
 			}
+		}
 
+		void updateMouseButtonPresses()
+		{
 			for (auto b : this->mouseButtonPressStates)
 			{
 				this->mouseButtonPressStates[b.first] = sf::Mouse::isButtonPressed(b.first);
@@ -56,7 +79,7 @@ namespace input
 
 		void addKey(sf::Keyboard::Key key)
 		{
-			this->keyPressStates[key] = false;
+			this->keyPressStates[key] = KeyPressState(false);
 		}
 
 		bool isKeyBeingPressed(sf::Keyboard::Key key)
@@ -64,14 +87,23 @@ namespace input
 			return sf::Keyboard::isKeyPressed(key);
 		}
 
+		bool isKeyStillBeingPressedAfterDelay(sf::Keyboard::Key key, float delay)
+		{
+			if (this->keyPressStates[key].elapsedTime >= delay)
+			{
+				return this->isKeyBeingPressed(key);
+			}
+			return false;
+		}
+
 		bool isKeyReleased(sf::Keyboard::Key key)
 		{
-			return this->keyPressStates[key] && !sf::Keyboard::isKeyPressed(key);
+			return this->keyPressStates[key].pressed && !sf::Keyboard::isKeyPressed(key);
 		}
 
 		bool isKeyPressed(sf::Keyboard::Key key)
 		{
-			return !this->keyPressStates[key] && sf::Keyboard::isKeyPressed(key);
+			return !this->keyPressStates[key].pressed && sf::Keyboard::isKeyPressed(key);
 		}
 
 		bool isMouseButtonBeingPressed(sf::Mouse::Button button)
@@ -89,7 +121,7 @@ namespace input
 			return !this->mouseButtonPressStates[button] && sf::Mouse::isButtonPressed(button);
 		}
 
-		std::map<sf::Keyboard::Key, bool> keyPressStates;
+		std::map<sf::Keyboard::Key, KeyPressState> keyPressStates;
 		std::map<sf::Mouse::Button, bool> mouseButtonPressStates;
 	};
 }

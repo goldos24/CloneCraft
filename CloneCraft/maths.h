@@ -131,7 +131,7 @@ namespace maths
 
 		std::string toString()
 		{
-			return "( x : " + std::to_string(this->x) + ", y : " + std::to_string(this->y) + ", z : " + std::to_string(this->z) + " )";
+			return "< x : " + std::to_string(this->x) + ", y : " + std::to_string(this->y) + ", z : " + std::to_string(this->z) + " >";
 		}
 
 		bool operator == (Vec3<num>& theOtherVec3)

@@ -169,7 +169,7 @@ namespace ui
 				correctedMousePos.y >= this->y && correctedMousePos.y <= this->y + this->h;
 		}
 
-		void tryCallOnClick(input::InputManager inputManager)
+		void tryCallOnClick(input::InputManager& inputManager)
 		{
 			if (this->visible && this->hovered && inputManager.isMouseButtonPressed(sf::Mouse::Left))
 			{
@@ -204,7 +204,7 @@ namespace ui
 			this->buttons.push_back(button);
 		}
 
-		void update(sf::RenderWindow& window, input::InputManager inputManager, std::string currentGuiName)
+		void update(sf::RenderWindow& window, input::InputManager& inputManager, std::string currentGuiName)
 		{
 			for (Button* button : this->buttons)
 			{
@@ -225,7 +225,7 @@ namespace ui
 		TextField(std::string parentGuiName) : UIElement(parentGuiName), enteredTextElement(parentGuiName), textFieldRect(parentGuiName) { }
 		TextField(std::string parentGuiName, int x, int y, int w, int h, sf::Color fillColor, sf::Color focusedFillColor,
 			fonts::UIFont* textFieldFont, sf::Color textColor, int charSize) :
-			textFieldRect(parentGuiName, x, y, w, h, fillColor), enteredTextElement(parentGuiName, "", textFieldFont, textColor, x, y + h / 2, charSize),
+			textFieldRect(parentGuiName, x, y, w, h, fillColor), enteredTextElement(parentGuiName, "", textFieldFont, textColor, x, y, charSize),
 			UIElement(parentGuiName)
 		{
 			this->visible = true;
@@ -248,7 +248,7 @@ namespace ui
 				correctedMousePos.y >= this->y && correctedMousePos.y <= this->y + this->h;
 		}
 
-		void trySetFocused(input::InputManager inputManager, std::vector<TextField*> otherTextFields)
+		void trySetFocused(input::InputManager& inputManager, std::vector<TextField*> otherTextFields)
 		{
 			if (this->visible && this->hovered && inputManager.isMouseButtonPressed(sf::Mouse::Left))
 			{
@@ -269,15 +269,44 @@ namespace ui
 			}
 		}
 
-		void tryType(input::InputManager inputManager)
+		void resetText()
+		{
+			this->text = "";
+			this->enteredTextElement.textElement.setString("");
+		}
+
+		void tryType(input::InputManager& inputManager)
 		{
 			if (this->focused)
-			{
-				// TODO typing
-				if (inputManager.isKeyPressed(sf::Keyboard::E))
+			{				
+				if (inputManager.isKeyPressed(sf::Keyboard::Backspace) || 
+					inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Backspace, .7f))
 				{
-					std::cout << "E" << std::endl;
+					if (this->text.size() > 0) 
+						this->text = this->text.substr(0, this->text.size() - 1);
 				}
+
+				for (int i = int(sf::Keyboard::A); i <= int(sf::Keyboard::Z); ++i) // Because C programmers thinks it should bee that way.
+				{
+					if (inputManager.isKeyPressed(sf::Keyboard::Key(i)) ||
+						inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Key(i), .7f))
+					{
+						this->text += inputManager.isKeyBeingPressed(sf::Keyboard::LShift) ? 
+							char('A' + i):
+							char('a' + i);
+					}
+				}
+
+				for (int i = int(sf::Keyboard::Num0); i <= int(sf::Keyboard::Num9); ++i) // Because C programmers thinks it should bee that way.
+				{
+					if (inputManager.isKeyPressed(sf::Keyboard::Key(i)) ||
+						inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Key(i), .7f))
+					{
+						this->text += char('0' + i - int(sf::Keyboard::Num0));
+					}
+				}
+
+				this->enteredTextElement.textElement.setString(text);
 			}
 		}
 
@@ -318,7 +347,7 @@ namespace ui
 			this->textFields.push_back(textField);
 		}
 
-		void update(sf::RenderWindow& window, input::InputManager inputManager, std::string currentGuiName)
+		void updateFocus(sf::RenderWindow& window, input::InputManager& inputManager, std::string currentGuiName)
 		{
 			for (TextField* textField : this->textFields)
 			{
@@ -327,8 +356,30 @@ namespace ui
 					{
 						textField->updateHoverState(window);
 						textField->trySetFocused(inputManager, this->textFields);
+					}
+			}
+		}
+
+		void updateTyping(input::InputManager& inputManager, std::string currentGuiName)
+		{
+			for (TextField* textField : this->textFields)
+			{
+				if (textField != nullptr)
+					if (textField->parentGuiName == currentGuiName)
+					{
 						textField->tryType(inputManager);
 					}
+			}
+		}
+
+		void clearTextFields(std::string currentGuiName)
+		{
+			for (TextField* textField : this->textFields)
+			{
+				if (textField->parentGuiName == currentGuiName)
+				{
+					textField->resetText();
+				}
 			}
 		}
 

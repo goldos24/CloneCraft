@@ -56,11 +56,16 @@ struct Game {
 		[this]() { this->inputManager.resetAllTo(true); this->guiManager.setGuiByName("options"); });
 	ui::Button backToGameButton = ui::Button("pause", 1, 310, 2, 2,
 		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::dos, sf::Color::White, 30,
-		[this]() { this->inputManager.resetAllTo(true); this->guiManager.setNoGui(); });
+		[this]() { this->inputManager.resetAllTo(false); this->guiManager.setNoGui(); });
 
 	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 2, 2,
 		sf::Color(0, 0, 0, 125), "Back", ui::fonts::dos, sf::Color::White, 30,
-		[this]() { this->inputManager.resetAllTo(true); this->guiManager.setGuiByName("pause"); });
+		[this]() 
+		{ 
+			this->guiManager.textFieldManager.clearTextFields("options"); 
+			this->inputManager.resetAllTo(false);
+			this->guiManager.setGuiByName("pause"); 
+		});
 	ui::Button saveWorldButton = ui::Button("options", 1, 190, 2, 2,
 		sf::Color(0, 0, 0, 125), "Save world", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->gameWorld.save(); });
@@ -212,10 +217,16 @@ struct Game {
 
 		if (this->guiManager.isGuiSet())
 		{
-			this->guiManager.textFieldManager.update(window, this->inputManager, this->guiManager.currentGui->guiName);
+			this->guiManager.textFieldManager.updateFocus(window, this->inputManager, this->guiManager.currentGui->guiName);
 		}
 
-		this->inputManager.update();
+		if (this->guiManager.isGuiSet())
+		{
+			this->guiManager.textFieldManager.updateTyping(this->inputManager, this->guiManager.currentGui->guiName);
+		}
+
+		this->inputManager.updateKeyPresses(elapsedSeconds);
+		this->inputManager.updateMouseButtonPresses();
 
 		window.setMouseCursorVisible(this->guiManager.isGuiSet());
 
@@ -279,7 +290,12 @@ struct Game {
 	{
 		if (inputManager.isKeyPressed(sf::Keyboard::Escape))
 		{
-			if (this->guiManager.isGuiSet()) this->guiManager.setNoGui();
+			if (this->guiManager.isGuiSet())
+			{
+				this->guiManager.textFieldManager.clearTextFields("options");
+				this->inputManager.resetAllTo(false);
+				this->guiManager.setNoGui();
+			}
 			else this->guiManager.setGuiByName("pause");
 		}
 		else if (inputManager.isKeyPressed(sf::Keyboard::Tab))
