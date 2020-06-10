@@ -30,4 +30,4 @@ namespace player
 	};
 }
 
-float player::Player::playerReach = 7.f;
+float player::Player::playerReach = 5.f;

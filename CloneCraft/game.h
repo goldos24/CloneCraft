@@ -69,8 +69,8 @@ struct Game {
 	ui::Button saveWorldButton = ui::Button("options", 1, 190, 2, 2,
 		sf::Color(0, 0, 0, 125), "Save world", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->gameWorld.save(); });
-	ui::TextField testTextField = ui::TextField("options", 1, 260, 120, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
-	ui::TextField testTextField2 = ui::TextField("options", 1, 300, 120, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
+	ui::TextField testTextField = ui::TextField("options", 1, 260, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
+	ui::TextField testTextField2 = ui::TextField("options", 1, 300, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
 
 	ui::Rect simpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 125));
 	ui::Rect darkerSimpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 195));
