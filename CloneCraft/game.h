@@ -30,6 +30,7 @@ struct Game {
 		this->guiManager.addButtonToGuiWithName(&this->testButton, "pause");
 		this->guiManager.addButtonToGuiWithName(&this->optionsButton, "pause");
 		this->guiManager.addButtonToGuiWithName(&this->backToGameButton, "pause");
+		this->guiManager.addButtonToGuiWithName(&this->backToMainMenuButton, "pause");
 
 		this->guiManager.addGui(&this->optionsGui);
 		this->guiManager.addUIElementToGuiWithName(&this->darkerSimpleBackgroundRect, "options");
@@ -62,6 +63,9 @@ struct Game {
 	ui::Button backToGameButton = ui::Button("pause", 1, 310, 2, 2,
 		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->inputManager.resetAllTo(false); this->guiManager.setNoGui(); });
+	ui::Button backToMainMenuButton = ui::Button("pause", 1, 370, 2, 2,
+		sf::Color(0, 0, 0, 125), "Back to main menu", ui::fonts::dos, sf::Color::White, 30,
+		[this]() { this->inputManager.resetAllTo(false); this->guiManager.setGuiByName("main_menu"); });
 
 	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 2, 2,
 		sf::Color(0, 0, 0, 125), "Back", ui::fonts::dos, sf::Color::White, 30,
@@ -80,10 +84,12 @@ struct Game {
 	ui::Button loadWorldButton = ui::Button("main_menu", 431, 20, 2, 2,
 		sf::Color(0, 0, 0, 125), "Load world", ui::fonts::dos, sf::Color::White, 30,
 		[this]() 
-		{ 
+		{
 			/*this->gameWorld.loadWorldWithName(this->loadedWorldNameTextField.text);*/ 
 			std::cout << "Loading world \"" << this->loadedWorldNameTextField.text << "\"\n";
 			this->guiManager.setNoGui();
+			this->guiManager.textFieldManager.clearTextFields("main_menu");
+			this->inputManager.resetAllTo(false);
 		});
 	ui::TextField loadedWorldNameTextField = ui::TextField("main_menu", 1, 20, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
 
