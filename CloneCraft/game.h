@@ -12,6 +12,7 @@
 #include "player.h"
 #include "maths.h"
 #include "world.h"
+#include "ui.h"
 #include "gui.h"
 #include "playerWorldInteraction.h"
 #include "input.h"
@@ -23,23 +24,20 @@ struct Game {
 	{
 		this->player.position = maths::Vec3<float>(0, 20, 0);
 
-		this->pauseGui.addElement(&this->simpleBackgroundRect);
-		this->addButton(this->pauseGui, this->testButton);
-		this->addButton(this->pauseGui, this->optionsButton);
-		this->addButton(this->pauseGui, this->backToGameButton);
+		this->guiManager.addGui(&this->emptyGui);
+		this->guiManager.addGui(&this->pauseGui);
+		this->guiManager.addUIElementToGuiWithName(&this->simpleBackgroundRect, "pause");
+		this->guiManager.addButtonToGuiWithName(&this->testButton, "pause");
+		this->guiManager.addButtonToGuiWithName(&this->optionsButton, "pause");
+		this->guiManager.addButtonToGuiWithName(&this->backToGameButton, "pause");
 
-		this->optionsGui.addElement(&this->darkerSimpleBackgroundRect);
-		this->addButton(this->optionsGui, this->backToPauseGuiButton);
-		this->addButton(this->optionsGui, this->saveWorldButton);
+		this->guiManager.addGui(&this->optionsGui);
+		this->guiManager.addUIElementToGuiWithName(&this->darkerSimpleBackgroundRect, "options");
+		this->guiManager.addButtonToGuiWithName(&this->backToPauseGuiButton, "options");
+		this->guiManager.addButtonToGuiWithName(&this->saveWorldButton, "options");
+		this->guiManager.addTextFieldToGuiWithName(&this->testTextField, "options");
+		this->guiManager.addTextFieldToGuiWithName(&this->testTextField2, "options");
 	}
-
-	void addButton(gui::Gui& gui, ui::Button& button)
-	{
-		gui.addElement(&button);
-		buttons.push_back(button);
-	}
-
-	std::vector<ui::Button> buttons;
 
 	world::World gameWorld = world::World();
 
@@ -55,16 +53,24 @@ struct Game {
 		[]() { std::cout << "Test!" << std::endl; });
 	ui::Button optionsButton = ui::Button("pause", 1, 250, 2, 2,
 		sf::Color(0, 0, 0, 125), "Options", ui::fonts::dos, sf::Color::White, 30,
-		[this]() { this->currentGuiPtr = &this->optionsGui; });
+		[this]() { this->inputManager.resetAllTo(true); this->guiManager.setGuiByName("options"); });
 	ui::Button backToGameButton = ui::Button("pause", 1, 310, 2, 2,
 		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::dos, sf::Color::White, 30,
-		[this]() { this->currentGuiPtr = nullptr; });
+		[this]() { this->inputManager.resetAllTo(false); this->guiManager.setNoGui(); });
+
 	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 2, 2,
 		sf::Color(0, 0, 0, 125), "Back", ui::fonts::dos, sf::Color::White, 30,
-		[this]() { this->currentGuiPtr = &this->pauseGui; });
+		[this]() 
+		{ 
+			this->guiManager.textFieldManager.clearTextFields("options"); 
+			this->inputManager.resetAllTo(false);
+			this->guiManager.setGuiByName("pause"); 
+		});
 	ui::Button saveWorldButton = ui::Button("options", 1, 190, 2, 2,
 		sf::Color(0, 0, 0, 125), "Save world", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->gameWorld.save(); });
+	ui::TextField testTextField = ui::TextField("options", 1, 260, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
+	ui::TextField testTextField2 = ui::TextField("options", 1, 300, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
 
 	ui::Rect simpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 125));
 	ui::Rect darkerSimpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 195));
@@ -75,9 +81,9 @@ struct Game {
 	gui::Gui optionsGui = gui::Gui("options");
 	gui::Gui pauseGui = gui::Gui("pause");
 	gui::Gui emptyGui = gui::Gui("empty");
-	gui::Gui* currentGuiPtr = nullptr;
 
 	input::InputManager inputManager;
+	gui::GuiManager guiManager;
 
 	void updateLoadedChunks()
 	{
@@ -113,7 +119,7 @@ struct Game {
 	void updatePosition(float elapsedTime)
 	{
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)) this->movementSpeed = 24.f;
-		else this->movementSpeed = 6.9f;
+		else this->movementSpeed = 5.9f;
 
 		if (player.isStandingOnASurface(this->gameWorld))
 		{
@@ -126,10 +132,10 @@ struct Game {
 			this->movementSpeed = 1.f;
 		}
 
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) playerControls::moveForward(this->player, elapsedTime, this->movementSpeed);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) playerControls::moveBackward(this->player, elapsedTime, this->movementSpeed);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) playerControls::moveLeft(this->player, elapsedTime, this->movementSpeed);
-		if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) playerControls::moveRight(this->player, elapsedTime, this->movementSpeed);
+		if (this->inputManager.isKeyBeingPressed(sf::Keyboard::W)) playerControls::moveForward(this->player, elapsedTime, this->movementSpeed);
+		if (this->inputManager.isKeyBeingPressed(sf::Keyboard::S)) playerControls::moveBackward(this->player, elapsedTime, this->movementSpeed);
+		if (this->inputManager.isKeyBeingPressed(sf::Keyboard::A)) playerControls::moveLeft(this->player, elapsedTime, this->movementSpeed);
+		if (this->inputManager.isKeyBeingPressed(sf::Keyboard::D)) playerControls::moveRight(this->player, elapsedTime, this->movementSpeed);
 		if (this->inputManager.isKeyBeingPressed(sf::Keyboard::Space)) playerControls::jump(this->player, 10.f, this->gameWorld);
 		playerControls::applyGravity(this->player, elapsedTime, 18.f);
 		this->player.clipMovement(elapsedTime, this->gameWorld);
@@ -139,8 +145,8 @@ struct Game {
 
 	void getAndRunCommand()
 	{
-		if (this->currentGuiPtr != nullptr) return;
-		this->currentGuiPtr = &this->emptyGui;
+		if (this->guiManager.isGuiSet()) return;
+		this->guiManager.setGuiByName("empty");
 
 		std::string command;
 		std::cin >> command;
@@ -167,7 +173,7 @@ struct Game {
 		{
 			this->gameWorld.save();
 		}
-		this->currentGuiPtr = nullptr;
+		this->guiManager.setNoGui();
 	}
 
 	void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
@@ -186,39 +192,43 @@ struct Game {
 
 		sf::Time elapsed = clock.restart();
 		float elapsedSeconds = elapsed.asSeconds();
-		if (this->currentGuiPtr == nullptr)
+		if (!this->guiManager.isGuiSet())
 		{
 			updatePosition(elapsedSeconds);
 			updateRotation(wsize, window);
 		}
 
 		this->manageKeys();
-		if (this->currentGuiPtr == nullptr)
+
+		if (!this->guiManager.isGuiSet())
 		{
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Right))
 			{
-				std::cout << "Right click" << std::endl;
+				//std::cout << "Right click" << std::endl;
 				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
 			}
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Left))
 				playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
 		}
-
-		for (ui::Button button : this->buttons)
+		else if (this->guiManager.isGuiSet())
 		{
-			if (this->currentGuiPtr)
-				if (this->currentGuiPtr->guiName == button.parentGuiName)
-				{
-					button.updateHoverState(window);
-					button.tryCallOnClick(this->inputManager);
-				}
+			this->guiManager.buttonManager.update(window, this->inputManager, this->guiManager.currentGui->guiName);
 		}
 
-		this->inputManager.update();
+		if (this->guiManager.isGuiSet())
+		{
+			this->guiManager.textFieldManager.updateFocus(window, this->inputManager, this->guiManager.currentGui->guiName);
+		}
 
-		window.setMouseCursorVisible(this->currentGuiPtr);
-		this->testButton.setVisible(this->currentGuiPtr);
-		this->backToGameButton.setVisible(this->currentGuiPtr);
+		if (this->guiManager.isGuiSet())
+		{
+			this->guiManager.textFieldManager.updateTyping(this->inputManager, this->guiManager.currentGui->guiName);
+		}
+
+		this->inputManager.updateKeyPresses(elapsedSeconds);
+		this->inputManager.updateMouseButtonPresses();
+
+		window.setMouseCursorVisible(this->guiManager.isGuiSet());
 
 		glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
 		glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
@@ -235,20 +245,23 @@ struct Game {
 
 		float windowStretchFactor = 1; // TODO calculate
 
-		this->simpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
-		this->darkerSimpleBackgroundRect.sfRectangle.setSize(sf::Vector2f(wsize.x, wsize.y));
+		this->simpleBackgroundRect.scale(wsize.x, wsize.y);
+		this->darkerSimpleBackgroundRect.scale(wsize.x, wsize.y);
 
 		sf::Vector2f s1 = this->crosshairRectangle1.sfRectangle.getSize();
 		this->crosshairRectangle1.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s1 / 2.f));
 
 		sf::Vector2f s2 = this->crosshairRectangle2.sfRectangle.getSize();
 		this->crosshairRectangle2.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s2 / 2.f));
-		
+
 		drawUI(window);
 	}
 
 	void updateDebugInfo()
 	{
+		maths::Vec3<float> blockPosInFrontOfPlayer = playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player);
+		blox::ID blockIDInFrontOfPlayer = this->gameWorld.getBlockID(blockPosInFrontOfPlayer);
+
 		debugInfoStream.clear();
 		debugInfoStream.str("");
 		debugInfoStream
@@ -257,8 +270,8 @@ struct Game {
 			<< "Rotation: " << this->player.rotation.toString() << "\n"
 			<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
 			<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
-			<< "Looking at block with ID: " << this->gameWorld.getBlockID(playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n"
-			<< "Looking at block: " << (playerWorldInteraction::getBlockPosInFrontOfPlayer(this->gameWorld, this->player)) << "\n";
+			<< "Looking at block with ID: " << blockIDInFrontOfPlayer << " (" << int(blockIDInFrontOfPlayer) << ")\n"
+			<< "Looking at block: " << blockPosInFrontOfPlayer << "\n";
 		debugInfoText.updateText(debugInfoStream.str());
 	}
 
@@ -269,7 +282,7 @@ struct Game {
 		this->debugInfoText.drawToWindow(window);
 		this->crosshairRectangle1.drawToWindow(window);
 		this->crosshairRectangle2.drawToWindow(window);
-		if (this->currentGuiPtr) this->currentGuiPtr->draw(window);
+		if (this->guiManager.isGuiSet()) this->guiManager.drawCurrentGuiToWindow(window);
 		window.popGLStates();
 	}
 
@@ -277,12 +290,17 @@ struct Game {
 	{
 		if (inputManager.isKeyPressed(sf::Keyboard::Escape))
 		{
-			this->currentGuiPtr = !(this->currentGuiPtr) ? &this->pauseGui : nullptr;
+			if (this->guiManager.isGuiSet())
+			{
+				this->guiManager.textFieldManager.clearTextFields("options");
+				this->inputManager.resetAllTo(false);
+				this->guiManager.setNoGui();
+			}
+			else this->guiManager.setGuiByName("pause");
 		}
 		else if (inputManager.isKeyPressed(sf::Keyboard::Tab))
 		{
 			this->getAndRunCommand();
 		}
-
 	}
 };

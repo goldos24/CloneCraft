@@ -27,7 +27,7 @@ namespace playerWorldInteraction
 	void breakBlockInFrontOfPlayer(world::World& world, player::Player& player)
 	{
 		maths::Vec3<float> blockPosInFrontOfPlayer = playerWorldInteraction::getBlockPosInFrontOfPlayer(world, player);
-		std::cout << "Block pos: " << blockPosInFrontOfPlayer.floor(1.f) << std::endl;
+		//std::cout << "Block pos: " << blockPosInFrontOfPlayer.floor(1.f) << std::endl;
 		world.setBlockID(blockPosInFrontOfPlayer, blox::air);
 	}
 
