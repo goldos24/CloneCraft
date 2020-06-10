@@ -145,7 +145,7 @@ struct Game {
 
 	void getAndRunCommand()
 	{
-		if (this->guiManager.currentGui != nullptr) return;
+		if (this->guiManager.isGuiSet()) return;
 		this->guiManager.setGuiByName("empty");
 
 		std::string command;
