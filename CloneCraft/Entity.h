@@ -66,7 +66,7 @@ struct Entity
 		this->position -= maths::Vec3<float>(appliedMovementVector.x, 0.f, 0.f);
 
 		this->position += maths::Vec3<float>(0.f, appliedMovementVector.y, 0.f);
-		if (this->isColliding(world)) this->movement.y = 0.f;
+		if (this->isColliding(world)) { this->movement.y = 0.f; }
 		this->position -= maths::Vec3<float>(0.f, appliedMovementVector.y, 0.f);
 
 		this->position += maths::Vec3<float>(0.f, 0.f, appliedMovementVector.z);

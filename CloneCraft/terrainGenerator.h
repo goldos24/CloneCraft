@@ -3,6 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
+#include "chunkData.h"
 #include "randomNumbers.h"
 #include "maths.h"
 
@@ -15,62 +16,29 @@ namespace terrainGen
 		return randomFloat::randomNumber(position.x * position.y / scalar - position.x / scalar + position.y / scalar);
 	}
 
-	void fillWithRandomNumbers(maths::Vec2<float> position, std::vector<float>& heightMap)
-	{
-		for (int i = 0; i < heightMap.size(); i++)
-		{
-			int x = i >> 4;
-			int y = i - x * 16;
-
-			heightMap[i] = getHeight(maths::Vec2<float>(float(x) + position.x, float(y) + position.y), 1.f);
-		}
-	}
-
-	void applyPerlinNoiseOnRow(std::vector<float>& heightMap, int rowIndex, int rowElemSize)
-	{
-		std::vector<float> newHeightMap = std::vector<float>(heightMap.size());
-		
-		float average = 0.f;
-
-		for (int i = rowIndex; i < rowIndex + rowElemSize * 16; i += rowElemSize) average += heightMap[i] / 16.f;
-
-		int IterationCount = 2;
-		for (int j = 0; j < IterationCount; j++)
-		{
-			for (int i = rowIndex; i < rowIndex + rowElemSize * 16; i += rowElemSize) newHeightMap[i] += (heightMap[i]
-				+ i > rowIndex + rowElemSize ? heightMap[i - rowElemSize] : heightMap[i]
-				+ i < rowIndex + rowElemSize * 15 ? heightMap[i + rowElemSize] : heightMap[i]) / float(IterationCount);
-
-			for (int i = rowIndex; i < rowIndex + rowElemSize * 16; i += rowElemSize) heightMap[i] = newHeightMap[i];
-		}
-	}
-
-	void applyPerlinNoise(std::vector<float>& heightMap)
-	{
-		for (int i = 0; i < 256; i += 16)
-			applyPerlinNoiseOnRow(heightMap, i, 1);
-
-		for (int i = 0; i < 16; i++) 
-			applyPerlinNoiseOnRow(heightMap, i, 16);
-
-		for (int i = 0; i < 256; i += 16)
-			applyPerlinNoiseOnRow(heightMap, i, 1);
-	}
 
 	std::vector<float> createHeightMap(maths::Vec2<float> position)
 	{
 		auto heightMap = std::vector<float>(256);
 
-		fillWithRandomNumbers(position, heightMap);
-
-		applyPerlinNoise(heightMap);
-
-		/*for (int i = 0; i < 16; i++)
+		float heights[3][3];
+		for (int i = 0; i <3; i++)
+			for (int j = 0; j < 3; j++)
+			{
+				heights[i][j] = getHeight((position / 16.f) + maths::Vec2<float>(float(i), float(j)), 1.f);
+			}
+		for (int i = 0; i < heightMap.size(); i++)
 		{
-			std::cout << "[";
-			for (int j = 0; j < 16; j++)
-				std::cout << heightMap[i * 16 + j] << (j < 15 ? "," : "]\n\r");
-		}*/
+			auto height = heights[1][1];
+			int x = i >> 4;
+			int y = i - x * 16;
+			float xInterpolation = float(x - chunks::size / 2) / float(chunks::size);
+			float yInterpolation = float(y - chunks::size / 2) / float(chunks::size);
+			float divisor = 1.f + abs(xInterpolation) + abs(yInterpolation);
+			height += (xInterpolation > 0 ? heights[2][1] : heights[0][1]) * abs(xInterpolation);
+			height += (yInterpolation > 0 ? heights[1][2] : heights[1][0]) * abs(yInterpolation);
+			heightMap[i] = height / divisor / 2.f - 6.f;
+		}
 
 		return heightMap;
 	}

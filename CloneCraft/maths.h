@@ -198,7 +198,47 @@ namespace maths
 				this->y * factor
 				);
 		}
+
+		Vec2<num> operator / (num scalarnt)
+		{
+			return Vec2<num>(
+				this->x / scalarnt,
+				this->y / scalarnt
+				);
+		}
+
+		Vec2<num> operator + (Vec2<num> theOtherVec3)
+		{
+			return Vec2<num>(
+				this->x + theOtherVec3.x,
+				this->y + theOtherVec3.y
+				);
+		}
+
+		Vec2<num> operator - (Vec2<num> theOtherVec3)
+		{
+			return Vec2<num>(
+				this->x - theOtherVec3.x,
+				this->y - theOtherVec3.y
+				);
+		}
 	};
+
+	template <class sourceNum, class targetNum>
+	Vec2<targetNum> convertVec2(Vec2<sourceNum> sauce)
+	{
+		return Vec2<targetNum>(targetNum(sauce.x), targetNum(sauce.y));
+	}
+
+	float pythagoras(float x, float y)
+	{
+		return sqrt(x * x + y * y);
+	}
+
+	float pythagoras(float x, float y, float z)
+	{
+		return sqrt(x * x + y * y + z * z);
+	}
 
 	const float pi = 3.1415926535897932384626433832795;
 
