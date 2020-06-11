@@ -242,9 +242,14 @@ namespace maths
 
 	const float pi = 3.1415926535897932384626433832795;
 
-	float degreesToRadians(float degrees)
+	constexpr float degreesToRadians(float degrees)
 	{
 		return degrees / 180 * pi;
+	}
+
+	constexpr float radiansToDegrees(float radians)
+	{
+		return radians * 180 / pi;
 	}
 
 	void capDegrees(float& angle)
@@ -261,7 +266,7 @@ namespace maths
 	}
 	
 	template <typename T>
-	float abs(T value)
+	T abs(T value)
 	{
 		return value < 0 ? -value : value;
 	}
@@ -279,6 +284,21 @@ namespace maths
 	float tand(float angle)
 	{
 		return (float)tan(degreesToRadians(angle));
+	}
+
+	float atan2d(float y, float x)
+	{
+		return radiansToDegrees(atan2f(y, x));
+	}
+
+	bool isAngleInRange(float angle, float min, float max)
+	{
+		capDegrees(angle); capDegrees(min); capDegrees(max);
+		if (max < min) 
+		{
+			return angle <= max || angle >= min;
+		}
+		return angle >= min && angle <= max;
 	}
 
 	template <class num>

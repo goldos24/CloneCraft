@@ -236,7 +236,7 @@ struct Game {
 
 		glBegin(GL_QUADS);      // Draw The Cubes Using quads
 
-		this->gameWorld.Render();
+		this->gameWorld.Render(this->player.position, this->player.rotation.y, 60.f);
 
 		glEnd();
 

@@ -33,7 +33,7 @@ namespace world
 
 		maths::Vec3<int> worldPos = maths::Vec3<int>(0, 0, 0);
 		int size;
-		int chunkRenderDistance = 7;
+		int chunkRenderDistance = 9;
 		std::map<uint64_t, std::shared_ptr<chunks::Chunk>> chunks;
 		saveData::Manager mgr;
 
@@ -145,16 +145,27 @@ namespace world
 			this->size = this->chunks.size();
 		}
 
-		void Render() //TODO replace
+		void Render(maths::Vec3<float> cameraPosition, float cameraYRotation, float fov) //TODO replace
 		{
 			// Making the variable with the best name you've seen in a while
 			auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
-
+			auto virtualPlayerPosition = cameraPosition - maths::positionFromRotation(maths::Vec3<float>(0.f, cameraYRotation, 0.f)) * float(chunks::size);
 			for (int i = this->worldPos.x; i < worldEnd.x; i += chunks::size)
 				for (int j = this->worldPos.y; j < worldEnd.y; j += chunks::size)
 					for (int k = this->worldPos.z; k < worldEnd.z; k += chunks::size)
 					{
-						this->getChunk(maths::Vec3<int>(i, j, k))->Render();
+						auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
+						float angle1 = maths::atan2d(float(chunk->chunkPos.z) - virtualPlayerPosition.z, float(chunk->chunkPos.x) - virtualPlayerPosition.x);
+						float angle2 = maths::atan2d(float(chunk->chunkPos.z) - virtualPlayerPosition.z + float(chunks::size), float(chunk->chunkPos.x) - virtualPlayerPosition.x);
+						float angle3 = maths::atan2d(float(chunk->chunkPos.z) - virtualPlayerPosition.z + float(chunks::size), float(chunk->chunkPos.x) - virtualPlayerPosition.x + float(chunks::size));
+						float angle4 = maths::atan2d(float(chunk->chunkPos.z) - virtualPlayerPosition.z, float(chunk->chunkPos.x) - virtualPlayerPosition.x + float(chunks::size));
+						if (maths::isAngleInRange(angle1, cameraYRotation - fov * 2.f, cameraYRotation - fov) ||
+							maths::isAngleInRange(angle2, cameraYRotation - fov * 2.f, cameraYRotation - fov) ||
+							maths::isAngleInRange(angle3, cameraYRotation - fov * 2.f, cameraYRotation - fov) ||
+							maths::isAngleInRange(angle4, cameraYRotation - fov * 2.f, cameraYRotation - fov))
+						{
+							chunk->Render();
+						}
 					}
 		}
 
