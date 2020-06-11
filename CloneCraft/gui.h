@@ -40,9 +40,9 @@ namespace gui
 
 		void draw(sf::RenderWindow& window)
 		{
-			if (this->drawBackground) window.clear(this->background.backgroundColor);
-
 			window.pushGLStates();
+			
+			if (this->drawBackground) window.clear(this->background.backgroundColor);
 
 			if (this->background.useImage && this->drawBackground)
 			{
@@ -95,6 +95,12 @@ namespace gui
 			{
 				this->currentGui = foundGui;
 			}
+		}
+
+		bool isGuiWithNameActive(std::string name)
+		{
+			if (this->currentGui != nullptr) return this->currentGui->guiName == name;
+			return false;
 		}
 
 		bool isGuiSet()

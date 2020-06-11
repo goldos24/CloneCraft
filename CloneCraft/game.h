@@ -30,6 +30,7 @@ struct Game {
 		this->guiManager.addButtonToGuiWithName(&this->testButton, "pause");
 		this->guiManager.addButtonToGuiWithName(&this->optionsButton, "pause");
 		this->guiManager.addButtonToGuiWithName(&this->backToGameButton, "pause");
+		this->guiManager.addButtonToGuiWithName(&this->backToMainMenuButton, "pause");
 
 		this->guiManager.addGui(&this->optionsGui);
 		this->guiManager.addUIElementToGuiWithName(&this->darkerSimpleBackgroundRect, "options");
@@ -37,6 +38,11 @@ struct Game {
 		this->guiManager.addButtonToGuiWithName(&this->saveWorldButton, "options");
 		this->guiManager.addTextFieldToGuiWithName(&this->testTextField, "options");
 		this->guiManager.addTextFieldToGuiWithName(&this->testTextField2, "options");
+
+		this->guiManager.addGui(&this->mainMenu);
+		this->guiManager.addTextFieldToGuiWithName(&this->loadedWorldNameTextField, "main_menu");
+		this->guiManager.addButtonToGuiWithName(&this->loadWorldButton, "main_menu");
+		this->guiManager.setGuiByName("main_menu");
 	}
 
 	world::World gameWorld = world::World();
@@ -57,6 +63,9 @@ struct Game {
 	ui::Button backToGameButton = ui::Button("pause", 1, 310, 2, 2,
 		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->inputManager.resetAllTo(false); this->guiManager.setNoGui(); });
+	ui::Button backToMainMenuButton = ui::Button("pause", 1, 370, 2, 2,
+		sf::Color(0, 0, 0, 125), "Back to main menu", ui::fonts::dos, sf::Color::White, 30,
+		[this]() { this->inputManager.resetAllTo(false); this->guiManager.setGuiByName("main_menu"); });
 
 	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 2, 2,
 		sf::Color(0, 0, 0, 125), "Back", ui::fonts::dos, sf::Color::White, 30,
@@ -71,6 +80,18 @@ struct Game {
 		[this]() { this->gameWorld.save(); });
 	ui::TextField testTextField = ui::TextField("options", 1, 260, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
 	ui::TextField testTextField2 = ui::TextField("options", 1, 300, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
+	
+	ui::Button loadWorldButton = ui::Button("main_menu", 431, 20, 2, 2,
+		sf::Color(0, 0, 0, 125), "Load world", ui::fonts::dos, sf::Color::White, 30,
+		[this]() 
+		{
+			/*this->gameWorld.loadWorldWithName(this->loadedWorldNameTextField.text);*/ 
+			std::cout << "Loading world \"" << this->loadedWorldNameTextField.text << "\"\n";
+			this->guiManager.setNoGui();
+			this->guiManager.textFieldManager.clearTextFields("main_menu");
+			this->inputManager.resetAllTo(false);
+		});
+	ui::TextField loadedWorldNameTextField = ui::TextField("main_menu", 1, 20, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
 
 	ui::Rect simpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 125));
 	ui::Rect darkerSimpleBackgroundRect = ui::Rect("", 0, 0, 0, 0, sf::Color(0, 0, 0, 195));
@@ -78,6 +99,7 @@ struct Game {
 	ui::Rect crosshairRectangle1 = ui::Rect("", 0, 0, 18, 2, sf::Color(255, 255, 255, 255));
 	ui::Rect crosshairRectangle2 = ui::Rect("", 0, 0, 2, 18, sf::Color(255, 255, 255, 255));
 
+	gui::Gui mainMenu = gui::Gui("main_menu", sf::Color(125, 125, 125));
 	gui::Gui optionsGui = gui::Gui("options");
 	gui::Gui pauseGui = gui::Gui("pause");
 	gui::Gui emptyGui = gui::Gui("empty");
@@ -178,83 +200,114 @@ struct Game {
 
 	void drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
 	{
-		this->updateLoadedChunks();
-
-		glClearColor(0.3f, 0.3f, 0.3f, 1.f);
-
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		oldf::glu::Perspective(60, (float)wsize.x / (float)wsize.y, 0.1f, 512.f);
-
-		glMatrixMode(GL_MODELVIEW);
-		glLoadIdentity();
-
-
-		sf::Time elapsed = clock.restart();
-		float elapsedSeconds = elapsed.asSeconds();
-		if (!this->guiManager.isGuiSet())
+		if (!this->guiManager.isGuiWithNameActive("main_menu"))
 		{
-			updatePosition(elapsedSeconds);
-			updateRotation(wsize, window);
-		}
+			this->updateLoadedChunks();
 
-		this->manageKeys();
+			glClearColor(0.3f, 0.3f, 0.3f, 1.f);
 
-		if (!this->guiManager.isGuiSet())
-		{
-			if (inputManager.isMouseButtonPressed(sf::Mouse::Right))
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			oldf::glu::Perspective(60, (float)wsize.x / (float)wsize.y, 0.1f, 512.f);
+
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+
+
+			sf::Time elapsed = clock.restart();
+			float elapsedSeconds = elapsed.asSeconds();
+			if (!this->guiManager.isGuiSet())
 			{
-				//std::cout << "Right click" << std::endl;
-				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
+				updatePosition(elapsedSeconds);
+				updateRotation(wsize, window);
 			}
-			if (inputManager.isMouseButtonPressed(sf::Mouse::Left))
-				playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
+
+			this->manageKeys();
+
+			if (!this->guiManager.isGuiSet())
+			{
+				if (inputManager.isMouseButtonPressed(sf::Mouse::Right))
+				{
+					//std::cout << "Right click" << std::endl;
+					playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
+				}
+				if (inputManager.isMouseButtonPressed(sf::Mouse::Left))
+					playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
+			}
+			else if (this->guiManager.isGuiSet())
+			{
+				this->guiManager.buttonManager.update(window, this->inputManager, this->guiManager.currentGui->guiName);
+			}
+
+			if (this->guiManager.isGuiSet())
+			{
+				this->guiManager.textFieldManager.updateFocus(window, this->inputManager, this->guiManager.currentGui->guiName);
+			}
+
+			if (this->guiManager.isGuiSet())
+			{
+				this->guiManager.textFieldManager.updateTyping(this->inputManager, this->guiManager.currentGui->guiName);
+			}
+
+			this->inputManager.updateKeyPresses(elapsedSeconds);
+			this->inputManager.updateMouseButtonPresses();
+
+			window.setMouseCursorVisible(this->guiManager.isGuiSet());
+
+			glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
+			glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
+			glTranslatef(-player.position.x, -player.position.y, -player.position.z);
+
+			glBegin(GL_QUADS);      // Draw The Cubes Using quads
+
+			this->gameWorld.Render(this->player.position, this->player.rotation.y, 60.f);
+
+			glEnd();
+
+			updateDebugInfo();
+
+			float windowStretchFactor = 1; // TODO calculate
+
+			this->simpleBackgroundRect.scale(wsize.x, wsize.y);
+			this->darkerSimpleBackgroundRect.scale(wsize.x, wsize.y);
+
+			sf::Vector2f s1 = this->crosshairRectangle1.sfRectangle.getSize();
+			this->crosshairRectangle1.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s1 / 2.f));
+
+			sf::Vector2f s2 = this->crosshairRectangle2.sfRectangle.getSize();
+			this->crosshairRectangle2.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s2 / 2.f));
+
+			drawUI(window);
+
+			if (this->guiManager.isGuiSet()) this->guiManager.drawCurrentGuiToWindow(window);
 		}
-		else if (this->guiManager.isGuiSet())
+		else
 		{
-			this->guiManager.buttonManager.update(window, this->inputManager, this->guiManager.currentGui->guiName);
+			window.setMouseCursorVisible(true);
+
+			sf::Time elapsed = clock.restart();
+			float elapsedSeconds = elapsed.asSeconds();
+
+			if (this->guiManager.isGuiSet())
+			{
+				this->guiManager.buttonManager.update(window, this->inputManager, this->guiManager.currentGui->guiName);
+			}
+
+			if (this->guiManager.isGuiSet())
+			{
+				this->guiManager.textFieldManager.updateFocus(window, this->inputManager, this->guiManager.currentGui->guiName);
+			}
+
+			if (this->guiManager.isGuiSet())
+			{
+				this->guiManager.textFieldManager.updateTyping(this->inputManager, this->guiManager.currentGui->guiName);
+			}
+
+			this->inputManager.updateKeyPresses(elapsedSeconds);
+			this->inputManager.updateMouseButtonPresses();
+			
+			if (this->guiManager.isGuiSet()) this->guiManager.drawCurrentGuiToWindow(window);
 		}
-
-		if (this->guiManager.isGuiSet())
-		{
-			this->guiManager.textFieldManager.updateFocus(window, this->inputManager, this->guiManager.currentGui->guiName);
-		}
-
-		if (this->guiManager.isGuiSet())
-		{
-			this->guiManager.textFieldManager.updateTyping(this->inputManager, this->guiManager.currentGui->guiName);
-		}
-
-		this->inputManager.updateKeyPresses(elapsedSeconds);
-		this->inputManager.updateMouseButtonPresses();
-
-		window.setMouseCursorVisible(this->guiManager.isGuiSet());
-
-		glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
-		glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
-		glTranslatef(-player.position.x, -player.position.y, -player.position.z);
-
-		glBegin(GL_QUADS);      // Draw The Cubes Using quads
-
-		this->gameWorld.Render(this->player.position, this->player.rotation.y, 60.f);
-
-		glEnd();
-
-		updateDebugInfo();
-
-
-		float windowStretchFactor = 1; // TODO calculate
-
-		this->simpleBackgroundRect.scale(wsize.x, wsize.y);
-		this->darkerSimpleBackgroundRect.scale(wsize.x, wsize.y);
-
-		sf::Vector2f s1 = this->crosshairRectangle1.sfRectangle.getSize();
-		this->crosshairRectangle1.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s1 / 2.f));
-
-		sf::Vector2f s2 = this->crosshairRectangle2.sfRectangle.getSize();
-		this->crosshairRectangle2.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s2 / 2.f));
-
-		drawUI(window);
 	}
 
 	void updateDebugInfo()
@@ -282,7 +335,6 @@ struct Game {
 		this->debugInfoText.drawToWindow(window);
 		this->crosshairRectangle1.drawToWindow(window);
 		this->crosshairRectangle2.drawToWindow(window);
-		if (this->guiManager.isGuiSet()) this->guiManager.drawCurrentGuiToWindow(window);
 		window.popGLStates();
 	}
 
