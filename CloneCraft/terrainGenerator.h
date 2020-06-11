@@ -34,10 +34,11 @@ namespace terrainGen
 			int y = i - x * 16;
 			float xInterpolation = float(x - chunks::size / 2) / float(chunks::size);
 			float yInterpolation = float(y - chunks::size / 2) / float(chunks::size);
-			float divisor = 1.f + abs(xInterpolation) + abs(yInterpolation);
+			float divisor = 1.f + (abs(xInterpolation) > abs(yInterpolation) ? abs(xInterpolation) : abs(yInterpolation));
+			height /= (divisor + 1.f);
 			height += (xInterpolation > 0 ? heights[2][1] : heights[0][1]) * abs(xInterpolation);
 			height += (yInterpolation > 0 ? heights[1][2] : heights[1][0]) * abs(yInterpolation);
-			heightMap[i] = height / divisor / 2.f - 6.f;
+			heightMap[i] = height / divisor / 1.f - 6.f;
 		}
 
 		return heightMap;
