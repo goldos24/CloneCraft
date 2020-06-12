@@ -163,15 +163,11 @@ namespace ui
 			this->onClick = onClick;
 
 			int charWidth = int(charSize / 1.7);
-			int fittingCharCount = int(this->w / charWidth);
 
-			if (buttonText.length() < fittingCharCount)
-			{
-				this->centerText.x = this->x + this->w / 2 - (charWidth * buttonText.length()) / 2;
-				this->centerText.y = this->y + this->h / 2 - charSize / 2 - 3;
+			this->centerText.x = this->x + this->w / 2 - (charWidth * buttonText.length()) / 2;
+			this->centerText.y = this->y + this->h / 2 - charSize / 2 - 3;
 
-				this->centerText.textElement.setPosition(this->centerText.x, this->centerText.y);
-			}
+			this->centerText.textElement.setPosition(this->centerText.x, this->centerText.y);
 		}
 
 		void setPosition(int x, int y)
@@ -181,15 +177,11 @@ namespace ui
 			this->buttonRect.setPosition(x, y);
 
 			int charWidth = int(this->charSize / 1.7);
-			int fittingCharCount = int(this->w / charWidth);
 
-			if (this->buttonText.length() < fittingCharCount)
-			{
-				this->centerText.x = this->x + this->w / 2 - (charWidth * buttonText.length()) / 2;
-				this->centerText.y = this->y + this->h / 2 - charSize / 2 - 3;
+			this->centerText.x = this->x + this->w / 2 - (charWidth * buttonText.length()) / 2;
+			this->centerText.y = this->y + this->h / 2 - charSize / 2 - 3;
 
-				this->centerText.textElement.setPosition(this->centerText.x, this->centerText.y);
-			}
+			this->centerText.textElement.setPosition(this->centerText.x, this->centerText.y);
 		}
 
 		void setXPositionByOrigin(int x)
@@ -342,11 +334,11 @@ namespace ui
 		void tryType(input::InputManager& inputManager)
 		{
 			if (this->focused)
-			{				
-				if (inputManager.isKeyPressed(sf::Keyboard::Backspace) || 
+			{
+				if (inputManager.isKeyPressed(sf::Keyboard::Backspace) ||
 					inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Backspace, .7f))
 				{
-					if (this->text.size() > 0) 
+					if (this->text.size() > 0)
 						this->text = this->text.substr(0, this->text.size() - 1);
 				}
 
@@ -355,8 +347,8 @@ namespace ui
 					if (inputManager.isKeyPressed(sf::Keyboard::Key(i)) ||
 						inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Key(i), .7f))
 					{
-						this->text += inputManager.isKeyBeingPressed(sf::Keyboard::LShift) ? 
-							char('A' + i):
+						this->text += inputManager.isKeyBeingPressed(sf::Keyboard::LShift) ?
+							char('A' + i) :
 							char('a' + i);
 					}
 				}
