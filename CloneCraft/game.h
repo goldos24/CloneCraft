@@ -154,18 +154,19 @@ struct Game {
 	float rotation = 0.f;
 	float friction = 1.f;
 	sf::Vector2f windowCenter;
+	sf::Vector2f lastMousePos;
 
 	void updateRotation(sf::Vector2u wsize, sf::RenderWindow& window)
 	{
-		sf::Vector2f halfWindowSize = sf::Vector2f(float(wsize.x) / 2, float(wsize.y) / 2);
+		this->windowCenter = sf::Vector2f(float(wsize.x) / 2, float(wsize.y) / 2);
 
 		auto position = sf::Vector2f(sf::Mouse::getPosition(window));
 
-		this->windowCenter = sf::Vector2f(halfWindowSize.x, halfWindowSize.y);
+		sf::Vector2f positionDifference = position - this->lastMousePos;
 
-		sf::Vector2f positionDifference = position - sf::Vector2f(this->windowCenter);
+		sf::Mouse::setPosition(sf::Vector2i(windowCenter.x, windowCenter.y), window);
 
-		sf::Mouse::setPosition(sf::Vector2i(halfWindowSize.x, halfWindowSize.y), window);
+		this->lastMousePos = sf::Vector2f(sf::Mouse::getPosition(window));
 
 		this->player.rotate(float(positionDifference.y), float(positionDifference.x), 1.f);
 	}
@@ -289,9 +290,6 @@ struct Game {
 			glRotatef(this->player.rotation.x, 1.f, 0.f, 0.f);
 			glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
 			glTranslatef(-player.position.x, -player.position.y, -player.position.z);
-
-
-			std::cout << oldf::glu::simpleProjectRelative({ 0.f, 0.f, 0.f }).x << " " << oldf::glu::simpleProjectRelative({ 0.f, 0.f, 0.f }).y << "         \r";
 
 			this->gameWorld.markVisibleChunks(this->player.rotation);
 
