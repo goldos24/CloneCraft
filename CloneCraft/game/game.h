@@ -298,10 +298,10 @@ struct Game {
 			this->simpleBackgroundRect.scale(wsize.x, wsize.y);
 			this->darkerSimpleBackgroundRect.scale(wsize.x, wsize.y);
 
-			sf::Vector2f s1 = this->crosshairRectangle1.sfRectangle.getSize();
+			sf::Vector2f s1 = this->crosshairRectangle1.rectElement.getSize();
 			this->crosshairRectangle1.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s1 / 2.f));
 
-			sf::Vector2f s2 = this->crosshairRectangle2.sfRectangle.getSize();
+			sf::Vector2f s2 = this->crosshairRectangle2.rectElement.getSize();
 			this->crosshairRectangle2.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s2 / 2.f));
 
 			this->backToGameButton.centerOnXAxis(wsize.x, window);
