@@ -222,6 +222,16 @@ namespace maths
 				this->y - theOtherVec3.y
 				);
 		}
+
+		bool isInBounds(Vec2<num> a, Vec2<num> b)
+		{
+			return
+				this->x >= a.x &&
+				this->y >= a.y &&
+				this->x < b.x  &&
+				this->y < b.y
+				;
+		}
 	};
 
 	template <class sourceNum, class targetNum>
@@ -289,6 +299,15 @@ namespace maths
 	float atan2d(float y, float x)
 	{
 		return radiansToDegrees(atan2f(y, x));
+	}
+
+	Vec3<float> rotateOnXf(Vec3<float> initialVector, float xRotation)
+	{
+		return Vec3<float>(
+			initialVector.x, 
+			initialVector.y * cosd(xRotation) - initialVector.z * sind(xRotation),
+			initialVector.y * sind(xRotation) + initialVector.z * cosd(xRotation)
+			);
 	}
 
 	bool isAngleInRange(float angle, float min, float max)

@@ -290,9 +290,14 @@ struct Game {
 			glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
 			glTranslatef(-player.position.x, -player.position.y, -player.position.z);
 
+
+			std::cout << oldf::glu::simpleProjectRelative({ 0.f, 0.f, 0.f }).x << " " << oldf::glu::simpleProjectRelative({ 0.f, 0.f, 0.f }).y << "         \r";
+
+			this->gameWorld.markVisibleChunks(this->player.rotation);
+
 			glBegin(GL_QUADS);      // Draw The Cubes Using quads
 
-			this->gameWorld.Render(this->player.position, this->player.rotation.y, 60.f);
+			this->gameWorld.Render();
 
 			glEnd();
 

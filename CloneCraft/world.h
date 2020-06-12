@@ -9,6 +9,7 @@
 #include "maths.h"
 #include "files.h"
 #include "blockInfo.h"
+#include "oldFunctions.h"
 
 namespace world
 {
@@ -33,7 +34,7 @@ namespace world
 
 		maths::Vec3<int> worldPos = maths::Vec3<int>(0, 0, 0);
 		int size;
-		int chunkRenderDistance = 9;
+		int chunkRenderDistance = 11;
 		std::map<uint64_t, std::shared_ptr<chunks::Chunk>> chunks;
 		saveData::Manager mgr;
 
@@ -145,28 +146,36 @@ namespace world
 			this->size = this->chunks.size();
 		}
 
-		void Render(maths::Vec3<float> cameraPosition, float cameraYRotation, float fov) //TODO replace
+		void Render() //TODO replace
 		{
 			// Making the variable with the best name you've seen in a while
 			auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
-			auto virtualPlayerPosition = cameraPosition - maths::positionFromRotation(maths::Vec3<float>(0.f, cameraYRotation, 0.f)) * float(chunks::size);
 			for (int i = this->worldPos.x; i < worldEnd.x; i += chunks::size)
 				for (int j = this->worldPos.y; j < worldEnd.y; j += chunks::size)
 					for (int k = this->worldPos.z; k < worldEnd.z; k += chunks::size)
 					{
 						auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
-						float angle1 = maths::atan2d(float(chunk->chunkPos.z) - virtualPlayerPosition.z, float(chunk->chunkPos.x) - virtualPlayerPosition.x);
-						float angle2 = maths::atan2d(float(chunk->chunkPos.z) - virtualPlayerPosition.z + float(chunks::size), float(chunk->chunkPos.x) - virtualPlayerPosition.x);
-						float angle3 = maths::atan2d(float(chunk->chunkPos.z) - virtualPlayerPosition.z + float(chunks::size), float(chunk->chunkPos.x) - virtualPlayerPosition.x + float(chunks::size));
-						float angle4 = maths::atan2d(float(chunk->chunkPos.z) - virtualPlayerPosition.z, float(chunk->chunkPos.x) - virtualPlayerPosition.x + float(chunks::size));
-						if (maths::isAngleInRange(angle1, cameraYRotation - fov * 2.f, cameraYRotation - fov) ||
-							maths::isAngleInRange(angle2, cameraYRotation - fov * 2.f, cameraYRotation - fov) ||
-							maths::isAngleInRange(angle3, cameraYRotation - fov * 2.f, cameraYRotation - fov) ||
-							maths::isAngleInRange(angle4, cameraYRotation - fov * 2.f, cameraYRotation - fov))
-						{
-							chunk->Render();
-						}
+						//if (oldf::glu::simpleProjectRelative(maths::convertVec3<int, float>(chunk->chunkPos)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)))
+						if(chunk->isVisible)
+						chunk->Render();
 					}
+		}
+
+		void markVisibleChunks(maths::Vec3<float> cameraRotation)
+		{
+			// Making the variable with the best name you've seen in a while
+			auto virtualOffset = maths::positionFromRotation(cameraRotation) * float(chunks::size) * 3.f;
+			glTranslatef(virtualOffset.x, virtualOffset.y, virtualOffset.z);
+			auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
+			for (int i = this->worldPos.x; i < worldEnd.x; i += chunks::size)
+				for (int j = this->worldPos.y; j < worldEnd.y; j += chunks::size)
+					for (int k = this->worldPos.z; k < worldEnd.z; k += chunks::size)
+					{
+						auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
+						chunk->isVisible =
+							oldf::glu::simpleProjectRelative(maths::convertVec3<int, float>(chunk->chunkPos)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f));
+					}
+			glTranslatef(-virtualOffset.x, -virtualOffset.y, -virtualOffset.z);
 		}
 
 		bool save() 

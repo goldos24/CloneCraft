@@ -38,6 +38,8 @@ namespace chunks
 			
 		}
 
+		bool isVisible = false;
+
 		std::vector<renderData::BlockFace> renderData = std::vector<renderData::BlockFace>();
 
 		maths::Vec3<int> chunkPos;
