@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "../maths/maths.h"
 #include "../world/world.h"
 #include "../world/blocks.h"
@@ -20,8 +21,8 @@ namespace player
 
 		void rotate(float X, float Y, float mouseSpeed)
 		{
-			this-> rotation.x += X * mouseSpeed;
-			this-> rotation.y += Y * mouseSpeed;
+			this->rotation.x += X * mouseSpeed;
+			this->rotation.y += Y * mouseSpeed;
 			if (this->rotation.x < -ROTATION_X_BOUNDS) this->rotation.x = -ROTATION_X_BOUNDS;
 			if (this->rotation.x > ROTATION_X_BOUNDS) this->rotation.x = ROTATION_X_BOUNDS;
 

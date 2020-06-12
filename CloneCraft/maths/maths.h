@@ -240,15 +240,7 @@ namespace maths
 		return Vec2<targetNum>(targetNum(sauce.x), targetNum(sauce.y));
 	}
 
-	float pythagoras(float x, float y)
-	{
-		return sqrt(x * x + y * y);
-	}
-
-	float pythagoras(float x, float y, float z)
-	{
-		return sqrt(x * x + y * y + z * z);
-	}
+	float pythagoras(float x, float y);
 
 	const float pi = 3.1415926535897932384626433832795;
 
@@ -262,18 +254,7 @@ namespace maths
 		return radians * 180 / pi;
 	}
 
-	void capDegrees(float& angle)
-	{
-		while (angle <= 0)
-		{
-			angle += 360;
-		}
-
-		while (angle >= 360)
-		{
-			angle -= 360;
-		}
-	}
+	void capDegrees(float& angle);
 	
 	template <typename T>
 	T abs(T value)
@@ -281,44 +262,17 @@ namespace maths
 		return value < 0 ? -value : value;
 	}
 
-	float cosd(float angle)
-	{
-		return (float)cos(degreesToRadians(angle));
-	}
+	float cosd(float angle);
 
-	float sind(float angle)
-	{
-		return (float)sin(degreesToRadians(angle));
-	}
+	float sind(float angle);
 
-	float tand(float angle)
-	{
-		return (float)tan(degreesToRadians(angle));
-	}
+	float tand(float angle);
 
-	float atan2d(float y, float x)
-	{
-		return radiansToDegrees(atan2f(y, x));
-	}
+	float atan2d(float y, float x);
 
-	Vec3<float> rotateOnXf(Vec3<float> initialVector, float xRotation)
-	{
-		return Vec3<float>(
-			initialVector.x, 
-			initialVector.y * cosd(xRotation) - initialVector.z * sind(xRotation),
-			initialVector.y * sind(xRotation) + initialVector.z * cosd(xRotation)
-			);
-	}
+	Vec3<float> rotateOnXf(Vec3<float> initialVector, float xRotation);
 
-	bool isAngleInRange(float angle, float min, float max)
-	{
-		capDegrees(angle); capDegrees(min); capDegrees(max);
-		if (max < min) 
-		{
-			return angle <= max || angle >= min;
-		}
-		return angle >= min && angle <= max;
-	}
+	bool isAngleInRange(float angle, float min, float max);
 
 	template <class num>
 	Vec3<num> positionFromRotation(Vec3<num> rotation)
@@ -339,44 +293,17 @@ namespace maths
 	constexpr float squareof(float x) { return x * x; };
 	constexpr int squareof(int x) { return x * x; };
 
-	bool is3dCoordInRange(int x, int y, int z, int min, int max)
-	{
-		return Vec3<int>(x, y, z).isInBounds(Vec3<int>(min, min, min), Vec3<int>(max, max, max));
-	}
+	bool is3dCoordInRange(int x, int y, int z, int min, int max);
 
-	float mapFromRangeToRange(float v, float aMin, float aMax, float bMin, float bMax)
-	{
-		return bMin + (bMax - bMin) * ((v - aMin) / (aMax - aMin));
-	}
+	float mapFromRangeToRange(float v, float aMin, float aMax, float bMin, float bMax);
 
 	namespace coord
 	{
-		int coordinateToIndex(int x, int y, int z, int size)
-		{
-			return x * size * size + y * size + z;
-		}
+		int coordinateToIndex(int x, int y, int z, int size);
 
-		void indexToCoordinate(int i, int& x, int& y, int& z, int size)
-		{
-			x = i / size / size;
-			i -= x * size * size;
-			y = i / size;
-			i -= y * size;
-			z = i;
-			i -= z;
-		}
+		void indexToCoordinate(int i, int& x, int& y, int& z, int size);
 	}
 }
 
-
-// Yeah, operator overloading isn't perfect...
-
-std::ostream& operator<<(std::ostream& output, maths::Vec3<int> vector)
-{
-	return output << vector.toString();
-}
-
-std::ostream& operator<<(std::ostream& output, maths::Vec3<float> vector)
-{
-	return output << vector.toString();
-}
+std::ostream& operator<<(std::ostream& output, maths::Vec3<int> vector);
+std::ostream& operator<<(std::ostream& output, maths::Vec3<float> vector);
