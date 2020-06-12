@@ -2,10 +2,10 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
-#include "blocks.h"
-#include "chunks.h"
+#include "../world/blocks.h"
+#include "../world/chunks.h"
 #include "game.h"
-#include "textures.h"
+#include "../textures/textures.h"
 
 
 int main()

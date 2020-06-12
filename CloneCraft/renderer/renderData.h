@@ -1,12 +1,12 @@
 #pragma once
 #include <iostream>
-#include "textures.h"
-#include "blocks.h"
-#include "maths.h"
-#include "renderer.h"
-#include "facePosition.h"
-#include "blocks.h"
-#include "blockInfo.h"
+#include "../textures/textures.h"
+#include "../world/blocks.h"
+#include "../maths/maths.h"
+#include "../renderer/renderer.h"
+#include "../renderer/facePosition.h"
+#include "../world/blocks.h"
+#include "../world/blockInfo.h"
 
 namespace renderData
 {

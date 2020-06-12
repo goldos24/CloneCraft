@@ -3,9 +3,9 @@
 #include <vector>
 #include <iostream>
 #include <math.h>
-#include "chunkData.h"
+#include "../world/chunkData.h"
 #include "randomNumbers.h"
-#include "maths.h"
+#include "../maths/maths.h"
 
 namespace terrainGen
 {

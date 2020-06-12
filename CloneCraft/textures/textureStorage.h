@@ -1,7 +1,7 @@
 #pragma once
 #include<SFML/Graphics.hpp>
 #include<SFML/OpenGL.hpp>
-#include "maths.h"
+#include "../maths/maths.h"
 
 namespace texStorage
 {

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "world.h"
-#include "player.h"
-#include "maths.h"
-#include "blocks.h"
+#include "../world/world.h"
+#include "../player/player.h"
+#include "../maths/maths.h"
+#include "../world/blocks.h"
 
 namespace playerControls
 {

@@ -2,7 +2,7 @@
 
 #include <SFML/OpenGL.hpp>
 #include <math.h>
-#include "maths.h"
+#include "../maths/maths.h"
 
 namespace oldf {
 

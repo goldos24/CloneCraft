@@ -1,8 +1,8 @@
 #pragma once
-#include "blocks.h"
+#include "../world/blocks.h"
 #include <string>
 #include <iostream>
-#include "textures.h"
+#include "../textures/textures.h"
 
 namespace blox
 {

@@ -8,7 +8,7 @@
 #include <SFML/System.hpp>
 #include <functional>
 
-#include "input.h"
+#include "../input/input.h"
 
 namespace ui
 {

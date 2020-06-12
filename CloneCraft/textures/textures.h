@@ -1,10 +1,10 @@
 #pragma once
-#include "maths.h"
-#include "facePosition.h"
+#include "../maths/maths.h"
+#include "../renderer/facePosition.h"
 #include <iostream>
 #include <string>
 #include <SFML/Graphics.hpp>
-#include "textureStorage.h"
+#include "../textures/textureStorage.h"
 
 namespace textures
 {

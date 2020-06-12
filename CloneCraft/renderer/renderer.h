@@ -3,11 +3,11 @@
 #include <SFML/OpenGL.hpp>
 #include <iostream>
 
-#include "blocks.h"
-#include "textureStorage.h"
-#include "textures.h"
-#include "facePosition.h"
-#include "maths.h"
+#include "../world/blocks.h"
+#include "../textures/textureStorage.h"
+#include "../textures/textures.h"
+#include "../renderer/facePosition.h"
+#include "../maths/maths.h"
 
 namespace renderer
 {

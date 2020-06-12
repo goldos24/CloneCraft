@@ -5,10 +5,10 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
-#include "maths.h"
-#include "chunkData.h"
-#include "chunks.h"
-#include "blocks.h"
+#include "../maths/maths.h"
+#include "../world/chunkData.h"
+#include "../world/chunks.h"
+#include "../world/blocks.h"
 
 namespace saveData 
 {

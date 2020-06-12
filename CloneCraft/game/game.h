@@ -6,18 +6,18 @@
 #include <sstream>
 #include <iostream>
 #include <string>
-#include "oldFunctions.h"
-#include "blocks.h"
-#include "chunks.h"
-#include "player.h"
-#include "maths.h"
-#include "world.h"
-#include "ui.h"
-#include "gui.h"
-#include "playerWorldInteraction.h"
-#include "input.h"
-#include "playerControls.h"
-#include "blockInfo.h"
+#include "../glu/oldFunctions.h"
+#include "../world/blocks.h"
+#include "../world/chunks.h"
+#include "../player/player.h"
+#include "../maths/maths.h"
+#include "../world/world.h"
+#include "../ui/ui.h"
+#include "../ui/gui.h"
+#include "../player/playerWorldInteraction.h"
+#include "../input/input.h"
+#include "../player/playerControls.h"
+#include "../world/blockInfo.h"
 
 struct Game {
 	Game()

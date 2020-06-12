@@ -1,13 +1,13 @@
 #pragma once
-#include "blocks.h"
-#include "renderer.h"
-#include "maths.h"
-#include "renderData.h"
+#include "../world/blocks.h"
+#include "../renderer/renderer.h"
+#include "../maths/maths.h"
+#include "../renderer/renderData.h"
 #include <vector>
 #include <memory>
-#include "terrainGenerator.h"
-#include "chunkData.h"
-#include "blockInfo.h"
+#include "../terrain/terrainGenerator.h"
+#include "../world/chunkData.h"
+#include "../world/blockInfo.h"
 
 namespace chunks 
 {

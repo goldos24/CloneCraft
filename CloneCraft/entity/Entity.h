@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-#include "world.h"
+#include "../world/world.h"
 
 struct Entity
 {

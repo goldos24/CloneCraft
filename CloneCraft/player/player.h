@@ -1,9 +1,9 @@
 #pragma once
 
-#include "maths.h"
-#include "world.h"
-#include "blocks.h"
-#include "Entity.h"
+#include "../maths/maths.h"
+#include "../world/world.h"
+#include "../world/blocks.h"
+#include "../entity/Entity.h"
 
 namespace player
 {

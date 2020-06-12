@@ -1,10 +1,10 @@
 #pragma once
 
 #include <cmath>
-#include "player.h"
-#include "maths.h"
-#include "blocks.h"
-#include "chunks.h"
+#include "../player/player.h"
+#include "../maths/maths.h"
+#include "../world/blocks.h"
+#include "../world/chunks.h"
 
 namespace playerWorldInteraction
 {

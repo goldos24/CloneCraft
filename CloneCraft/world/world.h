@@ -4,12 +4,12 @@
 #include <memory>
 #include <map>
 #include <cstdint>
-#include "chunkData.h"
-#include "chunks.h"
-#include "maths.h"
-#include "files.h"
-#include "blockInfo.h"
-#include "oldFunctions.h"
+#include "../world/chunkData.h"
+#include "../world/chunks.h"
+#include "../maths/maths.h"
+#include "../files/files.h"
+#include "../world/blockInfo.h"
+#include "../glu/oldFunctions.h"
 
 namespace world
 {
