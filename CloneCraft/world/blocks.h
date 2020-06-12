@@ -12,13 +12,7 @@ namespace blox
 		enumSize
 	};
 
-	void eliminateFalseID(ID& id)
-	{
-		if (id >= enumSize)  id = air; 
-	}
+	void eliminateFalseID(ID& id);
 
-	bool isTransparent(ID blockId) 
-	{
-		return blockId == air;
-	}
+	bool isTransparent(ID blockId);
 }

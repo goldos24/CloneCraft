@@ -8,26 +8,14 @@
 
 namespace textures
 {
-	auto storage = texStorage::Storage(16, 16, 256);
 
-	sf::Image loadImageFromPath(std::string path)
-	{
-		auto image = sf::Image();
-		if (!image.loadFromFile(path))
-		{
-			std::cout << "Couldn't load texture with path :" + path;
-			image.create(16, 16); // Preventing a Segfault 
-		}
-		return image;
-	}
+	__declspec(selectany) texStorage::Storage storage(16, 16, 256);
+
+	sf::Image loadImageFromPath(std::string path);
 
 	struct FaceTexture
 	{
-		FaceTexture(std::string path)
-		{
-			this->texture = storage.add(loadImageFromPath(path));
-			this->filePath = path;
-		}
+		FaceTexture(std::string path);
 		texStorage::Texture texture;
 		std::string filePath;
 		
@@ -40,37 +28,9 @@ namespace textures
 			FaceTexture* left,
 			FaceTexture* right,
 			FaceTexture* front,
-			FaceTexture* back)
-		{
-			this->top = top;
-			this->bottom = bottom;
-			this->left = left;
-			this->right = right;
-			this->front = front;
-			this->back = back;
-		}
+			FaceTexture* back);
 
-		FaceTexture* getFaceTexture(facePos::FacePosition position)
-		{
-			switch (position)
-			{
-			case facePos::top:
-				return this->top;
-			case facePos::bottom:
-				return this->bottom;
-			case facePos::front:
-				return this->front;
-			case facePos::back:
-				return this->back;
-			case facePos::left:
-				return this->left;
-			case facePos::right:
-				return this->right;
-			default:
-				std::cout << "Invalid position: Segfault imminent";
-				break;
-			}
-		}
+		FaceTexture* getFaceTexture(facePos::FacePosition position);
 
 		FaceTexture* top;
 		FaceTexture* bottom;
@@ -82,10 +42,10 @@ namespace textures
 
 	namespace faceTextures
 	{
-		FaceTexture* stone = new FaceTexture("resources/textures/blocks/stone.png");
-		FaceTexture* dirt = new FaceTexture("resources/textures/blocks/dirt.png");
-		FaceTexture* grass_side = new FaceTexture("resources/textures/blocks/grass_side.png");
-		FaceTexture* grass_top = new FaceTexture("resources/textures/blocks/grass_top.png");
+		__declspec(selectany) FaceTexture* stone = new textures::FaceTexture("resources/textures/blocks/stone.png");
+		__declspec(selectany) FaceTexture* dirt = new textures::FaceTexture("resources/textures/blocks/dirt.png");
+		__declspec(selectany) FaceTexture* grass_side = new textures::FaceTexture("resources/textures/blocks/grass_side.png");
+		__declspec(selectany) FaceTexture* grass_top = new textures::FaceTexture("resources/textures/blocks/grass_top.png");
 	}
 
 	namespace shadingFactors
@@ -98,31 +58,12 @@ namespace textures
 		const float right = 0.8f;
 	}
 
-	float getShadingFactorByPosition(facePos::FacePosition position)
-	{
-		switch (position)
-		{
-		case facePos::top:
-			return shadingFactors::top;
-		case facePos::bottom:
-			return shadingFactors::bottom;
-		case facePos::front:
-			return shadingFactors::front;
-		case facePos::back:
-			return shadingFactors::back;
-		case facePos::left:
-			return shadingFactors::left;
-		case facePos::right:
-			return shadingFactors::right;
-		default:
-			break;
-		}
-	}
+	float getShadingFactorByPosition(facePos::FacePosition position);
 
 	namespace blockTextures
 	{
-		BlockTexture* stone = new BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
-		BlockTexture* dirt = new BlockTexture(faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt);
-		BlockTexture* grass = new BlockTexture(faceTextures::grass_top, faceTextures::dirt, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side);
+		__declspec(selectany) BlockTexture* stone = new textures::BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
+		__declspec(selectany) BlockTexture* dirt = new textures::BlockTexture(faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt);
+		__declspec(selectany) BlockTexture* grass = new textures::BlockTexture(faceTextures::grass_top, faceTextures::dirt, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side);
 	}
 }

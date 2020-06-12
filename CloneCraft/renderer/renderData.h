@@ -20,11 +20,11 @@ namespace renderData
 		{
 			blox::eliminateFalseID(blockID);
 			this->position = maths::Vec3<float>( float(blockPosition.x), float(blockPosition.y), float(blockPosition.z)) ;
-			this->texture = blox::getByID(blockID).texture->getFaceTexture(position);
+			this->texture = (blox::getByID(blockID).texture->getFaceTexture(position));
 		}
 
 		const renderer::FaceVertexContainer* vertices;
-		textures::FaceTexture* texture;
+		const textures::FaceTexture* texture;
 
 		maths::Vec3<float> position;
 

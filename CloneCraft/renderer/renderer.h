@@ -78,7 +78,7 @@ namespace renderer
 
     namespace block
     {
-        void drawFace(textures::FaceTexture* texture, const float shading,
+        void drawFace(const textures::FaceTexture* texture, const float shading,
             FaceVertexContainer vertices)
         {
             textures::storage.select(texture->texture);
