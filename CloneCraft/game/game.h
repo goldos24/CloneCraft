@@ -27,7 +27,6 @@ struct Game {
 		this->guiManager.addGui(&this->emptyGui);
 		this->guiManager.addGui(&this->pauseGui);
 		this->guiManager.addUIElementToGuiWithName(&this->simpleBackgroundRect, "pause");
-		this->guiManager.addButtonToGuiWithName(&this->testButton, "pause");
 		this->guiManager.addButtonToGuiWithName(&this->optionsButton, "pause");
 		this->guiManager.addButtonToGuiWithName(&this->backToGameButton, "pause");
 		this->guiManager.addButtonToGuiWithName(&this->backToMainMenuButton, "pause");
@@ -36,8 +35,6 @@ struct Game {
 		this->guiManager.addUIElementToGuiWithName(&this->darkerSimpleBackgroundRect, "options");
 		this->guiManager.addButtonToGuiWithName(&this->backToPauseGuiButton, "options");
 		this->guiManager.addButtonToGuiWithName(&this->saveWorldButton, "options");
-		this->guiManager.addTextFieldToGuiWithName(&this->testTextField, "options");
-		this->guiManager.addTextFieldToGuiWithName(&this->testTextField2, "options");
 
 		this->guiManager.addGui(&this->mainMenu);
 		this->guiManager.addTextFieldToGuiWithName(&this->worldNameTextField, "main_menu");
@@ -58,24 +55,21 @@ struct Game {
 	ui::Text debugText = ui::Text("", "Debug", ui::fonts::dos, sf::Color::White, 1, 0, 17);
 	ui::Text debugInfoText = ui::Text("", "", ui::fonts::dos, sf::Color::White, 1, 25, 14);
 
-	ui::Button testButton = ui::Button("pause", 1, 190, 2, 2,
-		sf::Color(0, 0, 0, 125), "Test", ui::fonts::dos, sf::Color::White, 30,
-		[]() { std::cout << "Test!" << std::endl; });
-	ui::Button optionsButton = ui::Button("pause", 1, 250, 2, 2,
-		sf::Color(0, 0, 0, 125), "Options", ui::fonts::dos, sf::Color::White, 30,
-		[this]() { this->inputManager.resetAllTo(true); this->guiManager.setGuiByName("options"); });
-	ui::Button backToGameButton = ui::Button("pause", 1, 310, 2, 2,
+	ui::Button backToGameButton = ui::Button("pause", 1, 190, 500, 34,
 		sf::Color(0, 0, 0, 125), "Back to game", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->inputManager.resetAllTo(false); this->guiManager.setNoGui(); });
-	ui::Button backToMainMenuButton = ui::Button("pause", 1, 370, 2, 2,
+	ui::Button optionsButton = ui::Button("pause", 1, 250, 500, 34,
+		sf::Color(0, 0, 0, 125), "Options", ui::fonts::dos, sf::Color::White, 30,
+		[this]() { this->inputManager.resetAllTo(true); this->guiManager.setGuiByName("options"); });
+	ui::Button backToMainMenuButton = ui::Button("pause", 1, 310, 500, 34,
 		sf::Color(0, 0, 0, 125), "(Save) and quit to main menu", ui::fonts::dos, sf::Color::White, 30,
-		[this]() 
-		{ 
+		[this]()
+		{
 			//this->gameWorld.save();
-			this->inputManager.resetAllTo(false); this->guiManager.setGuiByName("main_menu"); 
+			this->inputManager.resetAllTo(false); this->guiManager.setGuiByName("main_menu");
 		});
-	
-	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 2, 2,
+
+	ui::Button backToPauseGuiButton = ui::Button("options", 1, 480, 500, 34,
 		sf::Color(0, 0, 0, 125), "Back", ui::fonts::dos, sf::Color::White, 30,
 		[this]()
 		{
@@ -83,15 +77,13 @@ struct Game {
 			this->inputManager.resetAllTo(false);
 			this->guiManager.setGuiByName("pause");
 		});
-	ui::Button saveWorldButton = ui::Button("options", 1, 190, 2, 2,
+	ui::Button saveWorldButton = ui::Button("options", 1, 190, 500, 34,
 		sf::Color(0, 0, 0, 125), "Save world", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->gameWorld.save(); });
-	ui::TextField testTextField = ui::TextField("options", 1, 260, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
-	ui::TextField testTextField2 = ui::TextField("options", 1, 300, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
 
 	ui::Text seedInfoText = ui::Text("main_menu", "Seed:", ui::fonts::dos, sf::Color::White, 1, 120, 30);
 	ui::TextField generatedWorldSeedTextField = ui::TextField("main_menu", 1, 155, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
-	ui::Button generateWorldButton = ui::Button("main_menu", 431, 155, 2, 2,
+	ui::Button generateWorldButton = ui::Button("main_menu", 431, 155, 280, 34,
 		sf::Color(0, 0, 0, 125), "Generate world", ui::fonts::dos, sf::Color::White, 30,
 		[this]()
 		{
@@ -101,8 +93,8 @@ struct Game {
 				std::cout << "World can't have a namen't.\n";
 				return;
 			}
-			std::cout << "Generatingn't world with seed \"" << this->generatedWorldSeedTextField.text 
-					  << "\" and with name \"" << this->worldNameTextField.text << "\"\n";
+			std::cout << "Generatingn't world with seed \"" << this->generatedWorldSeedTextField.text
+				<< "\" and with name \"" << this->worldNameTextField.text << "\"\n";
 			this->player.position = maths::Vec3<float>(0, 20, 0);
 			this->guiManager.setNoGui();
 			this->guiManager.textFieldManager.clearTextFields("main_menu");
@@ -110,7 +102,7 @@ struct Game {
 		});
 	
 	ui::Text worldNameInfoText = ui::Text("main_menu", "World name:", ui::fonts::dos, sf::Color::White, 1, 20, 30);
-	ui::Button loadWorldButton = ui::Button("main_menu", 431, 55, 2, 2,
+	ui::Button loadWorldButton = ui::Button("main_menu", 431, 55, 280, 34,
 		sf::Color(0, 0, 0, 125), "Load world", ui::fonts::dos, sf::Color::White, 30,
 		[this]()
 		{
@@ -311,6 +303,12 @@ struct Game {
 
 			sf::Vector2f s2 = this->crosshairRectangle2.sfRectangle.getSize();
 			this->crosshairRectangle2.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s2 / 2.f));
+
+			this->backToGameButton.centerOnXAxis(wsize.x, window);
+			this->backToMainMenuButton.centerOnXAxis(wsize.x, window);
+			this->backToPauseGuiButton.centerOnXAxis(wsize.x, window);
+			this->optionsButton.centerOnXAxis(wsize.x, window);
+			this->saveWorldButton.centerOnXAxis(wsize.x, window);
 
 			drawUI(window);
 

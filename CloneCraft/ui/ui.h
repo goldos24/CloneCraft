@@ -144,12 +144,16 @@ namespace ui
 	struct Button : public UIElement
 	{
 		Button(std::string parentGuiName) : UIElement(parentGuiName), centerText(parentGuiName), buttonRect(parentGuiName) { }
-		Button(std::string parentGuiName, int x, int y, int xSpacing, int ySpacing,
+
+		Button(std::string parentGuiName, int x, int y, int w, int h,
 			sf::Color fillColor, std::string buttonText, fonts::UIFont* buttonFont, sf::Color textColor, int charSize, std::function<void()> onClick) :
-			buttonRect(parentGuiName, x, y, (int(charSize / 1.7) * buttonText.length()) + 2 * xSpacing, charSize + 2 * ySpacing, fillColor),
-			centerText(parentGuiName, buttonText, buttonFont, textColor, x + xSpacing, y - ySpacing, charSize),
+
+			buttonRect(parentGuiName, x, y, w, h, fillColor),
+			centerText(parentGuiName, buttonText, buttonFont, textColor, x, y, charSize),
 			UIElement(parentGuiName)
 		{
+			this->charSize = charSize;
+			this->buttonText = buttonText;
 			this->visible = true;
 			this->x = x;
 			this->y = y;
@@ -157,6 +161,56 @@ namespace ui
 			this->h = buttonRect.sfRectangle.getSize().y;
 			this->fillColor = fillColor;
 			this->onClick = onClick;
+
+			int charWidth = int(charSize / 1.7);
+			int fittingCharCount = int(this->w / charWidth);
+
+			if (buttonText.length() < fittingCharCount)
+			{
+				this->centerText.x = this->x + this->w / 2 - (charWidth * buttonText.length()) / 2;
+				this->centerText.y = this->y + this->h / 2 - charSize / 2 - 3;
+
+				this->centerText.textElement.setPosition(this->centerText.x, this->centerText.y);
+			}
+		}
+
+		void setPosition(int x, int y)
+		{
+			this->x = x;
+			this->y = y;
+			this->buttonRect.setPosition(x, y);
+
+			int charWidth = int(this->charSize / 1.7);
+			int fittingCharCount = int(this->w / charWidth);
+
+			if (this->buttonText.length() < fittingCharCount)
+			{
+				this->centerText.x = this->x + this->w / 2 - (charWidth * buttonText.length()) / 2;
+				this->centerText.y = this->y + this->h / 2 - charSize / 2 - 3;
+
+				this->centerText.textElement.setPosition(this->centerText.x, this->centerText.y);
+			}
+		}
+
+		void setXPositionByOrigin(int x)
+		{
+			this->setPosition(x - this->w / 2, this->y);
+		}
+
+		void setYPositionByOrigin(int y)
+		{
+			this->setPosition(this->x, y - this->h / 2);
+		}
+
+		void setPositionByOrigin(int x, int y)
+		{
+			this->setPosition(x - this->w / 2, y - this->h / 2);
+		}
+
+		void centerOnXAxis(int width, sf::RenderWindow& window)
+		{
+			width = window.mapPixelToCoords(sf::Vector2i(width, 0)).x;
+			this->setXPositionByOrigin(width / 2);
 		}
 
 		void updateHoverState(sf::RenderWindow& window)
@@ -187,8 +241,10 @@ namespace ui
 		}
 
 		bool hovered;
+		int charSize;
 		int w;
 		int h;
+		std::string buttonText;
 		Text centerText;
 		sf::Color fillColor;
 		std::function<void()> onClick;
