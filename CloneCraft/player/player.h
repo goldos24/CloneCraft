@@ -12,23 +12,10 @@ namespace player
 
 	struct Player : Entity
 	{
-		Player()
-		{
-			this->hitbox = maths::Vec3<float>(0.7f, 1.8f, 0.7f);
-		}
+		Player();
 
 		static float playerReach;
 
-		void rotate(float X, float Y, float mouseSpeed)
-		{
-			this->rotation.x += X * mouseSpeed;
-			this->rotation.y += Y * mouseSpeed;
-			if (this->rotation.x < -ROTATION_X_BOUNDS) this->rotation.x = -ROTATION_X_BOUNDS;
-			if (this->rotation.x > ROTATION_X_BOUNDS) this->rotation.x = ROTATION_X_BOUNDS;
-
-			maths::capDegrees(this->rotation.y);
-		}
+		void rotate(float X, float Y, float mouseSpeed);
 	};
 }
-
-float player::Player::playerReach = 5.f;
