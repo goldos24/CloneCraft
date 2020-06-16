@@ -1,3 +1,4 @@
+#include <iostream>
 #include "input.h"
 
 // KeyPressState
@@ -9,6 +10,46 @@ input::InputManager::InputManager()
 {
 	for (int i = 0; i < sf::Mouse::Button::ButtonCount; i++) this->addMouseButton((sf::Mouse::Button)i);
 	for (int i = 0; i < sf::Keyboard::Key::KeyCount; i++) this->addKey((sf::Keyboard::Key)i);
+}
+
+void input::InputManager::clearInput()
+{
+	this->inputField.resize(0);
+}
+
+void input::InputManager::getAndClearInput(std::string& inputField)
+{
+	inputField += this->inputField;
+	this->clearInput();
+}
+
+void input::InputManager::updateEvents(sf::RenderWindow& ourWindow)
+{
+	// Resetting the stored values
+
+	this->wasWindowClosed = false;
+	this->wasWindowResized = false;
+
+	// handle events
+	sf::Event event;
+	//std::cout << "Window pointer" << ourWindow << std::endl;
+	while (ourWindow.pollEvent(event))
+	{
+		if (event.type == sf::Event::Closed)
+		{
+			this->wasWindowClosed = true;
+		}
+		else if (event.type == sf::Event::Resized)
+		{
+			this->wasWindowResized = true;
+			this->newSizeX = event.size.width;
+			this->newSizeY = event.size.height;
+		}
+		else if (event.type == sf::Event::TextEntered)
+		{
+			inputField += static_cast<char>(event.text.unicode);
+		}
+	}
 }
 
 void input::InputManager::updateKeyPresses(float elapsedTime)

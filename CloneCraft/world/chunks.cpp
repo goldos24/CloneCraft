@@ -42,9 +42,12 @@ void chunks::Chunk::setBlock(blox::ID id, int x, int y, int z)
 void chunks::Chunk::placeBlock(blox::ID id, int x, int y, int z)
 {
 	this->setBlock(id, x, y, z);
+#ifndef CLONECRAFT_NO_GFX
 	this->calculateFaces();
+#endif
 }
 
+#ifndef CLONECRAFT_NO_GFX
 void chunks::Chunk::calculateAndPushBlock(int x, int y, int z)
 {
 	bool isSelectedBlockTransparent = blox::isTransparent(this->getBlock(x, y, z));
@@ -101,7 +104,7 @@ void chunks::Chunk::Render() //TODO replace loop
 	for (auto face : renderData)
 		face.render();
 }
-
+#endif
 
 std::shared_ptr<chunks::Chunk> chunks::initFlatChunk(maths::Vec3<int> chunkPos)
 {
@@ -117,7 +120,9 @@ std::shared_ptr<chunks::Chunk> chunks::initFlatChunk(maths::Vec3<int> chunkPos)
 				);
 			}
 	chunk->setBlock(blox::grass, 8, 14, 8);
+#ifndef CLONECRAFT_NO_GFX
 	chunk->calculateFaces();
+#endif
 	return chunk;
 }
 
@@ -150,7 +155,8 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 					i, j, k
 				);
 			}
-
+#ifndef CLONECRAFT_NO_GFX
 	chunk->calculateFaces();
+#endif
 	return chunk;
 }

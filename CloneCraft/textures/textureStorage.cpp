@@ -1,4 +1,12 @@
+#include <cmath>
 #include "textureStorage.h"
+
+void convertColorToSrgb(sf::Color& color) // Necessary for not having too depressingly dark colors
+{
+	color.r = sqrt(int(color.r) * 256);
+	color.g = sqrt(int(color.g) * 256);
+	color.b = sqrt(int(color.b) * 256);
+}
 
 texStorage::Storage::Storage(int textureWidth, int textureHeight, int storageWidth) :
 	textureWidth(textureWidth),
@@ -17,6 +25,7 @@ texStorage::Texture texStorage::Storage::add(sf::Image&& image)
 		for (int j = 0; j < this->textureWidth; j++)
 		{
 			auto pixel = image.getPixel(j, i);
+			convertColorToSrgb(pixel);
 			this->contentImage.setPixel(j + currentBeginX, i, pixel);
 		}
 	this->currentTexCoordBeginX += float(this->textureWidth) / float(this->storageWidth);
@@ -27,6 +36,7 @@ sf::Texture* texStorage::Storage::makeTexture()
 {
 	this->finalTexture.loadFromImage(this->contentImage);
 	this->finalTexture.setSmooth(false);
+	this->finalTexture.setSrgb(false);
 	return &this->finalTexture;
 }
 

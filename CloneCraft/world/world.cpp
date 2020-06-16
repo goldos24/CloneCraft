@@ -124,7 +124,7 @@ void world::World::unloadGarbageChunks()
 
 	this->size = this->chunks.size();
 }
-
+#ifndef CLONECRAFT_NO_GFX
 void world::World::Render() //TODO replace
 {
 	// Making the variable with the best name you've seen in a while
@@ -156,7 +156,7 @@ void world::World::markVisibleChunks(maths::Vec3<float> cameraRotation)
 			}
 	glTranslatef(-virtualOffset.x, -virtualOffset.y, -virtualOffset.z);
 }
-
+#endif
 bool world::World::save()
 {
 	std::cout << "Saving the world..." << std::endl;

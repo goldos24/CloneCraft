@@ -20,7 +20,7 @@
 #include "../world/blockInfo.h"
 
 struct Game {
-	Game();
+	Game(input::InputManager& inputManager);
 
 	world::World gameWorld = world::World();
 
@@ -104,7 +104,7 @@ struct Game {
 	gui::Gui pauseGui = gui::Gui("pause");
 	gui::Gui emptyGui = gui::Gui("empty");
 
-	input::InputManager inputManager;
+	input::InputManager& inputManager;
 	gui::GuiManager guiManager;
 
 	void updateLoadedChunks();

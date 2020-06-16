@@ -262,6 +262,7 @@ void ui::TextField::trySetFocused(input::InputManager& inputManager, std::vector
 	{
 		if (this->hovered)
 		{
+			inputManager.clearInput();
 			this->focused = true;
 		}
 		else
@@ -295,31 +296,12 @@ void ui::TextField::tryType(input::InputManager& inputManager)
 		{
 			if (this->text.size() > 0)
 				this->text = this->text.substr(0, this->text.size() - 1);
+			inputManager.clearInput();
 		}
-
-		for (int i = int(sf::Keyboard::A); i <= int(sf::Keyboard::Z); ++i) // Because C programmers thinks it should bee that way.
+		else 
 		{
-			if (inputManager.isKeyPressed(sf::Keyboard::Key(i)) ||
-				inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Key(i), .7f))
-			{
-				this->text += inputManager.isKeyBeingPressed(sf::Keyboard::LShift) ?
-					char('A' + i) :
-					char('a' + i);
-			}
+			inputManager.getAndClearInput(this->text);
 		}
-
-		for (int i = int(sf::Keyboard::Num0); i <= int(sf::Keyboard::Num9); ++i) // Because C programmers thinks it should bee that way.
-		{
-			if (inputManager.isKeyPressed(sf::Keyboard::Key(i)) ||
-				inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Key(i), .7f))
-			{
-				this->text += char('0' + i - int(sf::Keyboard::Num0));
-			}
-		}
-
-		if (inputManager.isKeyPressed(sf::Keyboard::Space) ||
-			inputManager.isKeyStillBeingPressedAfterDelay(sf::Keyboard::Space, .7f))
-			this->text += ' ';
 
 		int charWidth = int(this->charSize / 1.7);
 		int fittingCharCount = int(this->w / charWidth);

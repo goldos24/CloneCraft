@@ -18,7 +18,8 @@ int main()
     window.setActive(true);
 
     // load resources, initialize the OpenGL states, ...
-    Game game;
+    input::InputManager* inputManager = new input::InputManager();
+    Game game(*inputManager);
     window.setMouseCursorVisible(false);
 
     // initialize the clock
@@ -36,36 +37,37 @@ int main()
     bool running = true;
     while (running)
     {
-        // handle events
-        sf::Event event;
-        while (window.pollEvent(event))
-        {
-            if (event.type == sf::Event::Closed)
-            {
-                // end the program
-                running = false;
-            }
-            else if (event.type == sf::Event::Resized)
-            {
-                // adjust the viewport when the window is resized
-                glViewport(0, 0, event.size.width, event.size.height);
-            }
-        }
 
-        // clear the buffers
+        sf::Vector2u wsize = window.getSize();
+
+        // handle events
+        inputManager->updateEvents(window);
+        if (inputManager->wasWindowClosed)
+        {
+            // end the program
+            running = false;
+        }
+        else if (inputManager->wasWindowResized)
+        {
+            // adjust the viewport when the window is resized
+            glViewport(0, 0, inputManager->newSizeX, inputManager->newSizeY);
+        }
+        //glViewport(0, 0, wsize.x, wsize.y);
+
+    // clear the buffers
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // draw...
 
-        sf::Vector2u wsize = window.getSize();
 
         game.drawGame(wsize, window, clock);
 
-        GLenum err = glGetError(); 
+        GLenum err = glGetError();
         window.display();
     }
 
     // release resources...
+    delete inputManager;
 
     return 0;
 }

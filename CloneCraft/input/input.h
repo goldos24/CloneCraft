@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window/Keyboard.hpp>
-#include <SFML/Window/Mouse.hpp>
+#include<SFML/Window.hpp>
+#include <string>
 #include <map>
 
 namespace input
@@ -20,6 +20,15 @@ namespace input
 	{
 		InputManager();
 
+		bool wasWindowResized = false, wasWindowClosed = false;
+		int newSizeX = 0, newSizeY = 0;
+		std::map<sf::Keyboard::Key, KeyPressState> keyPressStates;
+		std::map<sf::Mouse::Button, bool> mouseButtonPressStates;
+		std::string inputField;
+
+		void clearInput();
+		void getAndClearInput(std::string& inputField);
+		void updateEvents(sf::RenderWindow& ourWindow);
 		void updateKeyPresses(float elapsedTime);
 		void updateMouseButtonPresses();
 		void resetAllTo(bool pressed);
@@ -35,8 +44,5 @@ namespace input
 		bool isMouseButtonBeingPressed(sf::Mouse::Button button);
 		bool isMouseButtonReleased(sf::Mouse::Button button);
 		bool isMouseButtonPressed(sf::Mouse::Button button);
-
-		std::map<sf::Keyboard::Key, KeyPressState> keyPressStates;
-		std::map<sf::Mouse::Button, bool> mouseButtonPressStates;
 	};
 }

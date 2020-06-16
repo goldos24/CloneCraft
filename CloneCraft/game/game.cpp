@@ -1,6 +1,6 @@
 #include "game.h"
 
-Game::Game()
+Game::Game(input::InputManager& inputManager) : inputManager(inputManager)
 {
 	this->player.position = maths::Vec3<float>(0, 20, 0);
 

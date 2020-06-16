@@ -9,7 +9,9 @@
 #include "../maths/maths.h"
 #include "../files/files.h"
 #include "../world/blockInfo.h"
+#ifndef CLONECRAFT_NO_GFX
 #include "../glu/oldFunctions.h"
+#endif
 
 namespace world
 {
@@ -41,11 +43,11 @@ namespace world
 		void loadChunk(maths::Vec3<int> chunkPos);
 
 		void unloadGarbageChunks();
-
+#ifndef CLONECRAFT_NO_GFX
 		void Render();
 
 		void markVisibleChunks(maths::Vec3<float> cameraRotation);
-
+#endif
 		bool save();
 
 		bool containsChunk(maths::Vec3<int> chunkPos);
