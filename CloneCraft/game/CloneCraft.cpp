@@ -49,12 +49,17 @@ int main()
         }
         else if (inputManager->wasWindowResized)
         {
+            sf::Vector2u newWSize = window.getSize();
+
+            sf::FloatRect visibleArea(0, 0, newWSize.x, newWSize.y);
+            window.setView(sf::View(visibleArea));
+
             // adjust the viewport when the window is resized
             glViewport(0, 0, inputManager->newSizeX, inputManager->newSizeY);
         }
         //glViewport(0, 0, wsize.x, wsize.y);
 
-    // clear the buffers
+        // clear the buffers
         glClear(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 
         // draw...
