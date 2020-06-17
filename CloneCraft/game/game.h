@@ -56,6 +56,14 @@ struct Game {
 	ui::Button saveWorldButton = ui::Button("options", 1, 190, 500, 34,
 		sf::Color(0, 0, 0, 125), "Save world", ui::fonts::dos, sf::Color::White, 30,
 		[this]() { this->gameWorld.save(); });
+	ui::TextField mouseSensitivityTextInput = ui::TextField("options", 200, 240, 300, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
+	ui::Text      mouseSensitivityText = ui::Text("options", "Mouse Sensitivity: ", ui::fonts::dos, sf::Color::White, 1, 245, 20);
+	ui::Button    mouseSensitivityOKButton = ui::Button("options", 505, 240, 60, 34, sf::Color(0, 0, 0, 125), "OK!", ui::fonts::dos, sf::Color::White, 30, 
+		[this]()
+		{
+			this->player.mouseSensitivity = static_cast<float>(std::stod(this->mouseSensitivityTextInput.text));
+		}
+	);
 
 	ui::Text seedInfoText = ui::Text("main_menu", "Seed:", ui::fonts::dos, sf::Color::White, 1, 120, 30);
 	ui::TextField generatedWorldSeedTextField = ui::TextField("main_menu", 1, 155, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);

@@ -15,6 +15,9 @@ Game::Game(input::InputManager& inputManager) : inputManager(inputManager)
 	this->guiManager.addUIElementToGuiWithName(&this->darkerSimpleBackgroundRect, "options");
 	this->guiManager.addButtonToGuiWithName(&this->backToPauseGuiButton, "options");
 	this->guiManager.addButtonToGuiWithName(&this->saveWorldButton, "options");
+	this->guiManager.addTextFieldToGuiWithName(&this->mouseSensitivityTextInput, "options");
+	this->guiManager.addUIElementToGuiWithName(&this->mouseSensitivityText, "options");
+	this->guiManager.addButtonToGuiWithName(&this->mouseSensitivityOKButton, "options");
 
 	this->guiManager.addGui(&this->mainMenu);
 	this->guiManager.addTextFieldToGuiWithName(&this->worldNameTextField, "main_menu");
@@ -49,7 +52,7 @@ void Game::updateRotation(sf::Vector2u wsize, sf::RenderWindow& window)
 
 	this->lastMousePos = sf::Vector2f(sf::Mouse::getPosition(window));
 
-	this->player.rotate(float(positionDifference.y), float(positionDifference.x), 1.f);
+	this->player.rotate(float(positionDifference.y), float(positionDifference.x), this->player.mouseSensitivity);
 }
 
 void Game::updatePosition(float elapsedTime)
