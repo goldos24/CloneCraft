@@ -25,7 +25,7 @@ texStorage::Texture texStorage::Storage::add(sf::Image&& image)
 		for (int j = 0; j < this->textureWidth; j++)
 		{
 			auto pixel = image.getPixel(j, i);
-			convertColorToSrgb(pixel);
+			//convertColorToSrgb(pixel);
 			this->contentImage.setPixel(j + currentBeginX, i, pixel);
 		}
 	this->currentTexCoordBeginX += float(this->textureWidth) / float(this->storageWidth);
