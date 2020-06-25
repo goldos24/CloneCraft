@@ -15,6 +15,7 @@ Game::Game(input::InputManager& inputManager) : inputManager(inputManager)
 	this->guiManager.addUIElementToGuiWithName(&this->darkerSimpleBackgroundRect, "options");
 	this->guiManager.addButtonToGuiWithName(&this->backToPauseGuiButton, "options");
 	this->guiManager.addButtonToGuiWithName(&this->saveWorldButton, "options");
+	this->guiManager.addButtonToGuiWithName(&this->toggleFullscreenButton, "options");
 	this->guiManager.addTextFieldToGuiWithName(&this->mouseSensitivityTextInput, "options");
 	this->guiManager.addUIElementToGuiWithName(&this->mouseSensitivityText, "options");
 	this->guiManager.addButtonToGuiWithName(&this->mouseSensitivityOKButton, "options");
@@ -117,6 +118,36 @@ void Game::getAndRunCommand()
 
 void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
 {
+	if (this->shouldUpdateWindow)
+	{
+		std::cout << "Toggle Fullscreen" << std::endl;
+		this->shouldUpdateWindow = false;
+		if (this->isFullscreenEnabled)
+		{
+			window.create(sf::VideoMode::getFullscreenModes()[0], "Our Window", sf::Style::Fullscreen, sf::ContextSettings(32));
+			window.setVerticalSyncEnabled(true);
+			window.setActive(true);
+
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_TEXTURE_2D);
+
+			textures::storage.makeTexture();
+			textures::storage.bind();
+		}
+		else 
+		{
+			window.create(sf::VideoMode(800, 600), "Our Window", sf::Style::Default, sf::ContextSettings(32));
+			window.setVerticalSyncEnabled(true);
+			window.setActive(true);
+
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_TEXTURE_2D);
+
+			textures::storage.makeTexture();
+			textures::storage.bind();
+		}
+	}
+
 	if (!this->guiManager.isGuiWithNameActive("main_menu"))
 	{
 		this->updateLoadedChunks();
@@ -201,6 +232,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 		this->backToPauseGuiButton.centerOnXAxis(wsize.x, window);
 		this->optionsButton.centerOnXAxis(wsize.x, window);
 		this->saveWorldButton.centerOnXAxis(wsize.x, window);
+		this->toggleFullscreenButton.centerOnXAxis(wsize.x, window);
 
 		drawUI(window);
 

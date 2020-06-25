@@ -34,9 +34,9 @@ texStorage::Texture texStorage::Storage::add(sf::Image&& image)
 
 sf::Texture* texStorage::Storage::makeTexture()
 {
+	this->finalTexture.setSrgb(false);
 	this->finalTexture.loadFromImage(this->contentImage);
 	this->finalTexture.setSmooth(false);
-	this->finalTexture.setSrgb(false);
 	return &this->finalTexture;
 }
 

@@ -22,6 +22,9 @@
 struct Game {
 	Game(input::InputManager& inputManager);
 
+	bool shouldUpdateWindow = false;
+	bool isFullscreenEnabled = false;
+
 	world::World gameWorld = world::World();
 
 	player::Player player;
@@ -64,6 +67,13 @@ struct Game {
 			this->player.mouseSensitivity = static_cast<float>(std::stod(this->mouseSensitivityTextInput.text));
 		}
 	);
+	ui::Button toggleFullscreenButton = ui::Button("options", 1, 310, 500, 34,
+		sf::Color(0, 0, 0, 125), "Toggle fullscreen", ui::fonts::dos, sf::Color::White, 30,
+		[this]()
+		{
+			this->isFullscreenEnabled = !this->isFullscreenEnabled;
+			this->shouldUpdateWindow = true;
+		});
 
 	ui::Text seedInfoText = ui::Text("main_menu", "Seed:", ui::fonts::dos, sf::Color::White, 1, 120, 30);
 	ui::TextField generatedWorldSeedTextField = ui::TextField("main_menu", 1, 155, 420, 34, sf::Color(0, 0, 0, 125), sf::Color(255, 255, 255, 125), ui::fonts::dos, sf::Color::White, 30);
