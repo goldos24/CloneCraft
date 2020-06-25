@@ -141,6 +141,9 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 		return chunk;
 	}
 
+	// \\
+	Hills and mountains
+
 	auto heightMap = terrainGen::createHeightMap(maths::Vec2<float>(float(chunkPos.x), float(chunkPos.z)));
 
 	for (int i = 0; i < size; i++)
@@ -155,6 +158,16 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 					i, j, k
 				);
 			}
+	// \\
+	Trees
+
+	std::vector<maths::Vec3<float>> treePositions;
+	terrainGen::getTreePositions(maths::Vec2<float>(float(chunkPos.x), float(chunkPos.z)), treePositions);
+	for (auto treePos : treePositions)
+	{
+		chunk->setBlock(blox::wewd, treePos.x - chunkPos.x, treePos.y - chunkPos.y, treePos.z - chunkPos.z);
+	}
+
 #ifndef CLONECRAFT_NO_GFX
 	chunk->calculateFaces();
 #endif

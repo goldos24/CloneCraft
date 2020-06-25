@@ -17,6 +17,7 @@ blox::Block* blox::InitBlocks()
 	blocks[stone] = Block(stone, "stone", textures::blockTextures::stone);
 	blocks[grass] = Block(grass, "grass", textures::blockTextures::grass);
 	blocks[dirt] = Block(dirt, "dirt", textures::blockTextures::dirt);
+	blocks[wewd] = Block(wewd, "wood", textures::blockTextures::wewd);
 
 	return blocks;
 }

@@ -46,6 +46,8 @@ namespace textures
 		__declspec(selectany) FaceTexture* dirt = new textures::FaceTexture("resources/textures/blocks/dirt.png");
 		__declspec(selectany) FaceTexture* grass_side = new textures::FaceTexture("resources/textures/blocks/grass_side.png");
 		__declspec(selectany) FaceTexture* grass_top = new textures::FaceTexture("resources/textures/blocks/grass_top.png");
+		__declspec(selectany) FaceTexture* wewd_side = new textures::FaceTexture("resources/textures/blocks/wewd_side.png");
+		__declspec(selectany) FaceTexture* wewd_top = new textures::FaceTexture("resources/textures/blocks/wewd_top.png");
 	}
 
 	namespace shadingFactors
@@ -60,10 +62,12 @@ namespace textures
 
 	float getShadingFactorByPosition(facePos::FacePosition position);
 
+
 	namespace blockTextures
 	{
 		__declspec(selectany) BlockTexture* stone = new textures::BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
 		__declspec(selectany) BlockTexture* dirt = new textures::BlockTexture(faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt);
 		__declspec(selectany) BlockTexture* grass = new textures::BlockTexture(faceTextures::grass_top, faceTextures::dirt, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side);
+		__declspec(selectany) BlockTexture* wewd = new textures::BlockTexture(faceTextures::wewd_top, faceTextures::wewd_top, faceTextures::wewd_side, faceTextures::wewd_side, faceTextures::wewd_side, faceTextures::wewd_side);
 	}
 }

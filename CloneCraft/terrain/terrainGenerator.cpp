@@ -34,3 +34,45 @@ std::vector<float> terrainGen::createHeightMap(maths::Vec2<float> position)
 
 	return heightMap;
 }
+
+void terrainGen::getTreePositions(maths::Vec2<float> chunkPosition, std::vector<maths::Vec3<float>>& resultVector)
+{
+	auto heightMap = createHeightMap(chunkPosition);
+
+	maths::Vec2<int> forestDataVector;
+	forestDataVector.x = static_cast<int>( static_cast<int>(chunkPosition.x) >> 1 );
+	forestDataVector.y = static_cast<int>(static_cast<int>(chunkPosition.y) >> 1);
+
+	int treeCount = static_cast<int>(getHeight(maths::convertVec2<int, float>(forestDataVector), 1.f));
+	if (treeCount < 0) treeCount *= -1;
+
+	std::vector<maths::Vec3<float>> result;
+
+	for (int i = 0; i < treeCount; ++i)
+	{
+		//	\\
+		Calculating the local 2d Coordinate in the chunk and adjusting it if necessary
+		maths::Vec3<int> localTreePosition;
+
+		localTreePosition.x = randomFloat::randomNumber(static_cast<float>(i + forestDataVector.x * forestDataVector.y - forestDataVector.y + forestDataVector.x)) + 8.f;
+		localTreePosition.z = randomFloat::randomNumber(static_cast<float>(i + forestDataVector.x * forestDataVector.y + forestDataVector.y - forestDataVector.x)) + 8.f;
+
+		if (localTreePosition.x > 15) localTreePosition.x = 15;if (localTreePosition.z > 15) localTreePosition.z = 15;
+		if (localTreePosition.x < 0) localTreePosition.x = 0;  if (localTreePosition.z < 0) localTreePosition.z = 0;
+
+		//	\\
+		Adding the height
+
+		localTreePosition.y = heightMap[localTreePosition.z * chunks::size + localTreePosition.x] + 10.f;
+
+		//	\\
+		Pushing back the data
+
+		result.push_back(
+			maths::convertVec3<int, float>(localTreePosition) + maths::Vec3<float>(chunkPosition.x, 0.f, chunkPosition.y)
+		);
+	}
+
+
+	std::swap<maths::Vec3<float>>(result, resultVector);
+}

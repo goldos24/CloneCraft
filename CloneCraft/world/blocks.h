@@ -8,6 +8,7 @@ namespace blox
 		stone,
 		grass,
 		dirt,
+		wewd,
 
 		enumSize
 	};
