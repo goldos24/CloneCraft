@@ -118,6 +118,12 @@ void Game::getAndRunCommand()
 
 void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
 {
+	if (this->inputManager.isKeyPressed(sf::Keyboard::F11)) // TODO fix falling out of the world
+	{
+		this->shouldUpdateWindow = true;
+		this->isFullscreenEnabled = !this->isFullscreenEnabled;
+	}
+
 	if (this->shouldUpdateWindow)
 	{
 		std::cout << "Toggle Fullscreen" << std::endl;
