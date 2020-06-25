@@ -50,17 +50,15 @@ namespace textures
 		__declspec(selectany) FaceTexture* wewd_top = new textures::FaceTexture("resources/textures/blocks/wewd_top.png");
 	}
 
-	namespace shadingFactors
+	static float shadingFactors[] =
 	{
-		const float top = 1.0f;
-		const float bottom = 0.7f;
-		const float front = 0.95f;
-		const float back = 0.75f;
-		const float left = 0.9f;
-		const float right = 0.8f;
-	}
-
-	float getShadingFactorByPosition(facePos::FacePosition position);
+		1.0f,          // top
+		0.7f,		   // bottom
+		0.95f,		   // front
+		0.75f,		   // back
+		0.9f,		   // left
+		0.8f		   // right
+	};
 
 
 	namespace blockTextures

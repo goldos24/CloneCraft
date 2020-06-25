@@ -54,25 +54,4 @@ textures::FaceTexture* textures::BlockTexture::getFaceTexture(facePos::FacePosit
 	}
 }
 
-float textures::getShadingFactorByPosition(facePos::FacePosition position)
-{
-	switch (position)
-	{
-	case facePos::top:
-		return shadingFactors::top;
-	case facePos::bottom:
-		return shadingFactors::bottom;
-	case facePos::front:
-		return shadingFactors::front;
-	case facePos::back:
-		return shadingFactors::back;
-	case facePos::left:
-		return shadingFactors::left;
-	case facePos::right:
-		return shadingFactors::right;
-	default:
-		break;
-	}
-}
-
 

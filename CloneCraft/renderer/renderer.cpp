@@ -26,6 +26,8 @@ void renderer::block::drawFace(const textures::FaceTexture* texture, const float
 {
     textures::storage.select(texture->texture);
 
+    glColor3f(shading, shading, shading);
+
     textures::storage.setGlTexCoord2f(1, 1);
     glVertex3f(vertices.x1, vertices.y1, vertices.z1);
 

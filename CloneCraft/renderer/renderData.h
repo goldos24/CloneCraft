@@ -18,6 +18,7 @@ namespace renderData
 
 		const renderer::FaceVertexContainer* vertices;
 		const textures::FaceTexture* texture;
+		float shading;
 
 		maths::Vec3<float> position;
 
