@@ -126,6 +126,30 @@ std::shared_ptr<chunks::Chunk> chunks::initFlatChunk(maths::Vec3<int> chunkPos)
 	return chunk;
 }
 
+namespace
+{
+	void spawnTreeInChunk(chunks::Chunk& chunk, maths::Vec3<float> treePosition) 
+	{
+		maths::Vec3<int> localTreePos(treePosition.x - chunk.chunkPos.x, treePosition.y - chunk.chunkPos.y, treePosition.z - chunk.chunkPos.z);
+		for (int i = 0; i < 5; ++i)
+		{
+			maths::Vec3<int> localBlockPos = localTreePos + maths::Vec3<int>(0, i, 0);
+			chunk.setBlock(blox::wewd, localBlockPos.x, localBlockPos.y, localBlockPos.z);
+		}
+		
+		for (int i = -2; i < 3; ++i)
+			for (int j = 0; j < 2; ++j)
+				for (int k = -2; k < 3; ++k)
+				{
+					maths::Vec3<int> localBlockPos = localTreePos + maths::Vec3<int>(i, j + 4, k);
+					if (chunk.getBlock(localBlockPos.x, localBlockPos.y, localBlockPos.z) == blox::air)
+					{
+						chunk.setBlock(blox::leaves, localBlockPos.x, localBlockPos.y, localBlockPos.z);
+					}
+				}
+	}
+}
+
 std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos)
 {
 	std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
@@ -162,10 +186,15 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 	Trees
 
 	std::vector<maths::Vec3<float>> treePositions;
-	terrainGen::getTreePositions(maths::Vec2<float>(float(chunkPos.x), float(chunkPos.z)), treePositions);
+
+	for(int i = -1; i <= 1; ++i)
+		for (int j = -1; j <= 1; ++j)
+			terrainGen::getTreePositions(maths::Vec2<float>(float(chunkPos.x + i * chunks::size), float(chunkPos.z + j * chunks::size)), treePositions);
+
 	for (auto treePos : treePositions)
 	{
-		chunk->setBlock(blox::wewd, treePos.x - chunkPos.x, treePos.y - chunkPos.y, treePos.z - chunkPos.z);
+		//chunk->setBlock(blox::wewd, treePos.x - chunkPos.x, treePos.y, treePos.z - chunkPos.z);
+		spawnTreeInChunk(*chunk, treePos);
 	}
 
 #ifndef CLONECRAFT_NO_GFX

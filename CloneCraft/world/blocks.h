@@ -9,6 +9,7 @@ namespace blox
 		grass,
 		dirt,
 		wewd,
+		leaves,
 
 		enumSize
 	};
