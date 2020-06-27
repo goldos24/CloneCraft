@@ -1,10 +1,12 @@
 #pragma once
+#include <vector>
+#include <memory>
+#include <future>
+#include <mutex>
 #include "../world/blocks.h"
 #include "../renderer/renderer.h"
 #include "../maths/maths.h"
 #include "../renderer/renderData.h"
-#include <vector>
-#include <memory>
 #include "../terrain/terrainGenerator.h"
 #include "../world/chunkData.h"
 #include "../world/blockInfo.h"
@@ -23,6 +25,8 @@ namespace chunks
 
 		~Chunk();
 
+		std::mutex faceMutex;
+
 		bool isVisible = false;
 
 		std::vector<renderData::BlockFace> renderData = std::vector<renderData::BlockFace>();
@@ -39,17 +43,17 @@ namespace chunks
 
 		void placeBlock(blox::ID id, int x, int y, int z);
 
-		void calculateAndPushBlock(int x, int y, int z);
+		void calculateAndPushBlock(int x, int y, int z, std::vector<renderData::BlockFace>& renderData);
 
 		void calculateAndPushFace(int x, int y, int z, int actualX, int actualY, int actualZ,
 			maths::Vec3<int> offset,
 			bool isSelectedBlockTransparent, bool swapSides,
-			facePos::FacePosition swappedFacePosition);
+			facePos::FacePosition swappedFacePosition, std::vector<renderData::BlockFace>& renderData);
 
 		renderData::BlockFace calculateFace(int x, int y, int z, int actualX, int actualY, int actualZ,
 			maths::Vec3<int> offset,
 			bool swapSides,
-			facePos::FacePosition facePosition);
+			facePos::FacePosition facePosition, std::vector<renderData::BlockFace>& renderData);
 
 		void calculateFaces();
 

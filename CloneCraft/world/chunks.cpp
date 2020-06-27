@@ -48,7 +48,7 @@ void chunks::Chunk::placeBlock(blox::ID id, int x, int y, int z)
 }
 
 #ifndef CLONECRAFT_NO_GFX
-void chunks::Chunk::calculateAndPushBlock(int x, int y, int z)
+void chunks::Chunk::calculateAndPushBlock(int x, int y, int z, std::vector<renderData::BlockFace>& renderDataVector)
 {
 	bool isSelectedBlockTransparent = blox::isTransparent(this->getBlock(x, y, z));
 	bool swapSides = !isSelectedBlockTransparent;
@@ -57,28 +57,28 @@ void chunks::Chunk::calculateAndPushBlock(int x, int y, int z)
 	int aY = y + this->chunkPos.y;
 	int aZ = z + this->chunkPos.z;
 
-	calculateAndPushFace(x, y, z, aX, aY, aZ, maths::unitVectors::down, isSelectedBlockTransparent, swapSides, facePos::top);
-	calculateAndPushFace(x, y, z, aX, aY, aZ, maths::unitVectors::back, isSelectedBlockTransparent, swapSides, facePos::front);
-	calculateAndPushFace(x, y, z, aX, aY, aZ, maths::unitVectors::right, isSelectedBlockTransparent, swapSides, facePos::left);
+	calculateAndPushFace(x, y, z, aX, aY, aZ, maths::unitVectors::down, isSelectedBlockTransparent, swapSides, facePos::top, renderDataVector);
+	calculateAndPushFace(x, y, z, aX, aY, aZ, maths::unitVectors::back, isSelectedBlockTransparent, swapSides, facePos::front, renderDataVector);
+	calculateAndPushFace(x, y, z, aX, aY, aZ, maths::unitVectors::right, isSelectedBlockTransparent, swapSides, facePos::left, renderDataVector);
 }
 
 void chunks::Chunk::calculateAndPushFace(int x, int y, int z, int actualX, int actualY, int actualZ,
 	maths::Vec3<int> offset,
 	bool isSelectedBlockTransparent, bool swapSides,
-	facePos::FacePosition swappedFacePosition)
+	facePos::FacePosition swappedFacePosition, std::vector<renderData::BlockFace>& renderDataVector)
 {
 	bool isOffsetBlockTransparent = blox::isTransparent(this->getBlock(x + offset.x, y + offset.y, z + offset.z));
 
 	if (isSelectedBlockTransparent ^ isOffsetBlockTransparent)
-		this->renderData.push_back(
+		renderDataVector.push_back(
 			calculateFace(x, y, z, actualX, actualY, actualZ,
-				offset, swapSides, swappedFacePosition));
+				offset, swapSides, swappedFacePosition, renderDataVector));
 }
 
 renderData::BlockFace chunks::Chunk::calculateFace(int x, int y, int z, int actualX, int actualY, int actualZ,
 	maths::Vec3<int> offset,
 	bool swapSides,
-	facePos::FacePosition facePosition)
+	facePos::FacePosition facePosition, std::vector<renderData::BlockFace>& renderData)
 {
 	return renderData::makeFace(
 		(swapSides) ?
@@ -90,19 +90,25 @@ renderData::BlockFace chunks::Chunk::calculateFace(int x, int y, int z, int actu
 
 void chunks::Chunk::calculateFaces()
 {
+	std::vector<renderData::BlockFace> newFaces;
 	this->renderData.clear();
 	for (int i = 0; i <= size; i++)
 		for (int j = 0; j <= size; j++)
 			for (int k = 0; k <= size; k++)
 			{
-				calculateAndPushBlock(i, j, k);
+				calculateAndPushBlock(i, j, k, newFaces);
 			}
+	this->faceMutex.lock();
+	std::swap<renderData::BlockFace>(this->renderData, newFaces);
+	this->faceMutex.unlock();
 }
 
 void chunks::Chunk::Render() //TODO replace loop
 {
+	this->faceMutex.lock();
 	for (auto face : renderData)
 		face.render();
+	this->faceMutex.unlock();
 }
 #endif
 
