@@ -92,7 +92,7 @@ void Entity::render(maths::Vec3<float> cameraPosition, maths::Vec3<float> camera
 
 	// Entity Transformations
 	glTranslatef(this->position.x, this->position.y - this->hitbox.y, this->position.z);
-	glTranslatef(0.f, 0.f, -2.f);
+	glTranslatef(0.f, 0.9f, 0.f);
 
 	// Camera Transformations
 	glTranslatef(-cameraPosition.x, - cameraPosition.y, - cameraPosition.z);
