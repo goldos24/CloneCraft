@@ -18,5 +18,7 @@ namespace player
 		float mouseSensitivity = 1.f;
 
 		void rotate(float X, float Y, float mouseSpeed);
+
+		void renderModel();
 	};
 }

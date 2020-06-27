@@ -39,6 +39,11 @@ void chunks::Chunk::setBlock(blox::ID id, int x, int y, int z)
 	this->blocks[coordinateToIndex(x, y, z)] = id;
 }
 
+void chunks::Chunk::setBlockUnsafely(blox::ID id, int x, int y, int z)
+{
+	this->blocks[coordinateToIndex(x, y, z)] = id;
+}
+
 void chunks::Chunk::placeBlock(blox::ID id, int x, int y, int z)
 {
 	this->setBlock(id, x, y, z);
@@ -181,7 +186,7 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 			for (int k = 0; k < size; k++)
 			{
 				float height = heightMap[i * 16 + k];
-				chunk->setBlock(
+				chunk->setBlockUnsafely(
 					(height < float(j - 12) ? blox::air :
 						height < float(j - 11) ? blox::grass :
 						height < float(j - 8) ? blox::dirt : blox::stone),

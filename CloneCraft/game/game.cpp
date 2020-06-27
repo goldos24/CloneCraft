@@ -220,6 +220,9 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 
 		glEnd();
 
+		// TODO REMOVE BECAUSE IT IS JUST A TEST
+		this->player.render(this->player.position, this->player.rotation);
+
 		updateDebugInfo();
 
 		float windowStretchFactor = 1; // TODO calculate

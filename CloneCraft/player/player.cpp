@@ -16,3 +16,13 @@ void player::Player::rotate(float X, float Y, float mouseSpeed)
 
 	maths::capDegrees(this->rotation.y);
 }
+
+void player::Player::renderModel()
+{
+	glBegin(GL_QUADS);
+	glVertex3f(-1.f, 1.f, -1.f);
+	glVertex3f(1.f, 1.f, -1.f);
+	glVertex3f(1.f, 1.f, 1.f);
+	glVertex3f(-1.f, 1.f, 1.f);
+	glEnd();
+}

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include "../world/world.h"
+#include "../maths/maths.h"
 
 struct Entity
 {
@@ -21,4 +22,8 @@ struct Entity
 	bool isColliding(world::World& world);
 
 	void clipMovement(float elapsedTime, world::World& world);
+
+	virtual void renderModel();
+
+	void render(maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation);
 };
