@@ -36,12 +36,12 @@ void Entity::applyFriction(float elapsedTime, float friction)
 bool Entity::isColliding(world::World& world)
 {
 	for (float i = -this->hitbox.x / 2.f; i <= this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
-		for (float j = 0; j < this->hitbox.y; j++)
+		for (float j = 0; j < this->hitbox.y + 0.5f; j += 0.5f)
 			for (float k = -this->hitbox.z / 2.f; k <= this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
 			{
 				if (world.getBlockID(this->position + maths::Vec3<float>(
 					i > this->hitbox.x / 2.f ? this->hitbox.x / 2.f : i,
-					-(j + 1 > this->hitbox.y ? this->hitbox.y : j),
+					-(j > this->hitbox.y ? this->hitbox.y : j),
 					k > this->hitbox.z / 2.f ? this->hitbox.z / 2.f : k
 					)) != blox::air)
 					return true;
@@ -52,16 +52,29 @@ bool Entity::isColliding(world::World& world)
 void Entity::clipMovement(float elapsedTime, world::World& world)
 {
 	auto appliedMovementVector = this->movement * elapsedTime;
+	auto possibleNewPosition = this->position;
+	auto initialEntityPosition = this->position;
 
-	this->position += maths::Vec3<float>(appliedMovementVector.x, 0.f, 0.f);
-	if (this->isColliding(world)) this->movement.x = 0.f;
-	this->position -= maths::Vec3<float>(appliedMovementVector.x, 0.f, 0.f);
+	this->position.x += appliedMovementVector.x;
+	if (this->isColliding(world))
+	{
+		this->movement.x = 0.f;
+		this->position.x -= appliedMovementVector.x;
+	}
 
-	this->position += maths::Vec3<float>(0.f, appliedMovementVector.y, 0.f);
-	if (this->isColliding(world)) { this->movement.y = 0.f; }
-	this->position -= maths::Vec3<float>(0.f, appliedMovementVector.y, 0.f);
+	this->position.y += appliedMovementVector.y;
+	if (this->isColliding(world))
+	{
+		this->movement.y = 0.f;
+		this->position.y -= appliedMovementVector.y;
+	}
 
-	this->position += maths::Vec3<float>(0.f, 0.f, appliedMovementVector.z);
-	if (this->isColliding(world)) this->movement.z = 0.f;
-	this->position -= maths::Vec3<float>(0.f, 0.f, appliedMovementVector.z);
+	this->position.z += appliedMovementVector.z;
+	if (this->isColliding(world))
+	{
+		this->movement.z = 0.f;
+		this->position.z -= appliedMovementVector.z;
+	}
+
+	this->position = initialEntityPosition;
 }

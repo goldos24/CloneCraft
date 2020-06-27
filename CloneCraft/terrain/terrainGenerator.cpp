@@ -61,7 +61,7 @@ void terrainGen::getTreePositions(maths::Vec2<float> chunkPosition, std::vector<
 
 		//	\\
 		Adding the height
-
+		
 		localTreePosition.y = 12.f + heightMap[localTreePosition.x * chunks::size + localTreePosition.z];
 
 		//	\\
