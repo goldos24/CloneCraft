@@ -41,6 +41,8 @@ namespace chunks
 
 		void setBlock(blox::ID id, int x, int y, int z);
 
+		void setBlockUnsafely(blox::ID id, int x, int y, int z);
+
 		void placeBlock(blox::ID id, int x, int y, int z);
 
 		void calculateAndPushBlock(int x, int y, int z, std::vector<renderData::BlockFace>& renderData);
