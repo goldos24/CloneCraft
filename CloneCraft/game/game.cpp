@@ -178,12 +178,17 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 
 		this->manageKeys();
 
+		int newBlockValue = int(this->selectedBlockToPlace) + this->inputManager.lastScrollDelta;
+		if (newBlockValue < 0) newBlockValue = blox::enumSize - 1;
+		if (newBlockValue > blox::enumSize - 1) newBlockValue = 0;
+		this->selectedBlockToPlace = blox::ID(newBlockValue);
+
 		if (!this->guiManager.isGuiSet())
 		{
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Right))
 			{
 				//std::cout << "Right click" << std::endl;
-				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
+				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player, this->selectedBlockToPlace);
 			}
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Left))
 				playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
@@ -287,7 +292,8 @@ void Game::updateDebugInfo()
 		<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
 		<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
 		<< "Looking at block with ID: " << blockIDInFrontOfPlayer << " (" << int(blockIDInFrontOfPlayer) << ")\n"
-		<< "Looking at block: " << blockPosInFrontOfPlayer << "\n";
+		<< "Looking at block: " << blockPosInFrontOfPlayer << "\n" 
+		<< "Selected block: " << this->selectedBlockToPlace;
 	debugInfoText.updateText(debugInfoStream.str());
 }
 

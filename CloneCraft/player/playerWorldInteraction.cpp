@@ -22,11 +22,11 @@ void playerWorldInteraction::breakBlockInFrontOfPlayer(world::World& world, play
 	world.setBlockID(blockPosInFrontOfPlayer, blox::air);
 }
 
-void playerWorldInteraction::setBlockInFrontOfPlayer(world::World& world, player::Player& player)
+void playerWorldInteraction::setBlockInFrontOfPlayer(world::World& world, player::Player& player, blox::ID block)
 {
 	auto oldBlockPos = getBlockPosInFrontOfPlayer(world, player);
 	if (world.getBlockID(oldBlockPos) == blox::air) return;
 	auto newBlockPos = oldBlockPos + maths::positionFromRotation<float>(player.rotation) * -.5f;
-	world.setBlockID(newBlockPos, blox::stone);
+	world.setBlockID(newBlockPos, block);
 	if (player.isColliding(world)) world.setBlockID(newBlockPos, blox::air);
 }

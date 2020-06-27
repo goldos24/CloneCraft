@@ -25,6 +25,8 @@ struct Game {
 	bool shouldUpdateWindow = false;
 	bool isFullscreenEnabled = false;
 
+	blox::ID selectedBlockToPlace = blox::stone;
+
 	world::World gameWorld = world::World();
 
 	player::Player player;

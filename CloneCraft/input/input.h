@@ -25,6 +25,7 @@ namespace input
 		std::map<sf::Keyboard::Key, KeyPressState> keyPressStates;
 		std::map<sf::Mouse::Button, bool> mouseButtonPressStates;
 		std::string inputField;
+		int lastScrollDelta = 0;
 
 		void clearInput();
 		void getAndClearInput(std::string& inputField);
