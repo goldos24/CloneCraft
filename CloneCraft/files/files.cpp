@@ -44,10 +44,13 @@ void saveData::Manager::addChunk(std::shared_ptr<chunks::Chunk> chunk)
 	chunks.push_back(chunk);
 }
 
-void saveData::Manager::loadAll()
+bool saveData::Manager::loadAll(std::string fileName)
 {
 	std::ifstream inputFile;
-	inputFile.open("savedChunk");
+	inputFile.open(fileName);
+	
+	if (!inputFile.is_open()) return false;
+
 	while (inputFile.good())
 	{
 		char chunkFormatC;
@@ -65,14 +68,21 @@ void saveData::Manager::loadAll()
 			break;
 		}
 	}
+	
 	inputFile.close();
+	return true;
 }
 
-void saveData::Manager::saveAll()
+void saveData::Manager::saveAll(std::string worldName)
 {
 	std::ofstream outputFile;
-	outputFile.open("savedChunk");
+	outputFile.open(worldName + ".save");
 	for (auto chonk : this->chunks)
 		saveSimpleChunk(outputFile, chonk);
 	outputFile.close();
+}
+
+void saveData::Manager::unloadAll()
+{
+	this->chunks.clear();
 }
