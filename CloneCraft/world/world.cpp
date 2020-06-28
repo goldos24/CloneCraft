@@ -2,12 +2,27 @@
 
 world::World::World()
 {
-	mgr.loadAll();
+}
+
+bool world::World::loadFromFile(std::string fileName)
+{
+	if (!mgr.loadAll(fileName)) return false;
+
+	this->worldFileName = fileName;
+
 	for (auto chonk : mgr.chunks)
 	{
 		chonk->calculateFaces();
 		this->chunks[chunks::createKeyFromPosition(chonk->chunkPos).num] = chonk;
 	}
+
+	return true;
+}
+
+bool world::World::createWorld(std::string worldFileName)
+{
+	this->worldFileName = worldFileName;
+
 	size = maths::cubeof(this->chunkRenderDistance);
 	for (int i = 0; i < size; i++)
 	{
@@ -15,6 +30,17 @@ world::World::World()
 		maths::coord::indexToCoordinate(i, x, y, z, this->chunkRenderDistance);
 		this->loadChunk(maths::Vec3<int>(x * 16, y * 16, z * 16));
 	}
+
+	return true;
+}
+
+void world::World::unload()
+{
+	this->worldFileName = "";
+	this->worldPos = maths::Vec3<int>(0, 0, 0);
+	this->size = 0;
+	this->chunks.clear();
+	this->mgr.unloadAll();
 }
 
 void world::World::moveTo(maths::Vec3<int> destination) {
@@ -118,7 +144,7 @@ void world::World::unloadGarbageChunks()
 	{
 		if (!chunkKeyPair.second->chunkPos.isInBounds(worldStart, worldEnd))
 		{
-			this->chunks.erase(this->chunks.find(chunkKeyPair.first));;
+			this->chunks.erase(this->chunks.find(chunkKeyPair.first));
 		}
 	}
 
@@ -162,9 +188,12 @@ bool world::World::save()
 	std::cout << "Saving the world..." << std::endl;
 	for (auto keyChunkPair : this->chunks)
 	{
-		mgr.addChunk(keyChunkPair.second);
+		if (std::find(mgr.chunks.begin(), mgr.chunks.end(), keyChunkPair.second) == mgr.chunks.end())
+		{
+			mgr.addChunk(keyChunkPair.second);
+		}
 	}
-	mgr.saveAll();
+	mgr.saveAll(this->worldFileName);
 
 	std::cout << "Saved the world." << std::endl;
 	return true;

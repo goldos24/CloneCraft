@@ -26,3 +26,39 @@ void player::Player::renderModel()
 	glVertex3f(-1.f, 1.f, 1.f);
 	glEnd();
 }
+
+void player::Player::saveDataToFile(std::string worldFileName)
+{
+	std::ofstream out(worldFileName + ".pdata");
+	if (!out) return;
+
+	float x = this->position.x, y = this->position.y, z = this->position.z;
+	float rX = this->rotation.x, rY = this->rotation.y, rZ = this->rotation.z;
+
+	out << x << std::endl;
+	out << y << std::endl;
+	out << z << std::endl;
+
+	out << rX << std::endl;
+	out << rY << std::endl;
+	out << rZ << std::endl;
+
+	out.close();
+}
+
+void player::Player::loadDataFromFile(std::string worldFileName)
+{
+	std::ifstream in(worldFileName + ".pdata");
+	if (!in) return;
+
+	float x, y, z;
+	float rX, rY, rZ;
+
+	in >>  x >>  y >>  z;
+	in >> rX >> rY >> rZ;
+
+	in.close();
+
+	this->position = maths::Vec3<float>(x, y, z);
+	this->rotation = maths::Vec3<float>(rX, rY, rZ);
+}
