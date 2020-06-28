@@ -3,9 +3,9 @@
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 #include <SFML/OpenGL.hpp>
+#include <string>
 #include <sstream>
 #include <iostream>
-#include <string>
 #include "../glu/oldFunctions.h"
 #include "../world/blocks.h"
 #include "../world/chunks.h"

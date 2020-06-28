@@ -88,31 +88,40 @@ void Game::updatePosition(float elapsedTime)
 	this->player.applyFriction(elapsedTime, friction);
 }
 
-void Game::runCommand(std::string command) // TODO parse commands
+void Game::runCommand(std::string cmd)
 {
+	std::istringstream cmdin(cmd);
+	std::string command;
+
+	cmdin >> command;
+
 	if (command == "setblock")
 	{
 		int x = 0, y = 0, z = 0;
 		std::string blockName;
-		//std::cin >> x >> y >> z >> blockName;
-		//this->gameWorld.setBlockID(maths::Vec3<int>(x, y, z), blox::getByName(blockName).id);
+		cmdin >> x >> y >> z >> blockName;
+		this->gameWorld.setBlockID(maths::Vec3<int>(x, y, z), blox::getByName(blockName).id);
 	}
 	else if (command == "teleport")
 	{
 		float x = 0.f, y = 0.f, z = 0.f;
-		//std::cin >> x >> y >> z;
-		//this->player.position = maths::Vec3<float>(x, y, z);
+		cmdin >> x >> y >> z;
+		this->player.position = maths::Vec3<float>(x, y, z);
 	}
 	else if (command == "getblock")
 	{
 		int x = 0, y = 0, z = 0;
-		//std::cin >> x >> y >> z;
-		//std::cout << gameWorld.getBlockID(maths::Vec3<int>(x, y, z));
+		cmdin >> x >> y >> z;
+		std::cout << gameWorld.getBlockID(maths::Vec3<int>(x, y, z));
 	}
 	else if (command == "save")
 	{
 		this->gameWorld.save();
 		this->player.saveDataToFile(this->gameWorld.worldFileName);
+	}
+	else
+	{
+		std::cout << "Command \"" << command << "\" wasn't found!" << std::endl;
 	}
 }
 
@@ -319,7 +328,7 @@ void Game::manageKeys()
 	{
 		if (this->guiManager.isGuiSet())
 		{
-			this->guiManager.textFieldManager.clearTextFields("options");
+			this->guiManager.textFieldManager.clearTextFields(this->guiManager.currentGui->guiName);
 			this->inputManager.resetAllTo(false);
 			this->guiManager.setNoGui();
 		}
