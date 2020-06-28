@@ -1,6 +1,6 @@
 #pragma once
 
-#include <fstream>
+
 #include "../maths/maths.h"
 #include "../world/world.h"
 #include "../world/blocks.h"
@@ -20,8 +20,5 @@ namespace player
 		void rotate(float X, float Y, float mouseSpeed);
 
 		void renderModel();
-
-		void saveDataToFile(std::string worldFileName);
-		void loadDataFromFile(std::string worldFileName);
 	};
 }

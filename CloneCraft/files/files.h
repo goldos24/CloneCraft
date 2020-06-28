@@ -23,7 +23,7 @@ namespace saveData
 
 	std::shared_ptr<chunks::Chunk> loadSimpleChunk(std::ifstream& inputFile);
 
-	/*std::shared_ptr<chunks::Chunk> loadCompressedChunk(std::ifstream& inputFile); TODO load compressed chunks
+	/*std::shared_ptr<chunks::Chunk> loadCompressedChunk(std::ifstream& inputFile); TODO
 	{
 		auto chunk = std::make_shared<chunks::Chunk>();
 		chunk->chunkPos.x = loadInt(inputFile);
@@ -48,7 +48,7 @@ namespace saveData
 
 	void saveSimpleChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk);
 
-	//void saveCompressedChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk); // TODO implement the chunk compression algorithm
+	//void saveCompressedChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk); // TODO
 	/*{
 		outputFile << char(Format::compressedFormat);
 		saveInt(outputFile, chunk->chunkPos.x);
@@ -78,11 +78,9 @@ namespace saveData
 
 		void addChunk(std::shared_ptr<chunks::Chunk> chunk);
 
-		bool loadAll(std::string worldName);
+		void loadAll();
 
-		void saveAll(std::string worldName);
-
-		void unloadAll();
+		void saveAll();
 	};
 
 }

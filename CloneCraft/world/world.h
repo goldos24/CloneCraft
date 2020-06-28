@@ -18,18 +18,11 @@ namespace world
 	struct World
 	{
 		World();
-		std::string worldFileName;
 		maths::Vec3<int> worldPos = maths::Vec3<int>(0, 0, 0);
 		int size;
 		int chunkRenderDistance = 11;
 		std::map<uint64_t, std::shared_ptr<chunks::Chunk>> chunks;
 		saveData::Manager mgr;
-
-		bool loadFromFile(std::string worldFileName);
-		
-		bool createWorld(std::string worldFileName);
-
-		void unload();
 
 		void moveTo(maths::Vec3<int> destination);
 
