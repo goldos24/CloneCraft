@@ -91,14 +91,15 @@ void Entity::render(maths::Vec3<float> cameraPosition, maths::Vec3<float> camera
 	glLoadIdentity();
 
 	// Entity Transformations
-	glTranslatef(this->position.x, this->position.y - this->hitbox.y, this->position.z);
-	glTranslatef(0.f, 0.9f, 0.f);
 
 	// Camera Transformations
-	glTranslatef(-cameraPosition.x, - cameraPosition.y, - cameraPosition.z);
-
 	glRotatef(cameraRotation.x, 1.f, 0.f, 0.f);
 	glRotatef(-cameraRotation.y, 0.f, -1.f, 0.f);
+	glTranslatef(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
+
+	// Entity Translation
+
+	glTranslatef(this->position.x, this->position.y - this->hitbox.y, this->position.z);
 
 	// Finally Drawing the Entity
 	this->renderModel();
