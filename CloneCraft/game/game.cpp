@@ -2,9 +2,14 @@
 
 Game::Game(input::InputManager& inputManager) : inputManager(inputManager)
 {
-	this->player.position = maths::Vec3<float>(0, 20, 0);
+	this->player.position = maths::Vec3<float>(0.f, 100.0f, 0.f);
 
-	this->guiManager.addGui(&this->emptyGui);
+	this->guiManager.addGui(&this->commandGui);
+	this->guiManager.addUIElementToGuiWithName(&this->simpleBackgroundRect, "command");
+	this->guiManager.addUIElementToGuiWithName(&this->commandInfoText, "command");
+	this->guiManager.addTextFieldToGuiWithName(&this->commandTextField, "command");
+	this->guiManager.addButtonToGuiWithName(&this->executeCommandButton, "command");
+
 	this->guiManager.addGui(&this->pauseGui);
 	this->guiManager.addUIElementToGuiWithName(&this->simpleBackgroundRect, "pause");
 	this->guiManager.addButtonToGuiWithName(&this->optionsButton, "pause");
@@ -14,7 +19,6 @@ Game::Game(input::InputManager& inputManager) : inputManager(inputManager)
 	this->guiManager.addGui(&this->optionsGui);
 	this->guiManager.addUIElementToGuiWithName(&this->darkerSimpleBackgroundRect, "options");
 	this->guiManager.addButtonToGuiWithName(&this->backToPauseGuiButton, "options");
-	this->guiManager.addButtonToGuiWithName(&this->saveWorldButton, "options");
 	this->guiManager.addButtonToGuiWithName(&this->toggleFullscreenButton, "options");
 	this->guiManager.addTextFieldToGuiWithName(&this->mouseSensitivityTextInput, "options");
 	this->guiManager.addUIElementToGuiWithName(&this->mouseSensitivityText, "options");
@@ -28,6 +32,7 @@ Game::Game(input::InputManager& inputManager) : inputManager(inputManager)
 	this->guiManager.addButtonToGuiWithName(&this->generateWorldButton, "main_menu");
 	this->guiManager.addUIElementToGuiWithName(&this->seedInfoText, "main_menu");
 	this->guiManager.setGuiByName("main_menu");
+
 }
 
 void Game::updateLoadedChunks()
@@ -83,43 +88,48 @@ void Game::updatePosition(float elapsedTime)
 	this->player.applyFriction(elapsedTime, friction);
 }
 
-void Game::getAndRunCommand()
+void Game::runCommand(std::string cmd)
 {
-	if (this->guiManager.isGuiSet()) return;
-	this->guiManager.setGuiByName("empty");
-
+	std::istringstream cmdin(cmd);
 	std::string command;
-	std::cin >> command;
+
+	cmdin >> command;
+
 	if (command == "setblock")
 	{
-		int x, y, z;
+		int x = 0, y = 0, z = 0;
 		std::string blockName;
-		std::cin >> x >> y >> z >> blockName;
+		cmdin >> x >> y >> z >> blockName;
 		this->gameWorld.setBlockID(maths::Vec3<int>(x, y, z), blox::getByName(blockName).id);
 	}
 	else if (command == "teleport")
 	{
-		float x, y, z;
-		std::cin >> x >> y >> z;
+		float x = 0.f, y = 0.f, z = 0.f;
+		cmdin >> x >> y >> z;
 		this->player.position = maths::Vec3<float>(x, y, z);
 	}
 	else if (command == "getblock")
 	{
-		int x, y, z;
-		std::cin >> x >> y >> z;
+		int x = 0, y = 0, z = 0;
+		cmdin >> x >> y >> z;
 		std::cout << gameWorld.getBlockID(maths::Vec3<int>(x, y, z));
 	}
 	else if (command == "save")
 	{
 		this->gameWorld.save();
+		this->player.saveDataToFile(this->gameWorld.worldFileName);
 	}
-	this->guiManager.setNoGui();
+	else
+	{
+		std::cout << "Command \"" << command << "\" wasn't found!" << std::endl;
+	}
 }
 
 void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clock)
 {
-	if (this->inputManager.isKeyPressed(sf::Keyboard::F11)) // TODO fix falling out of the world
+	if (this->inputManager.isKeyPressed(sf::Keyboard::F11))
 	{
+		this->shouldRestartClock = true;
 		this->shouldUpdateWindow = true;
 		this->isFullscreenEnabled = !this->isFullscreenEnabled;
 	}
@@ -154,6 +164,12 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 		}
 	}
 
+	if (this->shouldRestartClock)
+	{
+		this->shouldRestartClock = false;
+		clock.restart();
+	}
+
 	if (!this->guiManager.isGuiWithNameActive("main_menu"))
 	{
 		this->updateLoadedChunks();
@@ -178,12 +194,16 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 
 		this->manageKeys();
 
+		int newBlockValue = int(this->selectedBlockToPlace) + this->inputManager.lastScrollDelta;
+		if (newBlockValue < 0) newBlockValue = blox::enumSize - 1;
+		if (newBlockValue > blox::enumSize - 1) newBlockValue = 0;
+		this->selectedBlockToPlace = blox::ID(newBlockValue);
+
 		if (!this->guiManager.isGuiSet())
 		{
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Right))
 			{
-				//std::cout << "Right click" << std::endl;
-				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player);
+				playerWorldInteraction::setBlockInFrontOfPlayer(this->gameWorld, this->player, this->selectedBlockToPlace);
 			}
 			if (inputManager.isMouseButtonPressed(sf::Mouse::Left))
 				playerWorldInteraction::breakBlockInFrontOfPlayer(this->gameWorld, this->player);
@@ -214,7 +234,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 
 		this->gameWorld.markVisibleChunks(this->player.rotation);
 
-		glBegin(GL_QUADS);      // Draw The Cubes Using quads
+		glBegin(GL_QUADS);      
 
 		this->gameWorld.Render();
 
@@ -225,22 +245,19 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 
 		updateDebugInfo();
 
-		float windowStretchFactor = 1; // TODO calculate
-
 		this->simpleBackgroundRect.scale(wsize.x, wsize.y);
 		this->darkerSimpleBackgroundRect.scale(wsize.x, wsize.y);
 
 		sf::Vector2f s1 = this->crosshairRectangle1.rectElement.getSize();
-		this->crosshairRectangle1.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s1 / 2.f));
+		this->crosshairRectangle1.setPosition(sf::Vector2f(wsize / 2u) - s1 / 2.f);
 
 		sf::Vector2f s2 = this->crosshairRectangle2.rectElement.getSize();
-		this->crosshairRectangle2.setPosition(sf::Vector2f(wsize / 2u) - windowStretchFactor * (s2 / 2.f));
+		this->crosshairRectangle2.setPosition(sf::Vector2f(wsize / 2u) - s2 / 2.f);
 
 		this->backToGameButton.centerOnXAxis(wsize.x, window);
 		this->backToMainMenuButton.centerOnXAxis(wsize.x, window);
 		this->backToPauseGuiButton.centerOnXAxis(wsize.x, window);
 		this->optionsButton.centerOnXAxis(wsize.x, window);
-		this->saveWorldButton.centerOnXAxis(wsize.x, window);
 		this->toggleFullscreenButton.centerOnXAxis(wsize.x, window);
 
 		drawUI(window);
@@ -290,7 +307,8 @@ void Game::updateDebugInfo()
 		<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
 		<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
 		<< "Looking at block with ID: " << blockIDInFrontOfPlayer << " (" << int(blockIDInFrontOfPlayer) << ")\n"
-		<< "Looking at block: " << blockPosInFrontOfPlayer << "\n";
+		<< "Looking at block: " << blockPosInFrontOfPlayer << "\n" 
+		<< "Selected block: " << this->selectedBlockToPlace;
 	debugInfoText.updateText(debugInfoStream.str());
 }
 
@@ -306,18 +324,30 @@ void Game::drawUI(sf::RenderWindow& window)
 
 void Game::manageKeys()
 {
-	if (inputManager.isKeyPressed(sf::Keyboard::Escape))
+	if (this->inputManager.isKeyPressed(sf::Keyboard::Escape))
 	{
 		if (this->guiManager.isGuiSet())
 		{
-			this->guiManager.textFieldManager.clearTextFields("options");
+			this->guiManager.textFieldManager.clearTextFields(this->guiManager.currentGui->guiName);
 			this->inputManager.resetAllTo(false);
 			this->guiManager.setNoGui();
 		}
 		else this->guiManager.setGuiByName("pause");
 	}
-	else if (inputManager.isKeyPressed(sf::Keyboard::Tab))
+	else if (this->inputManager.isKeyPressed(sf::Keyboard::Tab))
 	{
-		this->getAndRunCommand();
+		if (this->guiManager.isGuiSet())
+		{
+			this->guiManager.textFieldManager.clearTextFields("command");
+			this->inputManager.resetAllTo(false);
+			this->guiManager.setNoGui();
+		}
+		else this->guiManager.setGuiByName("command");
 	}
+	
+	if (!this->guiManager.isGuiSet() && this->inputManager.isKeyPressed(sf::Keyboard::R))
+	{
+		this->player.position = maths::Vec3<float>(0.f, 100.f, 0.f);
+	}
+
 }

@@ -13,5 +13,5 @@ namespace playerWorldInteraction
 
 	void breakBlockInFrontOfPlayer(world::World& world, player::Player& player);
 
-	void setBlockInFrontOfPlayer(world::World& world, player::Player& player);
+	void setBlockInFrontOfPlayer(world::World& world, player::Player& player, blox::ID block);
 }

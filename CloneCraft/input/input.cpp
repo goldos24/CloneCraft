@@ -30,6 +30,8 @@ void input::InputManager::updateEvents(sf::RenderWindow& ourWindow)
 	this->wasWindowClosed = false;
 	this->wasWindowResized = false;
 
+	this->lastScrollDelta = 0;
+
 	// handle events
 	sf::Event event;
 	//std::cout << "Window pointer" << ourWindow << std::endl;
@@ -48,6 +50,10 @@ void input::InputManager::updateEvents(sf::RenderWindow& ourWindow)
 		else if (event.type == sf::Event::TextEntered)
 		{
 			inputField += static_cast<char>(event.text.unicode);
+		}
+		else if (event.type == sf::Event::MouseWheelScrolled)
+		{
+			this->lastScrollDelta = event.mouseWheelScroll.delta;
 		}
 	}
 }
