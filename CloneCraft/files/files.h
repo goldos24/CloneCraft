@@ -19,58 +19,23 @@ namespace saveData
 		compressedFormat
 	};
 
+	union savedInt
+	{
+		int num;
+		char bytes[4];
+	};
+
 	int loadInt(std::ifstream& inputFile);
 
 	std::shared_ptr<chunks::Chunk> loadSimpleChunk(std::ifstream& inputFile);
 
-	/*std::shared_ptr<chunks::Chunk> loadCompressedChunk(std::ifstream& inputFile); TODO load compressed chunks
-	{
-		auto chunk = std::make_shared<chunks::Chunk>();
-		chunk->chunkPos.x = loadInt(inputFile);
-		chunk->chunkPos.y = loadInt(inputFile);
-		chunk->chunkPos.z = loadInt(inputFile);
-		int i = 0;
-		while (inputFile.good() && i < maths::cubeof(chunks::size))
-		{
-			int amount, blockIDInt;
-			inputFile >> amount >> blockIDInt;
-			for (int j = 0; j < amount; j++)
-			{
-				chunk->blocks[i + j] = (blox::ID) blockIDInt;
-			}
-			i += amount;
-		}
-		char c; inputFile.get(c); // Ignoring the next char which is ' '
-		return chunk;
-	} */
+	std::shared_ptr<chunks::Chunk> loadCompressedChunk(std::ifstream& inputFile); 
 
 	void saveInt(std::ofstream& outputFile, int data);
 
 	void saveSimpleChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk);
 
-	//void saveCompressedChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk); // TODO implement the chunk compression algorithm
-	/*{
-		outputFile << char(Format::compressedFormat);
-		saveInt(outputFile, chunk->chunkPos.x);
-		saveInt(outputFile, chunk->chunkPos.y);
-		saveInt(outputFile, chunk->chunkPos.z);
-		blox::ID id = chunk->blocks[0];
-		int amount = 1;
-		for (int i = 0; i < maths::cubeof(chunks::size); i++)
-		{
-			if (chunk->blocks[i] == id)
-			{
-				amount++;
-			}
-			else
-			{
-				outputFile << amount << ' ' << int(id) << ' ';
-				amount = 1;
-				id = chunk->blocks[i];
-			}
-		}
-		outputFile << -1 << ' ';
-	}*/
+	void saveCompressedChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk); 
 
 	struct Manager
 	{

@@ -1,11 +1,13 @@
 #include "files.h"
+#include "ChunkCompression.h"
 
 int saveData::loadInt(std::ifstream& inputFile)
 {
-	int result;
-	inputFile >> result;
-	char c; inputFile.get(c); // Ignoring the next char which is '\n'
-	return result;
+	saveData::savedInt result;
+
+	for (int j = 0; j < 4; ++j)
+		inputFile.get(result.bytes[j]); 
+	return result.num;
 }
 
 std::shared_ptr<chunks::Chunk> saveData::loadSimpleChunk(std::ifstream& inputFile)
@@ -24,7 +26,10 @@ std::shared_ptr<chunks::Chunk> saveData::loadSimpleChunk(std::ifstream& inputFil
 
 void saveData::saveInt(std::ofstream& outputFile, int data)
 {
-	outputFile << '\n' << data << '\n';
+	saveData::savedInt i;
+	i.num = data;
+	for (int j = 0; j < 4; ++j)
+		outputFile << i.bytes[j];
 }
 
 void saveData::saveSimpleChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk)
@@ -61,9 +66,9 @@ bool saveData::Manager::loadAll(std::string fileName)
 		case saveData::Format::simpleCharFormat:
 			this->addChunk(loadSimpleChunk(inputFile));
 			break;
-			/*case saveData::Format::compressedFormat:
-				this->addChunk(loadCompressedChunk(inputFile));
-				break;*/
+		case saveData::Format::compressedFormat:
+			this->addChunk(loadCompressedChunk(inputFile));
+			break;
 		default:
 			break;
 		}
@@ -78,11 +83,35 @@ void saveData::Manager::saveAll(std::string worldName)
 	std::ofstream outputFile;
 	outputFile.open(worldName + ".save");
 	for (auto chonk : this->chunks)
-		saveSimpleChunk(outputFile, chonk);
+		if (chonk->chunkPos.x > 0 && chonk->chunkPos.y > 0 && chonk->chunkPos.z > 0) saveCompressedChunk(outputFile, chonk);
+		else saveSimpleChunk(outputFile, chonk);
 	outputFile.close();
 }
 
 void saveData::Manager::unloadAll()
 {
 	this->chunks.clear();
+}
+
+std::shared_ptr<chunks::Chunk> saveData::loadCompressedChunk(std::ifstream& inputFile)
+{
+	auto chunk = std::make_shared<chunks::Chunk>();
+	chunk->chunkPos.x = loadInt(inputFile);
+	chunk->chunkPos.y = loadInt(inputFile);
+	chunk->chunkPos.z = loadInt(inputFile);
+
+
+	chunkCompression::loadBlocks(*chunk, inputFile);
+
+	return chunk;
+}
+
+void saveData::saveCompressedChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk)
+{
+	outputFile << char(Format::compressedFormat);
+	saveInt(outputFile, chunk->chunkPos.x);
+	saveInt(outputFile, chunk->chunkPos.y);
+	saveInt(outputFile, chunk->chunkPos.z);
+
+	chunkCompression::saveBlocks(*chunk, outputFile);
 }
