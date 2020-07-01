@@ -26,7 +26,6 @@ int main()
     sf::Clock clock;
 
     // Enable OpenGL 2D Textures and depth test
-    glEnable(GL_TEXTURE_2D);
     glEnable(GL_DEPTH_TEST);
 
     // Initialise the texture storage

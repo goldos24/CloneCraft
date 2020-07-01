@@ -20,6 +20,7 @@ namespace player
 		void rotate(float X, float Y, float mouseSpeed);
 
 		void renderModel();
+		void update(Game&, float);
 
 		void saveDataToFile(std::string worldFileName);
 		void loadDataFromFile(std::string worldFileName);

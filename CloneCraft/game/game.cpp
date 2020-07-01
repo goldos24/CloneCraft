@@ -1,4 +1,5 @@
 #include "game.h"
+#include "../mobs/Sheep.h"
 
 Game::Game(input::InputManager& inputManager) : inputManager(inputManager)
 {
@@ -175,6 +176,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 		this->updateLoadedChunks();
 
 		glClearColor(0.3f, 0.3f, 0.3f, 1.f);
+		glEnable(GL_TEXTURE_2D);
 
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
@@ -188,7 +190,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 		float elapsedSeconds = elapsed.asSeconds();
 		if (!this->guiManager.isGuiSet())
 		{
-			updatePosition(elapsedSeconds);
+			this->player.update(*this, elapsedSeconds);
 			updateRotation(wsize, window);
 		}
 
@@ -241,7 +243,9 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 		glEnd();
 
 		// TODO REMOVE BECAUSE IT IS JUST A TEST
-		this->player.render(this->player.position, this->player.rotation);
+		Sheep sheep;
+		sheep.position = maths::Vec3<float>(0.f, 16.f, 0.f);
+		sheep.render(this->player.position, this->player.rotation);
 
 		updateDebugInfo();
 

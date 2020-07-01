@@ -1,4 +1,5 @@
 #include "player.h"
+#include "../game/game.h"
 
 float player::Player::playerReach = 5.f;
 
@@ -56,4 +57,9 @@ void player::Player::loadDataFromFile(std::string worldFileName)
 
 	this->position = maths::Vec3<float>(x, y, z);
 	this->rotation = maths::Vec3<float>(rX, rY, rZ);
+}
+
+void player::Player::update(Game& game, float elapsedTime)
+{
+	game.updatePosition(elapsedTime);
 }
