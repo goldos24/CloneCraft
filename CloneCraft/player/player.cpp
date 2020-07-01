@@ -19,12 +19,7 @@ void player::Player::rotate(float X, float Y, float mouseSpeed)
 
 void player::Player::renderModel()
 {
-	glBegin(GL_QUADS);
-	glVertex3f(-1.f, 3.4f, -1.f);
-	glVertex3f(1.f, 3.4f, -1.f);
-	glVertex3f(1.f, 3.4f, 1.f);
-	glVertex3f(-1.f, 3.4f, 1.f);
-	glEnd();
+
 }
 
 void player::Player::saveDataToFile(std::string worldFileName)

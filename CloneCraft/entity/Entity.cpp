@@ -104,3 +104,8 @@ void Entity::render(maths::Vec3<float> cameraPosition, maths::Vec3<float> camera
 	// Finally Drawing the Entity
 	this->renderModel();
 }
+
+void Entity::update(Game& game, float elapsedTime)
+{
+	
+}

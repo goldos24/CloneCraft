@@ -3,6 +3,7 @@
 #include <cmath>
 #include "../world/world.h"
 #include "../maths/maths.h"
+#include "../game/forwardDeclarations.h"
 
 struct Entity
 {
@@ -26,4 +27,6 @@ struct Entity
 	virtual void renderModel();
 
 	void render(maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation);
+
+	virtual void update(Game&, float);
 };
