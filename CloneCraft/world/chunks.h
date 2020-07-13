@@ -3,6 +3,8 @@
 #include <memory>
 #include <future>
 #include <mutex>
+#include "../entity/Entity.h"
+#include "../game/forwardDeclarations.h"
 #include "../world/blocks.h"
 #include "../renderer/renderer.h"
 #include "../maths/maths.h"
@@ -35,9 +37,13 @@ namespace chunks
 
 		blox::ID blocks[maths::cubeof(size)];
 
-
+		std::vector<std::shared_ptr<Entity>> entities;
 
 		blox::ID getBlock(int x, int y, int z);
+
+		void updateEntities(Game&, float elapsedTime);
+
+		void renderEntities(maths::Vec3<float>, maths::Vec3<float>);
 
 		void setBlock(blox::ID id, int x, int y, int z);
 

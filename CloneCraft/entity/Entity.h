@@ -1,7 +1,8 @@
 #pragma once
 
 #include <cmath>
-#include "../world/world.h"
+#include <functional>
+#include "../world/forwardDeclarations.h"
 #include "../maths/maths.h"
 #include "../game/forwardDeclarations.h"
 

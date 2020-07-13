@@ -213,3 +213,17 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 #endif
 	return chunk;
 }
+
+void chunks::Chunk::renderEntities(maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation)
+{
+	for (auto entity : this->entities)
+	{
+		entity->render(cameraPosition, cameraRotation);
+	}
+}
+
+void chunks::Chunk::updateEntities(Game& game, float elapsedTime)
+{
+	for (auto entity : this->entities)
+		entity->update(game, elapsedTime);
+}

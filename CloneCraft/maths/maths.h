@@ -240,6 +240,16 @@ namespace maths
 		return Vec2<targetNum>(targetNum(sauce.x), targetNum(sauce.y));
 	}
 
+	template<class num>
+	num dotProduct(int dimensions, num* vector1, num* vector2)
+	{
+		num result(0);
+		for (int i = 0; i < dimensions; ++i)
+			result += vector1[i] * vector2[i];
+
+		return result;
+	}
+
 	float pythagoras(float x, float y);
 
 	const float pi = 3.1415926535897932384626433832795;

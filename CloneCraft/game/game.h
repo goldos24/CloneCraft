@@ -18,6 +18,7 @@
 #include "../input/input.h"
 #include "../player/playerControls.h"
 #include "../world/blockInfo.h"
+#include "../mobs/Sheep.h" // TODO MAYBE REMOVE
 
 struct Game {
 	Game(input::InputManager& inputManager, texStorage::TextureAtlas& texAtlas);

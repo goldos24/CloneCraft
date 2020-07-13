@@ -122,6 +122,15 @@ void Game::runCommand(std::string cmd)
 		this->gameWorld.save();
 		this->player.saveDataToFile(this->gameWorld.worldFileName);
 	}
+	else if (command == "spawn")
+	{
+		float x, y, z;
+		cmdin >> x >> y >> z;
+		auto chunk = this->gameWorld.getChunk(chunks::convertToChunkPos(maths::Vec3<float>(x, y, z)));
+		auto newEntity = std::make_shared<Sheep>();
+		newEntity->position = maths::Vec3<float>(x,y,z);
+		chunk->entities.push_back(newEntity);
+	}
 	else
 	{
 		std::cout << "Command \"" << command << "\" wasn't found!" << std::endl;
@@ -192,6 +201,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 		{
 			this->player.update(*this, elapsedSeconds);
 			updateRotation(wsize, window);
+			this->gameWorld.updateEntities(*this, elapsedSeconds);
 		}
 
 		this->manageKeys();
@@ -238,14 +248,9 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 
 		glBegin(GL_QUADS);      
 
-		this->gameWorld.Render(this->texAtlas);
+		this->gameWorld.Render(this->texAtlas, this->player.position, this->player.rotation);
 
 		glEnd();
-
-		// TODO REMOVE BECAUSE IT IS JUST A TEST
-		Sheep sheep;
-		sheep.position = maths::Vec3<float>(0.f, 16.f, 0.f);
-		sheep.render(this->player.position, this->player.rotation);
 
 		updateDebugInfo();
 

@@ -1,4 +1,7 @@
 #include "Entity.h"
+#include "../world/world.h"
+#include <cmath>
+
 
 Entity::Entity()
 {}
@@ -65,6 +68,7 @@ void Entity::clipMovement(float elapsedTime, world::World& world)
 	this->position.y += appliedMovementVector.y;
 	if (this->isColliding(world))
 	{
+		if(this->movement.y < 0)initialEntityPosition.y = round(initialEntityPosition.y - this->hitbox.y) + this->hitbox.y + 0.000001f;
 		this->movement.y = 0.f;
 		this->position.y -= appliedMovementVector.y;
 	}
@@ -79,33 +83,25 @@ void Entity::clipMovement(float elapsedTime, world::World& world)
 	this->position = initialEntityPosition;
 }
 
-void Entity::renderModel()
-{
-
-}
-
 void Entity::render(maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation)
 {
-	// Restoring the identity (= transformedn't) matrix manually because OpenGL sometimes sucks
+	// Restoring the identity (= transformedn't) matrix 
 
 	glLoadIdentity();
 
-	// Entity Transformations
 
 	// Camera Transformations
 	glRotatef(cameraRotation.x, 1.f, 0.f, 0.f);
 	glRotatef(-cameraRotation.y, 0.f, -1.f, 0.f);
 	glTranslatef(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
 
-	// Entity Translation
-
+	// Entity Transformations
+	glRotatef(this->rotation.y, 0, 1, 0);
 	glTranslatef(this->position.x, this->position.y - this->hitbox.y, this->position.z);
 
 	// Finally Drawing the Entity
 	this->renderModel();
 }
 
-void Entity::update(Game& game, float elapsedTime)
-{
-	
-}
+void Entity::update(Game&, float) {}
+void Entity::renderModel() {}

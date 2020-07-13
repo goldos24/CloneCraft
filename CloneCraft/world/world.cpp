@@ -151,7 +151,7 @@ void world::World::unloadGarbageChunks()
 	this->size = this->chunks.size();
 }
 #ifndef CLONECRAFT_NO_GFX
-void world::World::Render(texStorage::TextureAtlas& texAtlas) //TODO replace
+void world::World::Render(texStorage::TextureAtlas & texAtlas,maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation) //TODO replace
 {
 	// Making the variable with the best name you've seen in a while
 	auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
@@ -162,7 +162,10 @@ void world::World::Render(texStorage::TextureAtlas& texAtlas) //TODO replace
 				auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
 				//if (oldf::glu::simpleProjectRelative(maths::convertVec3<int, float>(chunk->chunkPos)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)))
 				if (chunk->isVisible)
+				{
 					chunk->Render(texAtlas);
+					chunk->renderEntities(cameraPosition, cameraRotation);
+				}
 			}
 }
 
@@ -204,4 +207,17 @@ bool world::World::containsChunk(maths::Vec3<int> chunkPos)
 	auto key = chunks::createKeyFromPosition(chunkPos).num;
 	if (this->chunks.find(key) == this->chunks.end()) return false;
 	return this->chunks[key]->chunkPos == chunkPos;
+}
+
+void world::World::updateEntities(Game& game, float elapsedTime) //TODO replace
+{
+	// Making the variable with the best name you've seen in a while
+	auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
+	for (int i = this->worldPos.x; i < worldEnd.x; i += chunks::size)
+		for (int j = this->worldPos.y; j < worldEnd.y; j += chunks::size)
+			for (int k = this->worldPos.z; k < worldEnd.z; k += chunks::size)
+			{
+				auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
+				chunk->updateEntities(game, elapsedTime);
+			}
 }

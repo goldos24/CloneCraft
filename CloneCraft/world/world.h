@@ -1,5 +1,6 @@
 #pragma once
 
+#include <vector>
 #include <iostream>
 #include <memory>
 #include <map>
@@ -9,6 +10,7 @@
 #include "../maths/maths.h"
 #include "../files/files.h"
 #include "../world/blockInfo.h"
+#include "../entity/Entity.h"
 #ifndef CLONECRAFT_NO_GFX
 #include "../glu/oldFunctions.h"
 #endif
@@ -24,6 +26,8 @@ namespace world
 		int chunkRenderDistance = 11;
 		std::map<uint64_t, std::shared_ptr<chunks::Chunk>> chunks;
 		saveData::Manager mgr;
+
+		//void updateEntities(Game&, float elapsedTime);
 
 		bool loadFromFile(std::string worldFileName);
 		
@@ -49,9 +53,11 @@ namespace world
 
 		void loadChunk(maths::Vec3<int> chunkPos);
 
+		void updateEntities(Game& game, float elapsedTime);
+
 		void unloadGarbageChunks();
 #ifndef CLONECRAFT_NO_GFX
-		void Render(texStorage::TextureAtlas& texAtlas);
+		void Render(texStorage::TextureAtlas& texAtlas, maths::Vec3<float>, maths::Vec3<float>);
 
 		void markVisibleChunks(maths::Vec3<float> cameraRotation);
 #endif
