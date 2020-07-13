@@ -10,9 +10,9 @@ renderData::BlockFace::BlockFace(facePos::FacePosition position, blox::ID blockI
 	this->shading = textures::shadingFactors[position];
 }
 
-void renderData::BlockFace::render()
+void renderData::BlockFace::render(texStorage::TextureAtlas& texAtlas)
 {
-	renderer::block::drawFace(this->texture, this->shading, vertices->addVec3f(this->position));
+	renderer::block::drawFace(this->texture, this->shading, vertices->addVec3f(this->position), texAtlas);
 }
 
 renderData::BlockFace renderData::makeFace(blox::ID id, int x, int y, int z, bool swapSides, facePos::FacePosition facePosition)

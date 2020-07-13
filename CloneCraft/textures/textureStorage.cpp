@@ -1,5 +1,6 @@
 #include <cmath>
 #include "textureStorage.h"
+#include "textures.h"
 
 void convertColorToSrgb(sf::Color& color) // Necessary for not having too depressingly dark colors
 {
@@ -8,49 +9,104 @@ void convertColorToSrgb(sf::Color& color) // Necessary for not having too depres
 	color.b = sqrt(int(color.b) * 256);
 }
 
-texStorage::Storage::Storage(int textureWidth, int textureHeight, int storageWidth) :
-	textureWidth(textureWidth),
-	textureHeight(textureHeight),
-	storageWidth(storageWidth),
-	finalTexture(sf::Texture())
+
+
+void texStorage::Texture::setGlTexCoord2f(float x, float y)
 {
-	this->contentImage.create(storageWidth, textureHeight);
+	auto coord = this->convertTexCoord(x, y);
+	glTexCoord2f(coord.x, coord.y);
 }
 
-texStorage::Texture texStorage::Storage::add(sf::Image&& image)
+texStorage::TextureAtlas::TextureAtlas()
 {
-	int currentBeginX = int(this->currentTexCoordBeginX * float(storageWidth));
-	auto result = Texture(currentTexCoordBeginX, 0.f);
-	for (int i = 0; i < this->textureHeight; i++)
-		for (int j = 0; j < this->textureWidth; j++)
-		{
-			auto pixel = image.getPixel(j, i);
-			//convertColorToSrgb(pixel);
-			this->contentImage.setPixel(j + currentBeginX, i, pixel);
-		}
-	this->currentTexCoordBeginX += float(this->textureWidth) / float(this->storageWidth);
-	return result;
+    std::vector<std::string> filepaths;
+    for (int i = 0; i < int(textures::FaceTexture::enumSize); ++i)
+        filepaths.push_back("");
+    
+    filepaths[int(textures::FaceTexture::stone)] = "blocks/stone.png";
+    filepaths[int(textures::FaceTexture::dirt)] = "blocks/dirt.png";
+    filepaths[int(textures::FaceTexture::grass_side)] = "blocks/grass_side.png";
+    filepaths[int(textures::FaceTexture::grass_top)] = "blocks/grass_top.png";
+    filepaths[int(textures::FaceTexture::wewd_side)] = "blocks/wewd_side.png";
+    filepaths[int(textures::FaceTexture::wewd_top)] = "blocks/wewd_top.png";
+    filepaths[int(textures::FaceTexture::leaves)] = "blocks/leaves.png";
+
+
+    sf::Vector2u atlasSize(0, 0);
+    std::vector<std::shared_ptr<sf::Image>> images;
+
+    // Loading the images
+    for (auto path : filepaths)
+    {
+        auto image = std::make_shared<sf::Image>();
+        image->loadFromFile("resources/textures/" + path);
+        images.push_back(image);
+    }
+
+    // Calculating the atlas size
+
+    int width = 0, height = 0;
+
+    std::vector<sf::Vector2u> texelTexCoords;
+    std::vector<sf::Vector2u> imageSizes;
+
+    for (auto image : images)
+    {
+        texelTexCoords.push_back(sf::Vector2u(width, 0));
+
+        sf::Vector2u imageSize = image->getSize();
+        imageSizes.push_back(imageSize);
+        if (imageSize.y > height)
+            height = imageSize.y;
+
+
+        width += imageSize.x;
+    }
+
+    // loading the images
+
+    sf::Image finalAtlas;
+    finalAtlas.create(width, height);
+
+    for (int i = 0; i < images.size(); ++i)
+    {
+        finalAtlas.copy(*images[i], texelTexCoords[i].x, texelTexCoords[i].y);
+    }
+
+    // creating the textures
+
+    for (int i = 0; i < images.size(); ++i)
+    {
+        this->textures.push_back(
+            {
+                sf::Vector2f(float(texelTexCoords[i].x) / float(width), float(texelTexCoords[i].y) / float(height)),
+                sf::Vector2f(float(texelTexCoords[i].x + imageSizes[i].x) / float(width), float(texelTexCoords[i].y + imageSizes[i].y) / float(height)),
+                *this
+            }
+        );
+    }
+
+    // uploading the final texture
+
+    this->finalTexture.loadFromImage(finalAtlas);
+    this->finalTexture.setSmooth(false);
 }
 
-sf::Texture* texStorage::Storage::makeTexture()
+void texStorage::Texture::operator=(const Texture& other)
 {
-	this->finalTexture.setSrgb(false);
-	this->finalTexture.loadFromImage(this->contentImage);
-	this->finalTexture.setSmooth(false);
-	return &this->finalTexture;
+    new(this) Texture(other);
 }
 
-void texStorage::Storage::bind()
+void texStorage::TextureAtlas::bind()
 {
-	sf::Texture::bind(&finalTexture);
+    sf::Texture::bind(&this->finalTexture);
 }
 
-void texStorage::Storage::select(Texture texture)
+sf::Vector2f texStorage::Texture::convertTexCoord(float x, float y)
 {
-	this->selectedTexture = texture;
-}
-
-void texStorage::Storage::setGlTexCoord2f(float x, float y)
-{
-	glTexCoord2f(x * float(this->textureWidth) / float(this->storageWidth) + this->selectedTexture.x, y);
+    return
+    {
+        this->begin.x + (this->end.x - this->begin.x) * x,
+        this->begin.y + (this->end.y - this->begin.y) * y
+    };
 }

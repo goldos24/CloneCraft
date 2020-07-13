@@ -51,7 +51,7 @@ namespace world
 
 		void unloadGarbageChunks();
 #ifndef CLONECRAFT_NO_GFX
-		void Render();
+		void Render(texStorage::TextureAtlas& texAtlas);
 
 		void markVisibleChunks(maths::Vec3<float> cameraRotation);
 #endif

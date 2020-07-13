@@ -59,7 +59,7 @@ namespace renderer
 
     namespace block
     {
-        void drawFace(const textures::FaceTexture* texture, const float shading,
-            FaceVertexContainer vertices);
+        void drawFace(const textures::FaceTexture texture, const float shading,
+            FaceVertexContainer vertices, texStorage::TextureAtlas& texAtlas);
     }
 }

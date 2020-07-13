@@ -14,11 +14,11 @@ blox::Block* blox::InitBlocks()
 	auto* blocks = new Block[256];
 	blocks[air] = Block(air, "air", nullptr); //TODO nullptr
 
-	blocks[stone] = Block(stone, "stone", textures::blockTextures::stone);
-	blocks[grass] = Block(grass, "grass", textures::blockTextures::grass);
-	blocks[dirt] = Block(dirt, "dirt", textures::blockTextures::dirt);
-	blocks[wewd] = Block(wewd, "wood", textures::blockTextures::wewd);
-	blocks[leaves] = Block(leaves, "leaves", textures::blockTextures::leaves);
+	blocks[stone] = Block(stone, "stone", &textures::blockTextures::stone);
+	blocks[grass] = Block(grass, "grass", &textures::blockTextures::grass);
+	blocks[dirt] = Block(dirt, "dirt", &textures::blockTextures::dirt);
+	blocks[wewd] = Block(wewd, "wood", &textures::blockTextures::wewd);
+	blocks[leaves] = Block(leaves, "leaves", &textures::blockTextures::leaves);
 
 	return blocks;
 }

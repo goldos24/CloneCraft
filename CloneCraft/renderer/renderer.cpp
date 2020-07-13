@@ -21,22 +21,22 @@ renderer::FaceVertexContainer renderer::FaceVertexContainer::addVec3f(maths::Vec
     return result;
 }
 
-void renderer::block::drawFace(const textures::FaceTexture* texture, const float shading,
-    FaceVertexContainer vertices)
+void renderer::block::drawFace(const textures::FaceTexture texture, const float shading,
+    FaceVertexContainer vertices, texStorage::TextureAtlas& texAtlas)
 {
-    textures::storage.select(texture->texture);
+    auto& tex = texAtlas.textures[int(texture)];
 
     glColor3f(shading, shading, shading);
 
-    textures::storage.setGlTexCoord2f(1, 1);
+    tex.setGlTexCoord2f(1, 1);
     glVertex3f(vertices.x1, vertices.y1, vertices.z1);
 
-    textures::storage.setGlTexCoord2f(0, 1);
+    tex.setGlTexCoord2f(0, 1);
     glVertex3f(vertices.x2, vertices.y2, vertices.z2);
 
-    textures::storage.setGlTexCoord2f(0, 0);
+    tex.setGlTexCoord2f(0, 0);
     glVertex3f(vertices.x3, vertices.y3, vertices.z3);
 
-    textures::storage.setGlTexCoord2f(1, 0);
+    tex.setGlTexCoord2f(1, 0);
     glVertex3f(vertices.x4, vertices.y4, vertices.z4);
 }

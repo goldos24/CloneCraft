@@ -11,18 +11,12 @@ sf::Image textures::loadImageFromPath(std::string path)
 	return image;
 }
 
-textures::FaceTexture::FaceTexture(std::string path)
-{
-	this->texture = storage.add(loadImageFromPath(path));
-	this->filePath = path;
-}
-
-textures::BlockTexture::BlockTexture(FaceTexture* top,
-	FaceTexture* bottom,
-	FaceTexture* left,
-	FaceTexture* right,
-	FaceTexture* front,
-	FaceTexture* back)
+textures::BlockTexture::BlockTexture(FaceTexture top,
+	FaceTexture bottom,
+	FaceTexture left,
+	FaceTexture right,
+	FaceTexture front,
+	FaceTexture back)
 {
 	this->top = top;
 	this->bottom = bottom;
@@ -32,7 +26,7 @@ textures::BlockTexture::BlockTexture(FaceTexture* top,
 	this->back = back;
 }
 
-textures::FaceTexture* textures::BlockTexture::getFaceTexture(facePos::FacePosition position)
+textures::FaceTexture textures::BlockTexture::getFaceTexture(facePos::FacePosition position)
 {
 	switch (position)
 	{

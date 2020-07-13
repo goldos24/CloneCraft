@@ -17,9 +17,13 @@ int main()
     // activate the window
     window.setActive(true);
 
+    // Initialise the texture storage
+    texStorage::TextureAtlas texAtlas;
+    sf::Texture::bind(&texAtlas.finalTexture);
+
     // load resources, initialize the OpenGL states, ...
     input::InputManager* inputManager = new input::InputManager();
-    Game game(*inputManager);
+    Game game(*inputManager, texAtlas);
     window.setMouseCursorVisible(false);
 
     // initialize the clock
@@ -28,9 +32,6 @@ int main()
     // Enable OpenGL 2D Textures and depth test
     glEnable(GL_DEPTH_TEST);
 
-    // Initialise the texture storage
-    textures::storage.makeTexture();
-    textures::storage.bind();
 
     // run the main loop
     bool running = true;

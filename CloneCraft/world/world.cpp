@@ -151,7 +151,7 @@ void world::World::unloadGarbageChunks()
 	this->size = this->chunks.size();
 }
 #ifndef CLONECRAFT_NO_GFX
-void world::World::Render() //TODO replace
+void world::World::Render(texStorage::TextureAtlas& texAtlas) //TODO replace
 {
 	// Making the variable with the best name you've seen in a while
 	auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
@@ -162,7 +162,7 @@ void world::World::Render() //TODO replace
 				auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
 				//if (oldf::glu::simpleProjectRelative(maths::convertVec3<int, float>(chunk->chunkPos)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)))
 				if (chunk->isVisible)
-					chunk->Render();
+					chunk->Render(texAtlas);
 			}
 }
 

@@ -59,7 +59,7 @@ namespace chunks
 
 		void calculateFaces();
 
-		void Render();
+		void Render(texStorage::TextureAtlas& texAtlas);
 	};
 
 	std::shared_ptr<Chunk> initFlatChunk(maths::Vec3<int> chunkPos);

@@ -1,7 +1,9 @@
 #include "game.h"
 #include "../mobs/Sheep.h"
 
-Game::Game(input::InputManager& inputManager) : inputManager(inputManager)
+Game::Game(input::InputManager& inputManager, texStorage::TextureAtlas& texAtlas) :
+	inputManager(inputManager),
+	texAtlas(texAtlas)
 {
 	this->player.position = maths::Vec3<float>(0.f, 100.0f, 0.f);
 
@@ -148,8 +150,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_TEXTURE_2D);
 
-			textures::storage.makeTexture();
-			textures::storage.bind();
+			this->texAtlas.bind();
 		}
 		else 
 		{
@@ -160,8 +161,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 			glEnable(GL_DEPTH_TEST);
 			glEnable(GL_TEXTURE_2D);
 
-			textures::storage.makeTexture();
-			textures::storage.bind();
+			this->texAtlas.bind();
 		}
 	}
 
@@ -238,7 +238,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 
 		glBegin(GL_QUADS);      
 
-		this->gameWorld.Render();
+		this->gameWorld.Render(this->texAtlas);
 
 		glEnd();
 

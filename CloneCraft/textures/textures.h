@@ -9,38 +9,42 @@
 namespace textures
 {
 
-	__declspec(selectany) texStorage::Storage storage(16, 16, 256);
-
 	sf::Image loadImageFromPath(std::string path);
 
-	struct FaceTexture
+
+	enum class FaceTexture
 	{
-		FaceTexture(std::string path);
-		texStorage::Texture texture;
-		std::string filePath;
-		
+		stone,
+		dirt,
+		grass_side,
+		grass_top,
+		wewd_side,
+		wewd_top,
+		leaves,
+
+		enumSize
 	};
 
 	struct BlockTexture
 	{
-		BlockTexture(FaceTexture* top,
-			FaceTexture* bottom,
-			FaceTexture* left,
-			FaceTexture* right,
-			FaceTexture* front,
-			FaceTexture* back);
+		BlockTexture(FaceTexture top,
+			FaceTexture bottom,
+			FaceTexture left,
+			FaceTexture right,
+			FaceTexture front,
+			FaceTexture back);
 
-		FaceTexture* getFaceTexture(facePos::FacePosition position);
+		FaceTexture getFaceTexture(facePos::FacePosition position);
 
-		FaceTexture* top;
-		FaceTexture* bottom;
-		FaceTexture* left;
-		FaceTexture* right;
-		FaceTexture* front;
-		FaceTexture* back;
+		FaceTexture top;
+		FaceTexture bottom;
+		FaceTexture left;
+		FaceTexture right;
+		FaceTexture front;
+		FaceTexture back;
 	}; 
 
-	namespace faceTextures
+	/*namespace faceTextures
 	{
 		__declspec(selectany) FaceTexture* stone = new textures::FaceTexture("resources/textures/blocks/stone.png");
 		__declspec(selectany) FaceTexture* dirt = new textures::FaceTexture("resources/textures/blocks/dirt.png");
@@ -49,7 +53,8 @@ namespace textures
 		__declspec(selectany) FaceTexture* wewd_side = new textures::FaceTexture("resources/textures/blocks/wewd_side.png");
 		__declspec(selectany) FaceTexture* wewd_top = new textures::FaceTexture("resources/textures/blocks/wewd_top.png");
 		__declspec(selectany) FaceTexture* leaves = new textures::FaceTexture("resources/textures/blocks/leaves.png");
-	}
+	}*/
+
 
 	static float shadingFactors[] =
 	{
@@ -64,10 +69,10 @@ namespace textures
 
 	namespace blockTextures
 	{
-		__declspec(selectany) BlockTexture* stone = new textures::BlockTexture(faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone, faceTextures::stone);
-		__declspec(selectany) BlockTexture* dirt = new textures::BlockTexture(faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt, faceTextures::dirt);
-		__declspec(selectany) BlockTexture* grass = new textures::BlockTexture(faceTextures::grass_top, faceTextures::dirt, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side, faceTextures::grass_side);
-		__declspec(selectany) BlockTexture* wewd = new textures::BlockTexture(faceTextures::wewd_top, faceTextures::wewd_top, faceTextures::wewd_side, faceTextures::wewd_side, faceTextures::wewd_side, faceTextures::wewd_side);
-		__declspec(selectany) BlockTexture* leaves = new textures::BlockTexture(faceTextures::leaves, faceTextures::leaves, faceTextures::leaves, faceTextures::leaves, faceTextures::leaves, faceTextures::leaves);
+		static BlockTexture stone(FaceTexture::stone, FaceTexture::stone, FaceTexture::stone, FaceTexture::stone, FaceTexture::stone, FaceTexture::stone);
+		static BlockTexture dirt(FaceTexture::dirt, FaceTexture::dirt, FaceTexture::dirt, FaceTexture::dirt, FaceTexture::dirt, FaceTexture::dirt);
+		static BlockTexture grass(FaceTexture::grass_top, FaceTexture::dirt, FaceTexture::grass_side, FaceTexture::grass_side, FaceTexture::grass_side, FaceTexture::grass_side);
+		static BlockTexture wewd(FaceTexture::wewd_top, FaceTexture::wewd_top, FaceTexture::wewd_side, FaceTexture::wewd_side, FaceTexture::wewd_side, FaceTexture::wewd_side);
+		static BlockTexture leaves(FaceTexture::leaves, FaceTexture::leaves, FaceTexture::leaves, FaceTexture::leaves, FaceTexture::leaves, FaceTexture::leaves);
 	}
 }

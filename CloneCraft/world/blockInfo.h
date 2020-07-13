@@ -19,7 +19,7 @@ namespace blox
 
 	Block* InitBlocks();
 
-	__declspec(selectany) Block* blocks = InitBlocks();
+	static Block* blocks = InitBlocks();
 
 	Block& getByID(ID id);
 

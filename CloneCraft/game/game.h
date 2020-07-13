@@ -20,7 +20,7 @@
 #include "../world/blockInfo.h"
 
 struct Game {
-	Game(input::InputManager& inputManager);
+	Game(input::InputManager& inputManager, texStorage::TextureAtlas& texAtlas);
 
 	bool shouldRestartClock = false;
 	bool shouldUpdateWindow = false;
@@ -156,6 +156,7 @@ struct Game {
 
 	void updateLoadedChunks();
 
+	texStorage::TextureAtlas& texAtlas;
 	float movementSpeed = 6.9f;
 	float rotation = 0.f;
 	float friction = 1.f;

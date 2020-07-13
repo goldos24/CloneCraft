@@ -17,12 +17,12 @@ namespace renderData
 		BlockFace(facePos::FacePosition position, blox::ID blockID, maths::Vec3<int> blockPosition);
 
 		const renderer::FaceVertexContainer* vertices;
-		const textures::FaceTexture* texture;
+		textures::FaceTexture texture;
 		float shading;
 
 		maths::Vec3<float> position;
 
-		void render();
+		void render(texStorage::TextureAtlas& texAtlas);
 	};
 
 	BlockFace makeFace(blox::ID id, int x, int y, int z, bool swapSides, facePos::FacePosition facePosition);

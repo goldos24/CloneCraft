@@ -108,11 +108,11 @@ void chunks::Chunk::calculateFaces()
 	this->faceMutex.unlock();
 }
 
-void chunks::Chunk::Render() //TODO replace loop
+void chunks::Chunk::Render(texStorage::TextureAtlas& texAtlas) //TODO replace loop
 {
 	this->faceMutex.lock();
 	for (auto face : renderData)
-		face.render();
+		face.render(texAtlas);
 	this->faceMutex.unlock();
 }
 #endif
