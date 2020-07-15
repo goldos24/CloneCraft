@@ -49,7 +49,7 @@ void input::InputManager::updateEvents(sf::RenderWindow& ourWindow)
 		}
 		else if (event.type == sf::Event::TextEntered)
 		{
-			inputField += static_cast<char>(event.text.unicode);
+			if(event.text.unicode >= 32 || event.text.unicode == '\n')inputField += static_cast<char>(event.text.unicode);
 		}
 		else if (event.type == sf::Event::MouseWheelScrolled)
 		{

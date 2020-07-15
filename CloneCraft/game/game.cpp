@@ -252,6 +252,8 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 
 		glEnd();
 
+		this->gameWorld.RenderEntities(this->player.position, this->player.rotation);
+
 		updateDebugInfo();
 
 		this->simpleBackgroundRect.scale(wsize.x, wsize.y);

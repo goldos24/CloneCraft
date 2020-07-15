@@ -164,6 +164,22 @@ void world::World::Render(texStorage::TextureAtlas & texAtlas,maths::Vec3<float>
 				if (chunk->isVisible)
 				{
 					chunk->Render(texAtlas);
+				}
+			}
+}
+
+void world::World::RenderEntities(maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation) //TODO replace
+{
+	// Making the variable with the best name you've seen in a while
+	auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
+	for (int i = this->worldPos.x; i < worldEnd.x; i += chunks::size)
+		for (int j = this->worldPos.y; j < worldEnd.y; j += chunks::size)
+			for (int k = this->worldPos.z; k < worldEnd.z; k += chunks::size)
+			{
+				auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
+				//if (oldf::glu::simpleProjectRelative(maths::convertVec3<int, float>(chunk->chunkPos)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)))
+				if (chunk->isVisible)
+				{
 					chunk->renderEntities(cameraPosition, cameraRotation);
 				}
 			}
