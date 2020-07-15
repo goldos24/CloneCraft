@@ -96,8 +96,8 @@ void Entity::render(maths::Vec3<float> cameraPosition, maths::Vec3<float> camera
 	glTranslatef(-cameraPosition.x, -cameraPosition.y, -cameraPosition.z);
 
 	// Entity Transformations
-	glRotatef(this->rotation.y, 0, 1, 0);
 	glTranslatef(this->position.x, this->position.y - this->hitbox.y, this->position.z);
+	glRotatef(this->rotation.y, 0, 1, 0);
 
 	// Finally Drawing the Entity
 	this->renderModel();

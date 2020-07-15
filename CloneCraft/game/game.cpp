@@ -5,7 +5,7 @@ Game::Game(input::InputManager& inputManager, texStorage::TextureAtlas& texAtlas
 	inputManager(inputManager),
 	texAtlas(texAtlas)
 {
-	this->player.position = maths::Vec3<float>(0.f, 100.0f, 0.f);
+	this->player.position = maths::Vec3<float>(420.f, 69.0f, -240.f);
 
 	this->guiManager.addGui(&this->commandGui);
 	this->guiManager.addUIElementToGuiWithName(&this->simpleBackgroundRect, "command");
