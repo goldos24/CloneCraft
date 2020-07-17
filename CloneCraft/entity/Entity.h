@@ -5,13 +5,23 @@
 #include "../world/forwardDeclarations.h"
 #include "../maths/maths.h"
 #include "../game/forwardDeclarations.h"
+#include "../stringEncoder/stringEncoding.h"
 
 struct Entity
 {
 	Entity();
 
+	enum class ID : uint64_t
+	{
+		player = CptrToInt("player\0\0"),
+		sheep = CptrToInt("sheep\0\0\0")
+	};
+
 	maths::Vec3<float> position, rotation, movement;
 	maths::Vec3<float> hitbox;
+
+	static std::shared_ptr<Entity> createEntityFromID(ID entityID, ...);
+	static ID idFromString(std::string);
 
 	bool isStandingOnASurface(world::World& world);
 

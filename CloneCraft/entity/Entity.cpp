@@ -105,3 +105,31 @@ void Entity::render(maths::Vec3<float> cameraPosition, maths::Vec3<float> camera
 
 void Entity::update(Game&, float) {}
 void Entity::renderModel() {}
+
+Entity::ID Entity::idFromString(std::string str)
+{
+	return static_cast<Entity::ID>(StringToInt(str));
+}
+
+// Including all entity files
+#include <cstdarg>
+#include "../mobs/Sheep.h"
+
+std::shared_ptr<Entity> Entity::createEntityFromID(Entity::ID entityID, ...)
+{
+	va_list args;
+	va_start(args, entityID);
+	switch (entityID)
+	{
+	case Entity::ID::player:
+		std::cout << "Spawning players isn't possible\n";
+		break;
+	case Entity::ID::sheep:
+		return std::make_shared<Sheep>();
+		break;
+	default:
+		break;
+	}
+
+	return nullptr;
+}

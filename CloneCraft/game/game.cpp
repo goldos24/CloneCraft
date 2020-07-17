@@ -125,11 +125,19 @@ void Game::runCommand(std::string cmd)
 	else if (command == "spawn")
 	{
 		float x, y, z;
-		cmdin >> x >> y >> z;
+		std::string entityID;
+		cmdin >> x >> y >> z >> entityID;
 		auto chunk = this->gameWorld.getChunk(chunks::convertToChunkPos(maths::Vec3<float>(x, y, z)));
-		auto newEntity = std::make_shared<Sheep>();
-		newEntity->position = maths::Vec3<float>(x,y,z);
-		chunk->entities.push_back(newEntity);
+		auto newEntity = Entity::createEntityFromID(Entity::idFromString(entityID));
+		if (newEntity.get() != nullptr)
+		{
+			newEntity->position = maths::Vec3<float>(x, y, z);
+			chunk->entities.push_back(newEntity);
+		}
+		else
+		{
+			std::cout << "Could spawnn't entity" << std::endl;
+		}
 	}
 	else
 	{
