@@ -21,6 +21,7 @@ struct Entity
 	maths::Vec3<float> hitbox;
 
 	static std::shared_ptr<Entity> createEntityFromID(ID entityID, ...);
+	static std::shared_ptr<Entity> parseEntity(std::string entityData);
 	static ID idFromString(std::string);
 
 	bool isStandingOnASurface(world::World& world);

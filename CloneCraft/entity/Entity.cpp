@@ -1,6 +1,8 @@
 #include "Entity.h"
 #include "../world/world.h"
 #include <cmath>
+#include <cstdarg>
+#include <sstream>
 
 
 Entity::Entity()
@@ -112,7 +114,6 @@ Entity::ID Entity::idFromString(std::string str)
 }
 
 // Including all entity files
-#include <cstdarg>
 #include "../mobs/Sheep.h"
 
 std::shared_ptr<Entity> Entity::createEntityFromID(Entity::ID entityID, ...)
@@ -132,4 +133,20 @@ std::shared_ptr<Entity> Entity::createEntityFromID(Entity::ID entityID, ...)
 	}
 
 	return nullptr;
+}
+
+
+std::shared_ptr<Entity> Entity::parseEntity(std::string entityData)
+{
+	std::istringstream input(entityData);
+	std::string entityType;
+	input >> entityType;
+	std::shared_ptr<Entity> entity = createEntityFromID(idFromString(entityType));
+	while (input.good())
+	{
+		std::string command;
+		input >> command;
+		if (command == "entity-end")
+			break;
+	}
 }
