@@ -223,6 +223,11 @@ namespace maths
 				);
 		}
 
+		num operator * (Vec2<num> theOtherVec3)
+		{
+			return this->x * theOtherVec3.x + this->y * theOtherVec3.y;
+		}
+
 		bool isInBounds(Vec2<num> a, Vec2<num> b)
 		{
 			return

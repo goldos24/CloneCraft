@@ -55,6 +55,7 @@ bool saveData::Manager::loadAll(std::string fileName)
 	inputFile.open(fileName + ".save");
 	
 	if (!inputFile.is_open()) return false;
+	this->seed = loadInt(inputFile);
 
 	while (inputFile.good())
 	{
@@ -82,6 +83,7 @@ void saveData::Manager::saveAll(std::string worldName)
 {
 	std::ofstream outputFile;
 	outputFile.open(worldName + ".save");
+	saveInt(outputFile, this->seed);
 	for (auto chonk : this->chunks)
 		if (chonk->chunkPos.x > 0 && chonk->chunkPos.y > 0 && chonk->chunkPos.z > 0) saveCompressedChunk(outputFile, chonk);
 		else saveSimpleChunk(outputFile, chonk);

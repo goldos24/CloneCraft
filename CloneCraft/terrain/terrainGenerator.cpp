@@ -1,4 +1,5 @@
 #include "terrainGenerator.h"
+#include "perlin.h"
 
 float terrainGen::getHeight(maths::Vec2<float> position, float scalar)
 {
@@ -8,40 +9,30 @@ float terrainGen::getHeight(maths::Vec2<float> position, float scalar)
 }
 
 
-std::vector<float> terrainGen::createHeightMap(maths::Vec2<float> position)
+std::vector<float> terrainGen::createHeightMap(maths::Vec2<float> position, float seed)
 {
 	auto heightMap = std::vector<float>(256);
 
-	float heights[3][3];
-	for (int i = 0; i < 3; i++)
-		for (int j = 0; j < 3; j++)
-		{
-			heights[i][j] = getHeight((position / 16.f) + maths::Vec2<float>(float(i), float(j)), 1.f);
-		}
+	position = { floor(position.x / 16) * 16, floor(position.y / 16) * 16 };
+	maths::Vec2<float>data[4];
+	perlin::generateData(chunks::size, seed, position, data);
 	for (int i = 0; i < heightMap.size(); i++)
 	{
-		auto height = heights[1][1];
 		int x = i >> 4;
 		int y = i - x * 16;
-		float xInterpolation = float(x - chunks::size / 2) / float(chunks::size);
-		float yInterpolation = float(y - chunks::size / 2) / float(chunks::size);
-		float divisor = 1.f + (abs(xInterpolation) > abs(yInterpolation) ? abs(xInterpolation) : abs(yInterpolation));
-		height /= (divisor + 1.f);
-		height += (xInterpolation > 0 ? heights[2][1] : heights[0][1]) * abs(xInterpolation);
-		height += (yInterpolation > 0 ? heights[1][2] : heights[1][0]) * abs(yInterpolation);
-		heightMap[i] = height / divisor / 1.f - 6.f;
+		heightMap[i] = perlin::getPoint(chunks::size, seed, position + maths::Vec2<float>{(float)0.5 + x, (float)0.5 + y}, data) - 8;
 	}
 
 	return heightMap;
 }
 
-void terrainGen::getTreePositions(maths::Vec2<float> chunkPosition, std::vector<maths::Vec3<float>>& resultVector)
+void terrainGen::getTreePositions(maths::Vec2<float> chunkPosition, std::vector<maths::Vec3<float>>& resultVector, float seed)
 {
-	auto heightMap = createHeightMap(chunkPosition);
+	auto heightMap = createHeightMap(chunkPosition, seed);
 
 	maths::Vec2<int> forestDataVector;
-	forestDataVector.x = static_cast<int>( static_cast<int>(chunkPosition.x) >> 3 );
-	forestDataVector.y = static_cast<int>(static_cast<int>(chunkPosition.y) >> 2);
+	forestDataVector.x = static_cast<int>( static_cast<int>(chunkPosition.x + seed) >> 3 );
+	forestDataVector.y = static_cast<int>(static_cast<int>(chunkPosition.y + seed) >> 2);
 
 	int treeCount = static_cast<int>(getHeight(maths::convertVec2<int, float>(forestDataVector), 1.f));
 	if (treeCount < 0) treeCount = 0;

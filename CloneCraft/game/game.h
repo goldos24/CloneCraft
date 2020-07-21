@@ -93,7 +93,7 @@ struct Game {
 				return;
 			}
 
-			if (this->gameWorld.createWorld(this->worldNameTextField.text))
+			if (this->gameWorld.createWorld(this->worldNameTextField.text, std::stoi(this->generatedWorldSeedTextField.text)))
 			{
 				std::cout << "Generatingn't world with seed \"" << this->generatedWorldSeedTextField.text
 					<< "\" and with name \"" << this->worldNameTextField.text << "\"\n";

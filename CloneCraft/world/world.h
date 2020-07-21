@@ -31,7 +31,7 @@ namespace world
 
 		bool loadFromFile(std::string worldFileName);
 		
-		bool createWorld(std::string worldFileName);
+		bool createWorld(std::string worldFileName, int seed);
 
 		void unload();
 
@@ -61,11 +61,13 @@ namespace world
 
 		void RenderEntities(maths::Vec3<float>, maths::Vec3<float>);
 
-		void markVisibleChunks(maths::Vec3<float> cameraRotation);
+		void markVisibleChunks(maths::Vec3<float> cameraRotation, maths::Vec3<float> cameraPosition);
 #endif
 		bool save();
 
 		bool containsChunk(maths::Vec3<int> chunkPos);
+
+		int& seed;
 
 		private:
 

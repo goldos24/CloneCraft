@@ -252,7 +252,7 @@ void Game::drawGame(sf::Vector2u wsize, sf::RenderWindow& window, sf::Clock& clo
 		glRotatef(-this->player.rotation.y, 0.f, -1.f, 0.f);
 		glTranslatef(-player.position.x, -player.position.y, -player.position.z);
 
-		this->gameWorld.markVisibleChunks(this->player.rotation);
+		this->gameWorld.markVisibleChunks(this->player.rotation, this->player.position);
 
 		glBegin(GL_QUADS);      
 

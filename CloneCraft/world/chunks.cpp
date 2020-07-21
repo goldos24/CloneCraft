@@ -161,12 +161,12 @@ namespace
 	}
 }
 
-std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos)
+std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos, float seed)
 {
 	std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
 	chunk->chunkPos = chunkPos;
 
-	if (chunkPos.y < 0 || chunkPos.y >= 16)
+	if (chunkPos.y < -16 || chunkPos.y >= 32)
 	{
 		for (blox::ID& id : chunk->blocks)
 		{
@@ -179,7 +179,9 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 	// \\
 	Hills and mountains
 
-	auto heightMap = terrainGen::createHeightMap(maths::Vec2<float>(float(chunkPos.x), float(chunkPos.z)));
+	auto heightMap = terrainGen::createHeightMap(maths::Vec2<float>(float(chunkPos.x), float(chunkPos.z)), seed);
+
+	blox::ID surface = chunkPos.y >= 0 ? blox::grass : blox::dirt;
 
 	for (int i = 0; i < size; i++)
 		for (int j = 0; j < size; j++)
@@ -187,9 +189,9 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 			{
 				float height = heightMap[i * 16 + k];
 				chunk->setBlockUnsafely(
-					(height < float(j - 12) ? blox::air :
-						height < float(j - 11) ? blox::grass :
-						height < float(j - 8) ? blox::dirt : blox::stone),
+					(height < float(j + chunkPos.y - 12) ? blox::air :
+						height < float(j + chunkPos.y - 11) ? surface :
+						height < float(j + chunkPos.y - 8) ? blox::dirt : blox::stone),
 					i, j, k
 				);
 			}
@@ -200,11 +202,11 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 
 	for(int i = -1; i <= 1; ++i)
 		for (int j = -1; j <= 1; ++j)
-			terrainGen::getTreePositions(maths::Vec2<float>(float(chunkPos.x + i * chunks::size), float(chunkPos.z + j * chunks::size)), treePositions);
+			terrainGen::getTreePositions(maths::Vec2<float>(float(chunkPos.x + i * chunks::size), float(chunkPos.z + j * chunks::size)), treePositions, seed);
 
 	for (auto treePos : treePositions)
 	{
-		//chunk->setBlock(blox::wewd, treePos.x - chunkPos.x, treePos.y, treePos.z - chunkPos.z);
+		if(treePos.y > 0)
 		spawnTreeInChunk(*chunk, treePos);
 	}
 

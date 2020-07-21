@@ -6,6 +6,7 @@
 #include "../world/chunks.h"
 #include "game.h"
 #include "../textures/textures.h"
+#include "../terrain/perlin.h"
 
 
 int main()
@@ -31,7 +32,6 @@ int main()
 
     // Enable OpenGL 2D Textures and depth test
     glEnable(GL_DEPTH_TEST);
-
 
     // run the main loop
     bool running = true;
@@ -66,6 +66,7 @@ int main()
 
 
         game.drawGame(wsize, window, clock);
+
 
         GLenum err = glGetError();
         window.display();

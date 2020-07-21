@@ -1,6 +1,7 @@
 #include "world.h"
 
-world::World::World()
+world::World::World():
+	seed(this->mgr.seed)
 {
 }
 
@@ -19,9 +20,10 @@ bool world::World::loadFromFile(std::string fileName)
 	return true;
 }
 
-bool world::World::createWorld(std::string worldFileName)
+bool world::World::createWorld(std::string worldFileName, int seed)
 {
 	this->worldFileName = worldFileName;
+	this->seed = seed;
 
 	size = maths::cubeof(this->chunkRenderDistance);
 	for (int i = 0; i < size; i++)
@@ -65,7 +67,7 @@ void world::World::moveTo(maths::Vec3<int> destination) {
 std::shared_ptr<chunks::Chunk> world::World::getChunk(maths::Vec3<int> chunkPos)
 {
 	if (!this->containsChunk(chunkPos))
-		return chunks::initNormalChunk(chunkPos);
+		return chunks::initNormalChunk(chunkPos, this->seed);
 	return this->chunks[chunks::createKeyFromPosition(chunkPos).num];
 }
 
@@ -153,6 +155,10 @@ void world::World::unloadGarbageChunks()
 #ifndef CLONECRAFT_NO_GFX
 void world::World::Render(texStorage::TextureAtlas & texAtlas,maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation) //TODO replace
 {
+	glEnable(GL_CULL_FACE);
+
+	glCullFace(GL_BACK);
+
 	// Making the variable with the best name you've seen in a while
 	auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
 	for (int i = this->worldPos.x; i < worldEnd.x; i += chunks::size)
@@ -166,6 +172,8 @@ void world::World::Render(texStorage::TextureAtlas & texAtlas,maths::Vec3<float>
 					chunk->Render(texAtlas);
 				}
 			}
+
+	glDisable(GL_CULL_FACE);
 }
 
 void world::World::RenderEntities(maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation) //TODO replace
@@ -185,10 +193,10 @@ void world::World::RenderEntities(maths::Vec3<float> cameraPosition, maths::Vec3
 			}
 }
 
-void world::World::markVisibleChunks(maths::Vec3<float> cameraRotation)
+void world::World::markVisibleChunks(maths::Vec3<float> cameraRotation, maths::Vec3<float> cameraPosition)
 {
 	// Making the variable with the best name you've seen in a while
-	auto virtualOffset = maths::positionFromRotation(cameraRotation) * float(chunks::size) * 3.f;
+	auto virtualOffset = maths::positionFromRotation(cameraRotation) * float(chunks::size) * 1.3f;
 	glTranslatef(virtualOffset.x, virtualOffset.y, virtualOffset.z);
 	auto worldEnd = this->worldPos + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
 	for (int i = this->worldPos.x; i < worldEnd.x; i += chunks::size)
@@ -197,7 +205,8 @@ void world::World::markVisibleChunks(maths::Vec3<float> cameraRotation)
 			{
 				auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
 				chunk->isVisible =
-					oldf::glu::simpleProjectRelative(maths::convertVec3<int, float>(chunk->chunkPos)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f));
+					oldf::glu::simpleProjectRelative(maths::Vec3<float>(i + 8, j + 8, k + 8)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)); //||\\
+					chunk->chunkPos.isInBounds(maths::convertVec3<float, int>(cameraPosition) - maths::Vec3<int>{18, 18, 18}, maths::convertVec3<float, int>(cameraPosition) + maths::Vec3<int>{17, 17, 17});
 			}
 	glTranslatef(-virtualOffset.x, -virtualOffset.y, -virtualOffset.z);
 }

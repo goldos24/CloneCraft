@@ -48,6 +48,8 @@ namespace saveData
 		void saveAll(std::string worldName);
 
 		void unloadAll();
+
+		int seed = 69;
 	};
 
 }

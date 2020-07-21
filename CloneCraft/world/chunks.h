@@ -70,5 +70,5 @@ namespace chunks
 
 	std::shared_ptr<Chunk> initFlatChunk(maths::Vec3<int> chunkPos);
 
-	std::shared_ptr<Chunk> initNormalChunk(maths::Vec3<int> chunkPos);
+	std::shared_ptr<Chunk> initNormalChunk(maths::Vec3<int> chunkPos, float seed);
 }
