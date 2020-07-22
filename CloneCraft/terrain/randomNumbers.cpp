@@ -14,5 +14,5 @@ float randomFloat::randomNumber(float x)
         float currentPow = pow(3.141f, i);
         result += mod(currentPow + 1.f, x) - mod(currentPow + 2.f, x) + mod(currentPow + 3.f, x) - mod(currentPow + 4.f, x) + mod(currentPow + 5.f, x);
     }
-    return result / x;
+    return result / x + sin(x) - cos(x);
 }
