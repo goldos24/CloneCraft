@@ -246,3 +246,25 @@ void world::World::updateEntities(Game& game, float elapsedTime) //TODO replace
 				chunk->updateEntities(game, elapsedTime);
 			}
 }
+
+int world::generateSeed(std::string str)
+{
+	int result;
+	try
+	{
+		result = std::stoi(str);
+	}
+	catch (const std::exception&)
+	{
+		if (str.size() != 0)
+		{
+			result = sqrt(StringToInt(str));
+		}
+		else 
+		{
+			void* randomNum = malloc(1);
+			free(randomNum);
+			result = (long int) randomNum;
+		}
+	}
+}

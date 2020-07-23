@@ -224,6 +224,7 @@ void Sheep::update(Game& game, float elapsedTime)
 	}
 
 	this->movement.y -= elapsedTime * 18.f;
+	this->applyAcceleration(elapsedTime, maths::Vec3<float>(maths::sind(-this->rotation.y) * this->movementSpeed, 0.f, maths::cosd(-this->rotation.y) * this->movementSpeed));
 	this->clipMovement(elapsedTime, game.gameWorld);
 	this->applyMovement(elapsedTime);
 	this->applyFriction(elapsedTime, 1.2f);

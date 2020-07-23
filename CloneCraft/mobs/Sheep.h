@@ -24,4 +24,6 @@ struct Sheep : Entity
 	LegMovementMode legMoveMode = LegMovementMode::Forward;
 
 	void parseSpecialProperty(std::string propertyName, std::istream& entityParserStream);
+
+	float movementSpeed = 2.f;
 };

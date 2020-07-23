@@ -1,4 +1,5 @@
 #include "chunks.h"
+#include "../game/GAME.H"
 
 int chunks::coordinateToIndex(int x, int y, int z)
 {
@@ -226,6 +227,25 @@ void chunks::Chunk::renderEntities(maths::Vec3<float> cameraPosition, maths::Vec
 
 void chunks::Chunk::updateEntities(Game& game, float elapsedTime)
 {
-	for (auto entity : this->entities)
+	std::vector<int> entitiesToBeRemoved;
+	int offset = 0;
+
+	for (int i = 0; i < this->entities.size(); ++i)
+	{
+		auto entity = entities[i];
 		entity->update(game, elapsedTime);
+		if (!(entity->position - maths::convertVec3<int, float>(this->chunkPos)).isInBounds({ 0,0,0 }, { 16,16,16 }))
+		{
+			entitiesToBeRemoved.push_back(i);
+		}
+	}
+
+	for (auto i : entitiesToBeRemoved)
+	{
+		auto entity = entities[i];
+		this->entities.erase(this->entities.begin() + i - offset);
+		offset++;
+		auto newEntityChunkPos = chunks::convertToChunkPos(entity->position);
+		game.gameWorld.getChunk(newEntityChunkPos)->entities.push_back(entity);
+	}
 }

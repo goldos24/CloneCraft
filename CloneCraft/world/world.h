@@ -17,6 +17,8 @@
 
 namespace world
 {
+	int generateSeed(std::string);
+
 	struct World
 	{
 		World();
