@@ -41,4 +41,8 @@ struct Entity
 	void render(maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation);
 
 	virtual void update(Game&, float);
+
+	void parseProperty(std::string propertyName, std::istream& entityParserStream);
+
+	virtual void parseSpecialProperty(std::string propertyName, std::istream& entityParserStream) = 0;
 };

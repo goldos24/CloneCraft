@@ -63,3 +63,6 @@ void player::Player::update(Game& game, float elapsedTime)
 {
 	game.updatePosition(elapsedTime);
 }
+
+
+void player::Player::parseSpecialProperty(std::string propertyName, std::istream& entityParserStream) {}

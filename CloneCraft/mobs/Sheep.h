@@ -22,4 +22,6 @@ struct Sheep : Entity
 	void update(Game&, float);
 
 	LegMovementMode legMoveMode = LegMovementMode::Forward;
+
+	void parseSpecialProperty(std::string propertyName, std::istream& entityParserStream);
 };

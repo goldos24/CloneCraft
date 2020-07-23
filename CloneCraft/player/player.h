@@ -24,5 +24,6 @@ namespace player
 
 		void saveDataToFile(std::string worldFileName);
 		void loadDataFromFile(std::string worldFileName);
+		void parseSpecialProperty(std::string propertyName, std::istream& entityParserStream);
 	};
 }

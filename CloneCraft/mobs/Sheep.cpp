@@ -227,3 +227,5 @@ void Sheep::update(Game& game, float elapsedTime)
 	this->applyMovement(elapsedTime);
 	this->applyFriction(elapsedTime, 1.2f);
 }
+
+void Sheep::parseSpecialProperty(std::string propertyName, std::istream& entityParserStream) {}

@@ -150,3 +150,8 @@ std::shared_ptr<Entity> Entity::parseEntity(std::string entityData)
 			break;
 	}
 }
+
+void parseProperty(std::string propertyName, std::istream& entityParserStream)
+{
+
+}

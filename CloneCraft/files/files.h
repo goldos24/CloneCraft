@@ -27,6 +27,10 @@ namespace saveData
 
 	int loadInt(std::ifstream& inputFile);
 
+	std::string loadEntityDataString(std::ifstream& inputFile);
+
+	void putEntityDataString(std::shared_ptr<chunks::Chunk> chunk, std::ofstream& outputFile);
+
 	std::shared_ptr<chunks::Chunk> loadSimpleChunk(std::ifstream& inputFile);
 
 	std::shared_ptr<chunks::Chunk> loadCompressedChunk(std::ifstream& inputFile); 
@@ -35,7 +39,11 @@ namespace saveData
 
 	void saveSimpleChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk);
 
-	void saveCompressedChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk); 
+	void saveCompressedChunk(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk);
+
+	std::shared_ptr<chunks::Chunk> loadDefaultChunkData(std::ifstream& inputFile);
+
+	void saveDefaultChunkData(std::ofstream& outputFile, std::shared_ptr<chunks::Chunk> chunk);
 
 	struct Manager
 	{
