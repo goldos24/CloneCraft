@@ -134,6 +134,16 @@ namespace maths
 			return "< x : " + std::to_string(this->x) + ", y : " + std::to_string(this->y) + ", z : " + std::to_string(this->z) + " >";
 		}
 
+		std::string toParseableString()
+		{
+			return std::to_string(this->x) + " " + std::to_string(this->y) + " " + std::to_string(this->z);
+		}
+
+		void loadFromIstream(std::istream& stream)
+		{
+			stream >> this->x >> this->y >> this->z;
+		}
+
 		bool operator == (Vec3<num>& theOtherVec3)
 		{
 			return this->x == theOtherVec3.x &&

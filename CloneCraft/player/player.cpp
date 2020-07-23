@@ -6,6 +6,7 @@ float player::Player::playerReach = 5.f;
 player::Player::Player()
 {
 	this->hitbox = maths::Vec3<float>(0.7f, 1.8f, 0.7f);
+	this->id = Entity::ID::player;
 }
 
 void player::Player::rotate(float X, float Y, float mouseSpeed)

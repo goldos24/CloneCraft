@@ -135,7 +135,10 @@ namespace saveData
 	void putEntityDataString(std::shared_ptr<chunks::Chunk> chunk, std::ofstream& outputFile) 
 	{
 		outputFile << '{';
-		;; // code
+		for (auto entity : chunk->entities)
+		{
+			outputFile << entity->encode();
+		}
 		outputFile << '}';
 	}
 
@@ -153,6 +156,7 @@ namespace saveData
 			loadDataPrinted = true;
 			std::cout << "Entity Data: (" << entityData << ")\n";
 		}*/
+		Entity::parseEntities(entityData, chunk->entities);
 
 		return chunk;
 	}

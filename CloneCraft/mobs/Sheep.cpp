@@ -7,6 +7,7 @@ Sheep::Sheep()
 	this->hitbox = maths::Vec3<float>(1.f, 0.9f, 0.7f);
 	this->position = maths::Vec3<float>(0.f, 16.f, 0.f);
 	this->rotation.y = 45;
+	this->id = Entity::ID::sheep;
 }
 
 void Sheep::drawLeg(maths::Vec3<float> pos)

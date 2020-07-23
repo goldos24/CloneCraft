@@ -5,7 +5,8 @@
 #include <sstream>
 
 
-Entity::Entity()
+Entity::Entity() :
+	id(ID::invalid)
 {}
 
 bool Entity::isStandingOnASurface(world::World& world)
@@ -136,22 +137,62 @@ std::shared_ptr<Entity> Entity::createEntityFromID(Entity::ID entityID, ...)
 }
 
 
-std::shared_ptr<Entity> Entity::parseEntity(std::string entityData)
+void Entity::parseEntities(std::string entityData, std::vector<std::shared_ptr<Entity>>& entityVector)
 {
 	std::istringstream input(entityData);
 	std::string entityType;
-	input >> entityType;
-	std::shared_ptr<Entity> entity = createEntityFromID(idFromString(entityType));
+	std::shared_ptr<Entity> entity;
+	std::vector<std::shared_ptr<Entity>> entVector;
 	while (input.good())
 	{
 		std::string command;
 		input >> command;
-		if (command == "entity-end")
+		if (command.size() == 0)
 			break;
+		if (command == "entity-end")
+		{
+			entVector.push_back(entity);
+		}
+		else if (command == "entity")
+		{
+			input >> entityType;
+			entity = createEntityFromID(idFromString(entityType));
+		}
+		else
+			entity->parseProperty(command, input);
+	}
+
+	std::swap<std::shared_ptr<Entity>>(entityVector, entVector);
+}
+
+void Entity::parseProperty(std::string propertyName, std::istream& entityParserStream)
+{
+	switch(StringToInt(propertyName))
+	{
+	case CptrToInt("position"):
+		this->position.loadFromIstream(entityParserStream);
+		break;
+	case CptrToInt("rotation"):
+		this->rotation.loadFromIstream(entityParserStream);
+		break;
+	default:
+		this->parseSpecialProperty(propertyName, entityParserStream);
+		break;
 	}
 }
 
-void parseProperty(std::string propertyName, std::istream& entityParserStream)
+std::string Entity::encode() 
 {
+	std::string result;
+	std::ostringstream stream(result);
 
+	stream << " entity " << IntToString((uint64_t)this->id);
+
+	stream << " position " << this->position.toParseableString() << " rotation " << rotation.toParseableString();
+
+	stream << " entity-end";
+
+	result = stream.str();
+
+	return result;
 }
