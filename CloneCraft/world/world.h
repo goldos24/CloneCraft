@@ -55,6 +55,8 @@ namespace world
 
 		void loadChunk(maths::Vec3<int> chunkPos);
 
+		std::shared_ptr<chunks::Chunk> getAndLoadChunk(maths::Vec3<int> chunkPos);
+
 		void updateEntities(Game& game, float elapsedTime);
 
 		void unloadGarbageChunks();

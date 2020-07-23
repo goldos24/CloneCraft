@@ -324,7 +324,10 @@ namespace maths
 
 	namespace coord
 	{
-		int coordinateToIndex(int x, int y, int z, int size);
+		constexpr int coordinateToIndex(int x, int y, int z, int size)
+		{
+			return x * size * size + y * size + z;
+		}
 
 		void indexToCoordinate(int i, int& x, int& y, int& z, int size);
 	}

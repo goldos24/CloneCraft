@@ -1,11 +1,6 @@
 #include "chunks.h"
 #include "../game/GAME.H"
 
-int chunks::coordinateToIndex(int x, int y, int z)
-{
-	return maths::coord::coordinateToIndex(x, y, z, size);
-}
-
 void chunks::indexToCoordinate(int i, int& x, int& y, int& z)
 {
 	maths::coord::indexToCoordinate(i, x, y, z, size);
@@ -33,6 +28,16 @@ blox::ID chunks::Chunk::getBlock(int x, int y, int z)
 	return this->blocks[coordinateToIndex(x, y, z)];
 }
 
+
+blox::ID chunks::Chunk::getBlock(int x, int y, int z, world::World& world)
+{
+	if (!isCoordinateInBounds(x, y, z))
+		return world.getBlockID(this->chunkPos + maths::Vec3<int>(x, y, z));
+	return this->blocks[coordinateToIndex(x, y, z)];
+}
+
+#define chunk_getBlockUnsafely_macro(chunk, x, y, z)  ((chunk).blocks[coordinateToIndex(x, y, z)])
+
 void chunks::Chunk::setBlock(blox::ID id, int x, int y, int z)
 {
 	if (!isCoordinateInBounds(x, y, z))
@@ -45,11 +50,11 @@ void chunks::Chunk::setBlockUnsafely(blox::ID id, int x, int y, int z)
 	this->blocks[coordinateToIndex(x, y, z)] = id;
 }
 
-void chunks::Chunk::placeBlock(blox::ID id, int x, int y, int z)
+void chunks::Chunk::placeBlock(blox::ID id, int x, int y, int z, world::World& world)
 {
 	this->setBlock(id, x, y, z);
 #ifndef CLONECRAFT_NO_GFX
-	this->calculateFaces();
+	this->calculateFaces(world);
 #endif
 }
 
@@ -94,15 +99,58 @@ renderData::BlockFace chunks::Chunk::calculateFace(int x, int y, int z, int actu
 		actualX, actualY, actualZ, swapSides, facePosition);
 }
 
-void chunks::Chunk::calculateFaces()
+static int faceCount = 0;
+
+void chunks::Chunk::calculateFaces(world::World& world)
 {
+	this->wereFacesCalculated = true;
 	std::vector<renderData::BlockFace> newFaces;
 	this->renderData.clear();
-	for (int i = 0; i <= size; i++)
-		for (int j = 0; j <= size; j++)
-			for (int k = 0; k <= size; k++)
+	for (int i = -1; i < size; i++)
+		for (int j = -1; j < size; j++)
+			for (int k = -1; k < size; k++)
 			{
-				calculateAndPushBlock(i, j, k, newFaces);
+				//calculateAndPushBlock(i, j, k, newFaces);
+				facePos::FacePosition positions[3];
+				auto thisBlock = this->getBlock(i, j, k, world);
+				blox::ID ids[3] = { thisBlock, thisBlock, thisBlock };
+				bool isThisBlockTransparent = blox::isTransparent(this->getBlock(i, j, k, world));
+				bool opacityBools[3] =
+				{
+					blox::isTransparent(i < size - 1 && i >= 0 && j >= 0 && k >= 0 ? chunk_getBlockUnsafely_macro(*this, i + 1, j, k) : this->getBlock(i + 1, j, k, world)),
+					blox::isTransparent(j < size - 1 && i >= 0 && j >= 0 && k >= 0 ? chunk_getBlockUnsafely_macro(*this, i, j + 1, k) : this->getBlock(i, j + 1, k, world)),
+					blox::isTransparent(k < size - 1 && i >= 0 && j >= 0 && k >= 0 ? chunk_getBlockUnsafely_macro(*this, i, j, k + 1) : this->getBlock(i, j, k + 1, world))
+				};
+				if (isThisBlockTransparent)
+				{
+					positions[0] = facePos::left;
+					positions[1] = facePos::bottom;
+					positions[2] = facePos::front;
+					ids[0] = this->getBlock(i + 1, j, k, world);
+					ids[1] = this->getBlock(i, j + 1, k, world);
+					ids[2] = this->getBlock(i, j, k + 1, world);
+				}
+				else
+				{
+					positions[0] = facePos::right;
+					positions[1] = facePos::top;
+					positions[2] = facePos::back;
+				}
+
+				if (isThisBlockTransparent ^ opacityBools[0])
+				{
+					newFaces.push_back(renderData::makeFace(ids[0], this->chunkPos.x + i + 1, this->chunkPos.y + j, this->chunkPos.z + k, false, positions[0]));
+				}
+
+				if (isThisBlockTransparent ^ opacityBools[1])
+				{
+					newFaces.push_back(renderData::makeFace(ids[1], this->chunkPos.x + i, this->chunkPos.y + j + 1, this->chunkPos.z + k, false, positions[1]));
+				}
+
+				if (isThisBlockTransparent ^ opacityBools[2])
+				{
+					newFaces.push_back(renderData::makeFace(ids[2], this->chunkPos.x + i, this->chunkPos.y + j, this->chunkPos.z + k + 1, false, positions[2]));
+				}
 			}
 	this->faceMutex.lock();
 	std::swap<renderData::BlockFace>(this->renderData, newFaces);
@@ -117,26 +165,6 @@ void chunks::Chunk::Render(texStorage::TextureAtlas& texAtlas) //TODO replace lo
 	this->faceMutex.unlock();
 }
 #endif
-
-std::shared_ptr<chunks::Chunk> chunks::initFlatChunk(maths::Vec3<int> chunkPos)
-{
-	std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
-	chunk->chunkPos = chunkPos;
-	for (int i = 0; i < size; i++)
-		for (int j = 0; j < size; j++)
-			for (int k = 0; k < size; k++)
-			{
-				chunk->setBlock(
-					(j > 1 ? blox::air : blox::stone),
-					i, j, k
-				);
-			}
-	chunk->setBlock(blox::grass, 8, 14, 8);
-#ifndef CLONECRAFT_NO_GFX
-	chunk->calculateFaces();
-#endif
-	return chunk;
-}
 
 namespace
 {
@@ -167,13 +195,12 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 	std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
 	chunk->chunkPos = chunkPos;
 
-	if (chunkPos.y < -16 || chunkPos.y >= 32)
+	if (chunkPos.y >= 32)
 	{
 		for (blox::ID& id : chunk->blocks)
 		{
 			id = blox::air;
 		}
-		chunk->calculateFaces();
 		return chunk;
 	}
 
@@ -211,7 +238,7 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 		spawnTreeInChunk(*chunk, treePos);
 	}
 
-#ifndef CLONECRAFT_NO_GFX
+#ifndef CLONECRAFT_NO_GFX//\
 	chunk->calculateFaces();
 #endif
 	return chunk;

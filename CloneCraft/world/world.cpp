@@ -13,7 +13,7 @@ bool world::World::loadFromFile(std::string fileName)
 
 	for (auto chonk : mgr.chunks)
 	{
-		chonk->calculateFaces();
+		chonk->calculateFaces(*this);
 		this->chunks[chunks::createKeyFromPosition(chonk->chunkPos).num] = chonk;
 	}
 
@@ -74,14 +74,14 @@ std::shared_ptr<chunks::Chunk> world::World::getChunk(maths::Vec3<int> chunkPos)
 blox::ID world::World::getBlockID(maths::Vec3<int> blockPos)
 {
 	auto blockPosF = maths::convertVec3<int, float>(blockPos);
-	auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
+	auto chunk = this->getAndLoadChunk(chunks::convertToChunkPos(blockPosF));
 	auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
 	return chunk->getBlock(positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 }
 
 blox::ID world::World::getBlockID(maths::Vec3<float> blockPosF)
 {
-	auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
+	auto chunk = this->getAndLoadChunk(chunks::convertToChunkPos(blockPosF));
 	auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
 	return chunk->getBlock(positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 }
@@ -89,16 +89,16 @@ blox::ID world::World::getBlockID(maths::Vec3<float> blockPosF)
 void world::World::setBlockID(maths::Vec3<int> blockPos, blox::ID id)
 {
 	auto blockPosF = maths::convertVec3<int, float>(blockPos);
-	auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
+	auto chunk = this->getAndLoadChunk(chunks::convertToChunkPos(blockPosF));
 	auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
-	return chunk->placeBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
+	return chunk->placeBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z, *this);
 }
 
 void world::World::setBlockID(maths::Vec3<float> blockPosF, blox::ID id)
 {
-	auto chunk = this->getChunk(chunks::convertToChunkPos(blockPosF));
+	auto chunk = this->getAndLoadChunk(chunks::convertToChunkPos(blockPosF));
 	auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
-	return chunk->placeBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
+	return chunk->placeBlock(id, positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z, *this);
 }
 
 std::shared_ptr<chunks::Chunk> world::World::findChunkFromPlayerPosition(maths::Vec3<float> playerPosition)
@@ -205,8 +205,8 @@ void world::World::markVisibleChunks(maths::Vec3<float> cameraRotation, maths::V
 			{
 				auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
 				chunk->isVisible =
-					oldf::glu::simpleProjectRelative(maths::Vec3<float>(i + 8, j + 8, k + 8)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)); //||\\
-					chunk->chunkPos.isInBounds(maths::convertVec3<float, int>(cameraPosition) - maths::Vec3<int>{18, 18, 18}, maths::convertVec3<float, int>(cameraPosition) + maths::Vec3<int>{17, 17, 17});
+					oldf::glu::simpleProjectRelative(maths::Vec3<float>(i + 8, j + 8, k + 8)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)); 
+				if (!chunk->wereFacesCalculated) chunk->calculateFaces(*this);
 			}
 	glTranslatef(-virtualOffset.x, -virtualOffset.y, -virtualOffset.z);
 }
@@ -267,4 +267,13 @@ int world::generateSeed(std::string str)
 			result = (long int) randomNum;
 		}
 	}
+}
+
+
+std::shared_ptr<chunks::Chunk> world::World::getAndLoadChunk(maths::Vec3<int> chunkPos)
+{
+	auto chunk = this->getChunk(chunkPos);
+	if (!this->containsChunk(chunkPos))
+		this->loadChunk(chunkPos);
+	return chunk;
 }

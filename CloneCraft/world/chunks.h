@@ -15,7 +15,10 @@
 
 namespace chunks 
 {
-	int coordinateToIndex(int x, int y, int z);
+	constexpr int coordinateToIndex(int x, int y, int z)
+	{
+		return maths::coord::coordinateToIndex(x, y, z, size);
+	}
 
 	void indexToCoordinate(int i, int& x, int& y, int& z);
 
@@ -31,6 +34,8 @@ namespace chunks
 
 		bool isVisible = false;
 
+		bool wereFacesCalculated = false;
+
 		std::vector<renderData::BlockFace> renderData = std::vector<renderData::BlockFace>();
 
 		maths::Vec3<int> chunkPos;
@@ -41,6 +46,8 @@ namespace chunks
 
 		blox::ID getBlock(int x, int y, int z);
 
+		blox::ID getBlock(int x, int y, int z, world::World& world);
+
 		void updateEntities(Game&, float elapsedTime);
 
 		void renderEntities(maths::Vec3<float>, maths::Vec3<float>);
@@ -49,7 +56,7 @@ namespace chunks
 
 		void setBlockUnsafely(blox::ID id, int x, int y, int z);
 
-		void placeBlock(blox::ID id, int x, int y, int z);
+		void placeBlock(blox::ID id, int x, int y, int z, world::World& world);
 
 		void calculateAndPushBlock(int x, int y, int z, std::vector<renderData::BlockFace>& renderData);
 
@@ -63,12 +70,10 @@ namespace chunks
 			bool swapSides,
 			facePos::FacePosition facePosition, std::vector<renderData::BlockFace>& renderData);
 
-		void calculateFaces();
+		void calculateFaces(world::World& world);
 
 		void Render(texStorage::TextureAtlas& texAtlas);
 	};
-
-	std::shared_ptr<Chunk> initFlatChunk(maths::Vec3<int> chunkPos);
 
 	std::shared_ptr<Chunk> initNormalChunk(maths::Vec3<int> chunkPos, float seed);
 }

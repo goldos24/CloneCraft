@@ -67,10 +67,7 @@ float maths::mapFromRangeToRange(float v, float aMin, float aMax, float bMin, fl
 	return bMin + (bMax - bMin) * ((v - aMin) / (aMax - aMin));
 }
 
-int maths::coord::coordinateToIndex(int x, int y, int z, int size)
-{
-	return x * size * size + y * size + z;
-}
+
 
 void maths::coord::indexToCoordinate(int i, int& x, int& y, int& z, int size)
 {
