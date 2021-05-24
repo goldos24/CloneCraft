@@ -3,6 +3,7 @@
 #include <cmath>
 #include <functional>
 #include <vector>
+#include <memory>
 #include "../world/forwardDeclarations.h"
 #include "../maths/maths.h"
 #include "../game/forwardDeclarations.h"

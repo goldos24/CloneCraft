@@ -267,7 +267,7 @@ namespace maths
 
 	float pythagoras(float x, float y);
 
-	const float pi = 3.1415926535897932384626433832795;
+	constexpr float pi = 3.1415926535897932384626433832795;
 
 	constexpr float degreesToRadians(float degrees)
 	{

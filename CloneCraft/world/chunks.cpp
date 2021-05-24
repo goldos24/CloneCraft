@@ -1,5 +1,5 @@
 #include "chunks.h"
-#include "../game/GAME.H"
+#include "../game/game.h"
 
 void chunks::indexToCoordinate(int i, int& x, int& y, int& z)
 {
