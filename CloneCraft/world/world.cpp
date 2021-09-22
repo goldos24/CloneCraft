@@ -73,9 +73,9 @@ std::shared_ptr<chunks::Chunk> world::World::getChunk(maths::Vec3<int> chunkPos)
 
 blox::ID world::World::getBlockID(maths::Vec3<int> blockPos)
 {
-	auto blockPosF = maths::convertVec3<int, float>(blockPos);
-	auto chunk = this->getAndLoadChunk(chunks::convertToChunkPos(blockPosF));
-	auto positionInsideChunk = maths::convertVec3<float, int>(this->getPlayerPositionInsideCurrentChunk(blockPosF));
+	auto chunkPos = chunks::convertToChunkPos(blockPos);
+	auto chunk = this->getAndLoadChunk(chunkPos);
+	auto positionInsideChunk = blockPos - chunkPos;
 	return chunk->getBlock(positionInsideChunk.x, positionInsideChunk.y, positionInsideChunk.z);
 }
 

@@ -24,7 +24,10 @@ chunks::Chunk::~Chunk()
 blox::ID chunks::Chunk::getBlock(int x, int y, int z)
 {
 	if (!isCoordinateInBounds(x, y, z))
+	{
+		//throw std::logic_error("Coordinate " + std::to_string(x)+ " " + std::to_string(y) + " " + std::to_string(z) + " out of Bounds!");
 		return blox::air;
+	}
 	return this->blocks[coordinateToIndex(x, y, z)];
 }
 
@@ -101,34 +104,64 @@ renderData::BlockFace chunks::Chunk::calculateFace(int x, int y, int z, int actu
 
 static int faceCount = 0;
 
+constexpr int blockContainerSize = chunks::size + 1;
+
+constexpr int blockContainerGetIndex(int x, int y, int z)
+{
+	return maths::squareof(blockContainerSize) * x + blockContainerSize * y + z;
+}
+
 void chunks::Chunk::calculateFaces(world::World& world)
 {
 	this->wereFacesCalculated = true;
-	std::vector<renderData::BlockFace> newFaces;
-	this->renderData.clear();
-	for (int i = -1; i < size; i++)
-		for (int j = -1; j < size; j++)
-			for (int k = -1; k < size; k++)
+	this->faceMutex.lock();
+	blox::ID blockContainer[maths::cubeof(blockContainerSize)];
+	renderData.clear();
+	// Filling the block container with blocks from the chunk
+	for(int i = 0; i < 16; ++i)
+		for(int j = 0; j < 16; ++j)
+			for(int k = 0; k < 16; ++k)
+			{
+				blockContainer[blockContainerGetIndex(i, j, k)] = chunk_getBlockUnsafely_macro(*this, i, j , k);
+			}
+	for(int i = 0; i < 16; ++i)
+		for(int j = 0; j < 16; ++j)
+		{
+			blockContainer[blockContainerGetIndex(i, j, 16)] = world.getBlockID(maths::Vec3<int>(this->chunkPos.x + i, this->chunkPos.y + j, this->chunkPos.z + 16));
+		}
+	for(int i = 0; i < 16; ++i)
+		for(int j = 0; j < 16; ++j)
+		{
+			blockContainer[blockContainerGetIndex(i, 16, j)] = world.getBlockID(maths::Vec3<int>(this->chunkPos.x + i, this->chunkPos.y + 16, this->chunkPos.z + j));
+		}
+	for(int i = 0; i < 16; ++i)
+		for(int j = 0; j < 16; ++j)
+		{
+			blockContainer[blockContainerGetIndex(16, i, j)] = world.getBlockID(maths::Vec3<int>(this->chunkPos.x + 16, this->chunkPos.y + i, this->chunkPos.z + j));
+		}
+	for (int i = 0; i < size; i++)
+		for (int j = 0; j < size; j++)
+			for (int k = 0; k < size; k++)
 			{
 				//calculateAndPushBlock(i, j, k, newFaces);
 				facePos::FacePosition positions[3];
-				auto thisBlock = this->getBlock(i, j, k, world);
+				auto thisBlock = blockContainer[blockContainerGetIndex(i, j, k)];
 				blox::ID ids[3] = { thisBlock, thisBlock, thisBlock };
-				bool isThisBlockTransparent = blox::isTransparent(this->getBlock(i, j, k, world));
+				bool isThisBlockTransparent = blox::isTransparent(blockContainer[blockContainerGetIndex(i, j, k)]);
 				bool opacityBools[3] =
 				{
-					blox::isTransparent(i < size - 1 && i >= 0 && j >= 0 && k >= 0 ? chunk_getBlockUnsafely_macro(*this, i + 1, j, k) : this->getBlock(i + 1, j, k, world)),
-					blox::isTransparent(j < size - 1 && i >= 0 && j >= 0 && k >= 0 ? chunk_getBlockUnsafely_macro(*this, i, j + 1, k) : this->getBlock(i, j + 1, k, world)),
-					blox::isTransparent(k < size - 1 && i >= 0 && j >= 0 && k >= 0 ? chunk_getBlockUnsafely_macro(*this, i, j, k + 1) : this->getBlock(i, j, k + 1, world))
+					blox::isTransparent(blockContainer[blockContainerGetIndex(i + 1, j, k)]),
+					blox::isTransparent(blockContainer[blockContainerGetIndex(i, j + 1, k)]),
+					blox::isTransparent(blockContainer[blockContainerGetIndex(i, j, k + 1)])
 				};
 				if (isThisBlockTransparent)
 				{
 					positions[0] = facePos::left;
 					positions[1] = facePos::bottom;
 					positions[2] = facePos::front;
-					ids[0] = this->getBlock(i + 1, j, k, world);
-					ids[1] = this->getBlock(i, j + 1, k, world);
-					ids[2] = this->getBlock(i, j, k + 1, world);
+					ids[0] = blockContainer[blockContainerGetIndex(i + 1, j, k)];
+					ids[1] = blockContainer[blockContainerGetIndex(i, j + 1, k)];
+					ids[2] = blockContainer[blockContainerGetIndex(i, j, k + 1)];
 				}
 				else
 				{
@@ -139,21 +172,19 @@ void chunks::Chunk::calculateFaces(world::World& world)
 
 				if (isThisBlockTransparent ^ opacityBools[0])
 				{
-					newFaces.push_back(renderData::makeFace(ids[0], this->chunkPos.x + i + 1, this->chunkPos.y + j, this->chunkPos.z + k, false, positions[0]));
+					this->renderData.push_back(renderData::makeFace(ids[0], this->chunkPos.x + i + 1, this->chunkPos.y + j, this->chunkPos.z + k, false, positions[0]));
 				}
 
 				if (isThisBlockTransparent ^ opacityBools[1])
 				{
-					newFaces.push_back(renderData::makeFace(ids[1], this->chunkPos.x + i, this->chunkPos.y + j + 1, this->chunkPos.z + k, false, positions[1]));
+					this->renderData.push_back(renderData::makeFace(ids[1], this->chunkPos.x + i, this->chunkPos.y + j + 1, this->chunkPos.z + k, false, positions[1]));
 				}
 
 				if (isThisBlockTransparent ^ opacityBools[2])
 				{
-					newFaces.push_back(renderData::makeFace(ids[2], this->chunkPos.x + i, this->chunkPos.y + j, this->chunkPos.z + k + 1, false, positions[2]));
+					this->renderData.push_back(renderData::makeFace(ids[2], this->chunkPos.x + i, this->chunkPos.y + j, this->chunkPos.z + k + 1, false, positions[2]));
 				}
 			}
-	this->faceMutex.lock();
-	std::swap<renderData::BlockFace>(this->renderData, newFaces);
 	this->faceMutex.unlock();
 }
 
@@ -182,6 +213,8 @@ namespace
 				for (int k = -2; k < 3; ++k)
 				{
 					maths::Vec3<int> localBlockPos = localTreePos + maths::Vec3<int>(i, j + 4, k);
+					if(!chunks::isCoordinateInBounds(localBlockPos.x, localBlockPos.y, localBlockPos.z))
+						continue;
 					if (chunk.getBlock(localBlockPos.x, localBlockPos.y, localBlockPos.z) == blox::air)
 					{
 						chunk.setBlock(blox::leaves, localBlockPos.x, localBlockPos.y, localBlockPos.z);
