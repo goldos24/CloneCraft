@@ -262,9 +262,9 @@ int world::generateSeed(std::string str)
 		}
 		else 
 		{
-			void* randomNum = malloc(1);
-			free(randomNum);
-			result = (long int) randomNum;
+			srand(time(0));
+			result = rand();
+			return result;
 		}
 	}
 }
