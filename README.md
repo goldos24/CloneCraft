@@ -1,4 +1,4 @@
-# CloneCraft (Legacy)
+# CloneCraft
 Ze bäst Meinkraft Klon on zis Planet
 
 To compile this, you'll need the following binaries and libraries:
