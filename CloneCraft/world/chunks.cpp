@@ -169,20 +169,26 @@ void chunks::Chunk::calculateFaces(world::World& world)
 					positions[1] = facePos::top;
 					positions[2] = facePos::back;
 				}
+				const float lowX = (this->chunkPos.x + i);
+				const float lowY = (this->chunkPos.y + j);
+				const float lowZ = (this->chunkPos.z + k);
+				const float highX = (this->chunkPos.x + i + 1);
+				const float highY = (this->chunkPos.y + j + 1);
+				const float highZ = (this->chunkPos.z + k + 1);
 
 				if (isThisBlockTransparent ^ opacityBools[0])
 				{
-					this->renderData.push_back(renderData::makeFace(ids[0], this->chunkPos.x + i + 1, this->chunkPos.y + j, this->chunkPos.z + k, false, positions[0]));
+					this->renderData.push_back(renderData::makeFace(ids[0], highX, lowY, lowZ, false, positions[0]));
 				}
 
 				if (isThisBlockTransparent ^ opacityBools[1])
 				{
-					this->renderData.push_back(renderData::makeFace(ids[1], this->chunkPos.x + i, this->chunkPos.y + j + 1, this->chunkPos.z + k, false, positions[1]));
+					this->renderData.push_back(renderData::makeFace(ids[1], lowX, highY, lowZ, false, positions[1]));
 				}
 
 				if (isThisBlockTransparent ^ opacityBools[2])
 				{
-					this->renderData.push_back(renderData::makeFace(ids[2], this->chunkPos.x + i, this->chunkPos.y + j, this->chunkPos.z + k + 1, false, positions[2]));
+					this->renderData.push_back(renderData::makeFace(ids[2], lowX, lowY, highZ, false, positions[2]));
 				}
 			}
 	this->faceMutex.unlock();

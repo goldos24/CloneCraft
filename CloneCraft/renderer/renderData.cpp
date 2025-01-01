@@ -1,11 +1,12 @@
 #include "renderData.h"
+#include "../game/game.h"
 
 renderData::BlockFace::BlockFace(facePos::FacePosition position, blox::ID blockID, maths::Vec3<int> blockPosition)
 	:
 	vertices(renderer::vertices::faces + position)
 {
 	blox::eliminateFalseID(blockID);
-	this->position = maths::Vec3<float>(float(blockPosition.x), float(blockPosition.y), float(blockPosition.z));
+	this->position = maths::Vec3<float>(float(blockPosition.x), float(blockPosition.y), float(blockPosition.z)) * getFaceSize();
 	this->texture = (blox::getByID(blockID).texture->getFaceTexture(position));
 	this->shading = textures::shadingFactors[position];
 }

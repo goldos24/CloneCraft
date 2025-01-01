@@ -1,5 +1,6 @@
 #include "Entity.h"
 #include "../world/world.h"
+#include "../game/voxelConstants.h"
 #include <cmath>
 #include <cstdarg>
 #include <sstream>
@@ -11,13 +12,21 @@ Entity::Entity() :
 
 bool Entity::isStandingOnASurface(world::World& world)
 {
-	for (float i = -this->hitbox.x / 2.f; i <= this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
-		for (float k = -this->hitbox.z / 2.f; k <= this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
+	float scaledHitboxX = this->hitbox.x * getVoxelSubdivision();
+	float scaledHitboxY = this->hitbox.y * getVoxelSubdivision();
+	float scaledHitboxZ = this->hitbox.z * getVoxelSubdivision();
+	float scaledPositionX = this->position.x * getVoxelSubdivision();
+	float scaledPositionY = this->position.y * getVoxelSubdivision();
+	float scaledPositionZ = this->position.z * getVoxelSubdivision();
+	for (float i = -scaledHitboxX / 2.f; i < scaledHitboxX / 2.f + 1; ++i)
+		for (float k = -scaledHitboxZ / 2.f; k < scaledHitboxZ / 2.f + 1; ++k)
 		{
-			if (world.getBlockID(this->position + maths::Vec3<float>(i, -this->hitbox.y - 1.f, k)) != blox::air &&
-				world.getBlockID(this->position + maths::Vec3<float>(i, -this->hitbox.y, k)) == blox::air &&
-				this->position.y - this->hitbox.y >= floorf(this->position.y - this->hitbox.y) - 0.01f && this->position.y - this->hitbox.y < floorf(this->position.y - this->hitbox.y) + 0.01f
-				) return true;
+			if (world.getBlockID(this->position * getVoxelSubdivision() + maths::Vec3<float>(
+				i < scaledHitboxX / 2.f ? i : scaledHitboxX / 2.f,
+				-scaledHitboxY - 0.1,
+				k < scaledHitboxZ / 2.f ? k : scaledHitboxZ / 2.f
+				)) != blox::air)
+				return true;
 		}
 	return false;
 }
@@ -41,14 +50,20 @@ void Entity::applyFriction(float elapsedTime, float friction)
 
 bool Entity::isColliding(world::World& world)
 {
-	for (float i = -this->hitbox.x / 2.f; i <= this->hitbox.x / 2.f; i += this->hitbox.x / 2.f)
-		for (float j = 0; j < this->hitbox.y + 0.5f; j += 0.5f)
-			for (float k = -this->hitbox.z / 2.f; k <= this->hitbox.z / 2.f; k += this->hitbox.z / 2.f)
+	float scaledHitboxX = this->hitbox.x * getVoxelSubdivision();
+	float scaledHitboxY = this->hitbox.y * getVoxelSubdivision();
+	float scaledHitboxZ = this->hitbox.z * getVoxelSubdivision();
+	float scaledPositionX = this->position.x * getVoxelSubdivision();
+	float scaledPositionY = this->position.y * getVoxelSubdivision();
+	float scaledPositionZ = this->position.z * getVoxelSubdivision();
+	for (float i = -scaledHitboxX / 2.f; i < scaledHitboxX / 2.f + 1; ++i)
+		for (float j = 0; j < scaledHitboxY + 0.5f; j += 0.5f)
+			for (float k = -scaledHitboxZ / 2.f; k < scaledHitboxZ / 2.f + 1; ++k)
 			{
-				if (world.getBlockID(this->position + maths::Vec3<float>(
-					i > this->hitbox.x / 2.f ? this->hitbox.x / 2.f : i,
-					-(j > this->hitbox.y ? this->hitbox.y : j),
-					k > this->hitbox.z / 2.f ? this->hitbox.z / 2.f : k
+				if (world.getBlockID(this->position * getVoxelSubdivision() + maths::Vec3<float>(
+					i < scaledHitboxX / 2.f ? i : scaledHitboxX / 2.f,
+					-(j > scaledHitboxY ? scaledHitboxY : j),
+					k < scaledHitboxZ / 2.f ? k : scaledHitboxZ / 2.f
 					)) != blox::air)
 					return true;
 			}

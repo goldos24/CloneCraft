@@ -19,6 +19,7 @@
 #include "../player/playerControls.h"
 #include "../world/blockInfo.h"
 #include "../mobs/Sheep.h" // TODO MAYBE REMOVE
+#include "voxelConstants.h"
 
 struct Game {
 	Game(input::InputManager& inputManager, texStorage::TextureAtlas& texAtlas);
