@@ -1,5 +1,6 @@
 #include "terrainGenerator.h"
 #include "perlin.h"
+#include "../game/voxelConstants.h"
 
 float terrainGen::getHeight(maths::Vec2<float> position, float scalar)
 {
@@ -13,14 +14,15 @@ std::vector<float> terrainGen::createHeightMap(maths::Vec2<float> position, floa
 {
 	auto heightMap = std::vector<float>(256);
 
-	position = { floor(position.x / 16) * 16, floor(position.y / 16) * 16 };
+	maths::Vec2<float> noiseOriginPosition = { floor(position.x / getVoxelSubdivision() / 16) * 16, floor(position.y / getVoxelSubdivision() / 16) * 16 };
 	maths::Vec2<float>data[4];
-	perlin::generateData(chunks::size, seed, position, data);
+	perlin::generateData(chunks::size, seed, noiseOriginPosition, data);
+	maths::Vec2<float> chunkOriginPosition = maths::Vec2<float>(floor(position.x / 16) * 16, floor(position.y / 16) * 16) * (float)getFaceSize();
 	for (int i = 0; i < heightMap.size(); i++)
 	{
-		int x = i >> 4;
-		int y = i - x * 16;
-		heightMap[i] = perlin::getPoint(chunks::size, seed, position + maths::Vec2<float>{(float)0.5 + x, (float)0.5 + y}, data) - 8;
+		float x = i >> 4;
+		float y = i - x * 16;
+		heightMap[i] = perlin::getPoint(chunks::size, seed, chunkOriginPosition + maths::Vec2<float>{(0.5f + x) / getVoxelSubdivision(), (0.5f + y) / getVoxelSubdivision()}, data) - 8;
 	}
 
 	return heightMap;

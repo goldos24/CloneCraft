@@ -62,7 +62,8 @@ void world::World::moveTo(maths::Vec3<int> destination) {
 			}
 
 	this->worldPos = destination;
-	if (this->chunks.size() > maths::cubeof(this->chunkRenderDistance) * 100)this->unloadGarbageChunks();
+	if (this->chunks.size() > maths::cubeof(this->chunkRenderDistance) * 100)
+		this->unloadGarbageChunks();
 }
 
 std::shared_ptr<chunks::Chunk> world::World::getChunk(maths::Vec3<int> chunkPos)

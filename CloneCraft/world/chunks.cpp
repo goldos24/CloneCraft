@@ -234,7 +234,7 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 	std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
 	chunk->chunkPos = chunkPos;
 
-	if (chunkPos.y >= 32)
+	if (chunkPos.y >= 32 * getVoxelSubdivision())
 	{
 		for (blox::ID& id : chunk->blocks)
 		{
@@ -254,11 +254,11 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 		for (int j = 0; j < size; j++)
 			for (int k = 0; k < size; k++)
 			{
-				float height = heightMap[i * 16 + k];
+				float height = heightMap[i * 16 + k] * getVoxelSubdivision();
 				chunk->setBlockUnsafely(
-					(height < float(j + chunkPos.y - 12) ? blox::air :
-						height < float(j + chunkPos.y - 11) ? surface :
-						height < float(j + chunkPos.y - 8) ? blox::dirt : blox::stone),
+					(height < float(j + chunkPos.y - 12 * getVoxelSubdivision()) ? blox::air :
+						height < float(j + chunkPos.y - 11 * getVoxelSubdivision()) ? surface :
+						height < float(j + chunkPos.y - 8 * getVoxelSubdivision()) ? blox::dirt : blox::stone),
 					i, j, k
 				);
 			}

@@ -72,33 +72,36 @@ bool Entity::isColliding(world::World& world)
 
 void Entity::clipMovement(float elapsedTime, world::World& world)
 {
-	auto appliedMovementVector = this->movement * elapsedTime;
-	auto possibleNewPosition = this->position;
-	auto initialEntityPosition = this->position;
+	for(int yOffset = 0; yOffset < 2; ++yOffset) {
+		auto appliedMovementVector = this->movement * elapsedTime;
+		auto possibleNewPosition = this->position;
+		auto initialEntityPosition = this->position;
 
-	this->position.x += appliedMovementVector.x;
-	if (this->isColliding(world))
-	{
-		this->movement.x = 0.f;
-		this->position.x -= appliedMovementVector.x;
+		this->position.x += appliedMovementVector.x;
+		if (this->isColliding(world))
+		{
+			this->movement.x = 0.f;
+			this->position.x -= appliedMovementVector.x;
+		}
+
+		this->position.y += (float)yOffset / (float)getVoxelSubdivision();
+		this->position.y += appliedMovementVector.y;
+		if (this->isColliding(world))
+		{
+			if(this->movement.y < 0)initialEntityPosition.y = round((initialEntityPosition.y - this->hitbox.y) * getVoxelSubdivision()) / getVoxelSubdivision() + this->hitbox.y + 0.000001f;
+			this->movement.y = 0.f;
+			this->position.y -= appliedMovementVector.y;
+		}
+
+		this->position.z += appliedMovementVector.z;
+		if (this->isColliding(world))
+		{
+			this->movement.z = 0.f;
+			this->position.z -= appliedMovementVector.z;
+		}
+
+		this->position = initialEntityPosition;
 	}
-
-	this->position.y += appliedMovementVector.y;
-	if (this->isColliding(world))
-	{
-		if(this->movement.y < 0)initialEntityPosition.y = round((initialEntityPosition.y - this->hitbox.y) * getVoxelSubdivision()) / getVoxelSubdivision() + this->hitbox.y + 0.000001f;
-		this->movement.y = 0.f;
-		this->position.y -= appliedMovementVector.y;
-	}
-
-	this->position.z += appliedMovementVector.z;
-	if (this->isColliding(world))
-	{
-		this->movement.z = 0.f;
-		this->position.z -= appliedMovementVector.z;
-	}
-
-	this->position = initialEntityPosition;
 }
 
 void Entity::render(maths::Vec3<float> cameraPosition, maths::Vec3<float> cameraRotation)

@@ -42,9 +42,9 @@ void Game::updateLoadedChunks()
 {
 	maths::Vec3<int> playerPositionInt = maths::Vec3<int>(int(this->player.position.x), int(this->player.position.y), int(this->player.position.z));
 
-	if (lastChunkUpdatePosition.overlySimpleDistanceTo(playerPositionInt) > 16)
+	if (lastChunkUpdatePosition.overlySimpleDistanceTo(playerPositionInt) > 16 / getVoxelSubdivision())
 	{
-		this->gameWorld.moveTo(playerPositionInt - maths::Vec3<int>(gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2));
+		this->gameWorld.moveTo((playerPositionInt * getVoxelSubdivision() - maths::Vec3<int>(gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2, gameWorld.chunkRenderDistance * chunks::size / 2)));
 		this->lastChunkUpdatePosition = playerPositionInt;
 	}
 }

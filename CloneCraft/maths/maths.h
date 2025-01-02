@@ -203,7 +203,7 @@ namespace maths
 
 		Vec2<num> operator * (num factor)
 		{
-			return Vec3<num>(
+			return Vec2<num>(
 				this->x * factor,
 				this->y * factor
 				);

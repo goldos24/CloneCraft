@@ -1,7 +1,7 @@
 #pragma once
 
 constexpr inline const int getVoxelSubdivision() {
-	return 4;
+	return 8;
 }
 
 constexpr inline const float getFaceSize() {
