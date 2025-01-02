@@ -1,4 +1,5 @@
 #include "world.h"
+#include "../game/voxelConstants.h"
 
 world::World::World():
 	seed(this->mgr.seed)
@@ -205,7 +206,7 @@ void world::World::markVisibleChunks(maths::Vec3<float> cameraRotation, maths::V
 			{
 				auto chunk = this->getChunk(maths::Vec3<int>(i, j, k));
 				chunk->isVisible =
-					oldf::glu::simpleProjectRelative(maths::Vec3<float>(i + 8, j + 8, k + 8)).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)); 
+					oldf::glu::simpleProjectRelative(maths::Vec3<float>((i + 8) * getFaceSize(), (j + 8) * getFaceSize(), (k + 8) * getFaceSize())).isInBounds(maths::Vec2<float>(0.f, 0.f), maths::Vec2<float>(1.f, 1.f)); 
 				if (!chunk->wereFacesCalculated) chunk->calculateFaces(*this);
 			}
 	glTranslatef(-virtualOffset.x, -virtualOffset.y, -virtualOffset.z);

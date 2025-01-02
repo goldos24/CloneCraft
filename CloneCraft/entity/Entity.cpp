@@ -86,7 +86,7 @@ void Entity::clipMovement(float elapsedTime, world::World& world)
 	this->position.y += appliedMovementVector.y;
 	if (this->isColliding(world))
 	{
-		if(this->movement.y < 0)initialEntityPosition.y = round(initialEntityPosition.y - this->hitbox.y) + this->hitbox.y + 0.000001f;
+		if(this->movement.y < 0)initialEntityPosition.y = round((initialEntityPosition.y - this->hitbox.y) * getVoxelSubdivision()) / getVoxelSubdivision() + this->hitbox.y + 0.000001f;
 		this->movement.y = 0.f;
 		this->position.y -= appliedMovementVector.y;
 	}
