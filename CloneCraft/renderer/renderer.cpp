@@ -28,10 +28,10 @@ void renderer::block::drawFace(const textures::FaceTexture texture, const float 
 
     float xOffset = fmod(abs(vertices.x1), 1.f);
     float yOffset = fmod(abs(vertices.y1), 1.f);
-    if (abs(vertices.y4 - vertices.y1) < 0.0001) {
-    	float yOffset = fmod(abs(vertices.z1), 1.f);
-    } else if (abs(vertices.x4 - vertices.x1) < 0.0001) {
-    	float xOffset = fmod(abs(vertices.z1), 1.f);
+    if (abs(vertices.y2 - vertices.y1) < 0.01 && abs(vertices.y4 - vertices.y1) < 0.01) {
+    	yOffset = fmod(abs(vertices.z1), 1.f);
+    } else if (abs(vertices.x2 - vertices.x1) < 0.01 && abs(vertices.x4 - vertices.x1) < 0.01) {
+    	xOffset = fmod(abs(vertices.z1), 1.f);
     }
     glColor3f(shading, shading, shading);
 
