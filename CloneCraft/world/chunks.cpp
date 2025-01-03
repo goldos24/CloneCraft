@@ -229,7 +229,7 @@ namespace
 	}
 }
 
-std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos, float seed)
+std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos, float seed, float heightMap[terrainGen::HEIGHTMAP_SIZE], bool& heightMapUninitialized)
 {
 	std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>();
 	chunk->chunkPos = chunkPos;
@@ -245,8 +245,11 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 
 	// \\
 	Hills and mountains
-
-	auto heightMap = terrainGen::createHeightMap(maths::Vec2<float>(float(chunkPos.x), float(chunkPos.z)), seed);
+	
+	if(heightMapUninitialized) {
+		terrainGen::createHeightMap(maths::Vec2<float>(float(chunkPos.x), float(chunkPos.z)), seed, heightMap);
+		heightMapUninitialized = false;
+	}
 
 	blox::ID surface = chunkPos.y >= 0 ? blox::grass : blox::dirt;
 
@@ -277,9 +280,6 @@ std::shared_ptr<chunks::Chunk> chunks::initNormalChunk(maths::Vec3<int> chunkPos
 		spawnTreeInChunk(*chunk, treePos);
 	}
 
-#ifndef CLONECRAFT_NO_GFX//\
-	chunk->calculateFaces();
-#endif
 	return chunk;
 }
 

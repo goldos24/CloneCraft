@@ -323,8 +323,8 @@ void Game::updateDebugInfo()
 		<< "Chunks: " << gameWorld.chunks.size() << "\n"
 		<< "Position: " << this->player.position.toString() << "\n"
 		<< "Rotation: " << this->player.rotation.toString() << "\n"
-		<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position)->chunkPos.toString() << "\n"
-		<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position).toString() << "\n"
+		<< "Chunk position: " << gameWorld.findChunkFromPlayerPosition(this->player.position * (float)getVoxelSubdivision())->chunkPos.toString() << "\n"
+		<< "Position in chunk: " << gameWorld.getPlayerPositionInsideCurrentChunk(this->player.position * (float)getVoxelSubdivision()).toString() << "\n"
 		<< "Looking at block with ID: " << blockIDInFrontOfPlayer << " (" << int(blockIDInFrontOfPlayer) << ")\n"
 		<< "Looking at block: " << blockPosInFrontOfPlayer << "\n" 
 		<< "Selected block: " << this->selectedBlockToPlace;

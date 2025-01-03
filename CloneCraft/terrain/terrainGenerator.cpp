@@ -10,27 +10,26 @@ float terrainGen::getHeight(maths::Vec2<float> position, float scalar)
 }
 
 
-std::vector<float> terrainGen::createHeightMap(maths::Vec2<float> position, float seed)
+void terrainGen::createHeightMap(maths::Vec2<float> position, float seed, float heightMap[HEIGHTMAP_SIZE])
 {
-	auto heightMap = std::vector<float>(256);
-
 	maths::Vec2<float> noiseOriginPosition = { floor(position.x / getVoxelSubdivision() / 16) * 16, floor(position.y / getVoxelSubdivision() / 16) * 16 };
 	maths::Vec2<float>data[4];
 	perlin::generateData(chunks::size, seed, noiseOriginPosition, data);
 	maths::Vec2<float> chunkOriginPosition = maths::Vec2<float>(floor(position.x / 16) * 16, floor(position.y / 16) * 16) * (float)getFaceSize();
-	for (int i = 0; i < heightMap.size(); i++)
+	for (int i = 0; i < HEIGHTMAP_SIZE; i++)
 	{
 		float x = i >> 4;
 		float y = i - x * 16;
 		heightMap[i] = perlin::getPoint(chunks::size, seed, chunkOriginPosition + maths::Vec2<float>{(0.5f + x) / getVoxelSubdivision(), (0.5f + y) / getVoxelSubdivision()}, data) - 8;
 	}
-
-	return heightMap;
 }
 
 void terrainGen::getTreePositions(maths::Vec2<float> chunkPosition, std::vector<maths::Vec3<float>>& resultVector, float seed)
 {
-	auto heightMap = createHeightMap(chunkPosition, seed);
+	maths::Vec2<float> noiseOriginPosition = { floor(chunkPosition.x / getVoxelSubdivision() / 16) * 16, floor(chunkPosition.y / getVoxelSubdivision() / 16) * 16 };
+	maths::Vec2<float>data[4];
+	perlin::generateData(chunks::size, seed, noiseOriginPosition, data);
+	maths::Vec2<float> chunkOriginPosition = maths::Vec2<float>(floor(chunkPosition.x / 16) * 16, floor(chunkPosition.y / 16) * 16) * (float)getFaceSize();
 
 	maths::Vec2<int> forestDataVector;
 	forestDataVector.x = static_cast<int>( static_cast<int>(chunkPosition.x + seed) >> 3 );
@@ -55,7 +54,7 @@ void terrainGen::getTreePositions(maths::Vec2<float> chunkPosition, std::vector<
 		//	\\
 		Adding the height
 		
-		localTreePosition.y = 12.f + heightMap[localTreePosition.x * chunks::size + localTreePosition.z];
+		localTreePosition.y = (12.f + perlin::getPoint(chunks::size, seed, chunkOriginPosition + maths::Vec2<float>{(0.5f + localTreePosition.x) / getVoxelSubdivision(), (0.5f + localTreePosition.y) / getVoxelSubdivision()}, data) - 8) * getVoxelSubdivision();
 
 		//	\\
 		Pushing back the data

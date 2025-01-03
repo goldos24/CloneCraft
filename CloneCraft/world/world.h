@@ -25,7 +25,7 @@ namespace world
 		std::string worldFileName;
 		maths::Vec3<int> worldPos = maths::Vec3<int>(0, 0, 0);
 		int size;
-		int chunkRenderDistance = 11;
+		int chunkRenderDistance = 16;
 		std::map<uint64_t, std::shared_ptr<chunks::Chunk>> chunks;
 		saveData::Manager mgr;
 
@@ -74,6 +74,8 @@ namespace world
 		int& seed;
 
 		private:
+
+		void loadChunkWithHeightMap(maths::Vec3<int> chunkPos, float heightMap[terrainGen::HEIGHTMAP_SIZE], bool& isHeightMapInitialized);
 
 		// Only for state modifications corrupting the data
 	};

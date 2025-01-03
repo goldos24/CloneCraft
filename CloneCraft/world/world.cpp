@@ -51,25 +51,39 @@ void world::World::moveTo(maths::Vec3<int> destination) {
 	destination = chunks::convertToChunkPos(destination);
 
 	// Loading new Chunks
-	auto destEnd = destination + maths::Vec3<int>(this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size, this->chunkRenderDistance * chunks::size);
+	int rDistPlusOne = this->chunkRenderDistance + 1;
+	auto destEnd = destination + maths::Vec3<int>(rDistPlusOne * chunks::size, rDistPlusOne * chunks::size, rDistPlusOne * chunks::size);
 
 	for (int i = destination.x; i < destEnd.x; i += chunks::size)
-		for (int j = destination.y; j < destEnd.y; j += chunks::size)
-			for (int k = destination.z; k < destEnd.z; k += chunks::size)
+		for (int k = destination.z; k < destEnd.z; k += chunks::size) {
+			float heightMap[terrainGen::HEIGHTMAP_SIZE];
+			bool heightMapUninitialized = true;
+			for (int j = destination.y; j < destEnd.y; j += chunks::size)
 			{
 				auto currentChunkPos = maths::Vec3<int>(i, j, k);
-				this->loadChunk(currentChunkPos);
+				this->loadChunkWithHeightMap(currentChunkPos, heightMap, heightMapUninitialized);
 			}
+		}
 
 	this->worldPos = destination;
 	if (this->chunks.size() > maths::cubeof(this->chunkRenderDistance) * 100)
 		this->unloadGarbageChunks();
 }
 
+void world::World::loadChunkWithHeightMap(maths::Vec3<int> chunkPos, float heightMap[terrainGen::HEIGHTMAP_SIZE], bool& isHeightMapUninitialized) {
+	if (this->containsChunk(chunkPos)) return;
+
+	this->chunks[chunks::createKeyFromPosition(chunkPos).num] =
+		chunks::initNormalChunk(chunkPos, this->seed, heightMap, isHeightMapUninitialized);
+}
+
 std::shared_ptr<chunks::Chunk> world::World::getChunk(maths::Vec3<int> chunkPos)
 {
-	if (!this->containsChunk(chunkPos))
-		return chunks::initNormalChunk(chunkPos, this->seed);
+	if (!this->containsChunk(chunkPos)) {
+		float heightMap[terrainGen::HEIGHTMAP_SIZE];
+		bool heightMapUninitialized = true;
+		return chunks::initNormalChunk(chunkPos, this->seed, heightMap, heightMapUninitialized);
+	}
 	return this->chunks[chunks::createKeyFromPosition(chunkPos).num];
 }
 

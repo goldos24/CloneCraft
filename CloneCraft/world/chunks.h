@@ -75,5 +75,5 @@ namespace chunks
 		void Render(texStorage::TextureAtlas& texAtlas);
 	};
 
-	std::shared_ptr<Chunk> initNormalChunk(maths::Vec3<int> chunkPos, float seed);
+	std::shared_ptr<Chunk> initNormalChunk(maths::Vec3<int> chunkPos, float seed, float heightMap[terrainGen::HEIGHTMAP_SIZE], bool& heightMapUninitialized);
 }

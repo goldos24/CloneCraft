@@ -1,18 +1,20 @@
 #include "playerWorldInteraction.h"
+#include "../game/voxelConstants.h"
 
 maths::Vec3<float> playerWorldInteraction::getBlockPosInFrontOfPlayer(world::World& world, player::Player& player)
 {
 	auto t = maths::positionFromRotation<float>(player.rotation) * player.playerReach;
 
+	maths::Vec3<float> scaledPlayerPos = player.position * (float)getVoxelSubdivision();
 	maths::Vec3<float> finalBlockPos;
 	for (float i = 0.f; i < 100.f * player.playerReach; i++)
 	{
-		finalBlockPos = maths::Vec3<float>(t.x, t.y, t.z) * i / 100.f / player.playerReach;
-		auto blockID = world.getBlockID(finalBlockPos + player.position);
+		finalBlockPos = maths::Vec3<float>(t.x, t.y, t.z) * i / 100.f / player.playerReach * (float)getVoxelSubdivision();
+		auto blockID = world.getBlockID(finalBlockPos + scaledPlayerPos);
 		if (blockID != blox::air)break;
 	}
 
-	return finalBlockPos + player.position;
+	return finalBlockPos + scaledPlayerPos;
 }
 
 void playerWorldInteraction::breakBlockInFrontOfPlayer(world::World& world, player::Player& player)

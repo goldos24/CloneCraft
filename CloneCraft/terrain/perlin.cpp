@@ -28,8 +28,8 @@ namespace perlin
 		}
 
 		float
-			xInterpolation = maths::cosd((pos.x - xStart) / gridSize  * 90.f),
-			yInterpolation = maths::cosd((pos.y - yStart) / gridSize  * 90.f);
+			xInterpolation = 1.f - (pos.x - xStart) / gridSize,
+			yInterpolation = 1.f - (pos.y - yStart) / gridSize;
 
 		float
 			upperDotProduct = dotProducts[1] * xInterpolation + dotProducts[3] * (1 - xInterpolation),
