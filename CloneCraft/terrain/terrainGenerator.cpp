@@ -54,7 +54,7 @@ void terrainGen::getTreePositions(maths::Vec2<float> chunkPosition, std::vector<
 		//	\\
 		Adding the height
 		
-		localTreePosition.y = (12.f + perlin::getPoint(chunks::size, seed, chunkOriginPosition + maths::Vec2<float>{(0.5f + localTreePosition.x) / getVoxelSubdivision(), (0.5f + localTreePosition.y) / getVoxelSubdivision()}, data) - 8) * getVoxelSubdivision();
+		localTreePosition.y = (12.f + perlin::getPoint(chunks::size, seed, chunkOriginPosition + maths::Vec2<float>{(2.5f + localTreePosition.x) / getVoxelSubdivision(), (2.5f + localTreePosition.y) / getVoxelSubdivision()}, data) - 8) * getVoxelSubdivision();
 
 		//	\\
 		Pushing back the data
